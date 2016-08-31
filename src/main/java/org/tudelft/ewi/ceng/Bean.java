@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by root on 8/22/16.
+ * Abstract to be inherited for all user-defined containers.
  */
 public abstract class Bean implements Serializable {
     private static final int BILLION = 1000000000;

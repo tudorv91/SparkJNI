@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 /**
  * Created by root on 7/20/16.
+ * Abstract class to be inherited for all JNI function user implementation classes.
  */
 public abstract class JniFunction<T1, R> implements Function<T1, R>{
     private String nativeLibPath;

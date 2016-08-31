@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 /**
  * Created by Tudor on 7/20/16.
+ * Top level class with static functionality that handles the SparkJNI execution.
  */
 public class JniFrameworkLoader {
     // Constants
@@ -114,6 +115,12 @@ public class JniFrameworkLoader {
 
     private JniFrameworkLoader() {}
 
+    /**
+     * Function which triggers the SparkJNI processes.
+     * @param appName The target app name.
+     * @param kernelFileName The name of the kernel that provides with native functionality
+     * @param sparkContext The Spark Context.
+     */
     public static void deploy(String appName, String kernelFileName, JavaSparkContext sparkContext) {
         long start = System.currentTimeMillis();
         setAppName(appName);
@@ -179,18 +186,34 @@ public class JniFrameworkLoader {
         libLoadTime = System.currentTimeMillis() - start;
     }
 
+    /**
+     * Enable automataic makefile generation at the end of the deployment stage.
+     * @param doGenerateMakefile
+     */
     public static void setDoGenerateMakefile(boolean doGenerateMakefile) {
         JniFrameworkLoader.doGenerateMakefile = doGenerateMakefile;
     }
 
+    /**
+     * Enable building the shared native library.
+     * @param doBuild
+     */
     public static void setDoBuild(boolean doBuild) {
         JniFrameworkLoader.doBuild = doBuild;
     }
 
+    /**
+     * Set the user defines pragma for the build stage flags.
+     * @param userDefines
+     */
     public static void setUserDefines(String userDefines) {
         JniFrameworkLoader.userDefines = userDefines;
     }
 
+    /**
+     * Set the personalized user directories.
+     * @param userLibraryDirs
+     */
     public static void setUserLibraryDirs(String userLibraryDirs) {
         JniFrameworkLoader.userLibraryDirs = userLibraryDirs;
     }
@@ -199,10 +222,18 @@ public class JniFrameworkLoader {
         JniFrameworkLoader.javaSparkContext = javaSparkContext;
     }
 
+    /**
+     * Trigger the writing of the template file.
+     * @param doWriteTemplateFile
+     */
     public static void setDoWriteTemplateFile(boolean doWriteTemplateFile) {
         JniFrameworkLoader.doWriteTemplateFile = doWriteTemplateFile;
     }
 
+    /**
+     * Set the personalized user include directories.
+     * @param userIncludeDirs
+     */
     public static void setUserIncludeDirs(String userIncludeDirs) {
         JniFrameworkLoader.userIncludeDirs = userIncludeDirs;
     }
@@ -234,6 +265,10 @@ public class JniFrameworkLoader {
         JniFrameworkLoader.appName = appName;
     }
 
+    /**
+     * Register the user-defined jni function.
+     * @param jniFunctionClass
+     */
     public static void registerJniFunction(Class jniFunctionClass) {
         registeredJniFunctions.add(jniFunctionClass);
     }
@@ -272,6 +307,10 @@ public class JniFrameworkLoader {
         }
     }
 
+    /**
+     * Register the user-defined Bean container.
+     * @param beanClass
+     */
     public static void registerContainer(Class beanClass) {
         registeredJavaContainers.add(beanClass);
     }
