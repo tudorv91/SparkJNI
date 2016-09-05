@@ -11,6 +11,8 @@ import sun.misc.Unsafe;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -20,9 +22,10 @@ import java.util.Scanner;
  */
 public class PairHmmMain {
     private static String appName = "pairhmm";
+    private final static float ERROR_MARGIN_FLOAT = 0.00000001f;
     private static JavaSparkContext jscSingleton;
     private static String modeString = "CPP",
-    jdkPath = "/usr/lib/jvm/java-1.7.0-openjdk-amd64",
+            jdkPath = "/usr/lib/jvm/java-1.7.0-openjdk-amd64",
             nativePath = "/home/tudor/Desktop/Thesis/projects/PairHMM_TACC",
             nativeFuncName = "calculateSoftware";
     private static int noLines = 32768;
@@ -35,31 +38,7 @@ public class PairHmmMain {
         return jscSingleton;
     }
 
-    public static final long addressOffset;
-    static {
-        try {
-            addressOffset = getUnsafe().objectFieldOffset(Buffer.class.getDeclaredField("address"));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @SuppressWarnings("restriction")
-    public static Unsafe getUnsafe() {
-        try {
-            Field singleoneInstanceField = Unsafe.class.getDeclaredField("theUnsafe");
-            singleoneInstanceField.setAccessible(true);
-            return (Unsafe) singleoneInstanceField.get(null);
-
-        } catch (RuntimeException e){
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static void main(String[] args) throws Exception {
+    private static void initSparkJNI(String[] args){
         if(args.length >= 5){
             nativePath = args[0];
             appName = args[1];
@@ -79,7 +58,6 @@ public class PairHmmMain {
         } else {
             JniFrameworkLoader.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
             JniFrameworkLoader.setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
-//            JniFrameworkLoader.setUserStaticLibraries("/home/tudor/capi-streaming-framework/sim/pslse/libcxl/libcxl.a");
         }
 
         JniFrameworkLoader.setJdkPath(jdkPath);
@@ -93,15 +71,18 @@ public class PairHmmMain {
         JniFrameworkLoader.registerContainer(WorkloadPairHmmBean.class);
         JniFrameworkLoader.registerContainer(PairHmmBean.class);
         JniFrameworkLoader.registerContainer(SizesBean.class);
-        JniFrameworkLoader.registerContainer(ImageBean.class);
         JniFrameworkLoader.registerContainer(ByteArrBean.class);
         JniFrameworkLoader.deploy(appName, appName + ".cpp", null);
-        String libPath = nativePath + "/pairhmm.so";
+    }
 
-        appendToFile(String.valueOf(JniFrameworkLoader.getGenTime())+",");
-        appendToFile(String.valueOf(JniFrameworkLoader.getJavahTime())+",");
-        appendToFile(String.valueOf(JniFrameworkLoader.getBuildTime())+",");
-        appendToFile(String.valueOf(JniFrameworkLoader.getLibLoadTime())+",");
+    public static void main(String[] args) throws Exception {
+        initSparkJNI(args);
+        createFile();
+        String libPath = nativePath + "/pairhmm.so";
+        appendToFile(String.valueOf(JniFrameworkLoader.getGenTime()/1000.0f)+",");
+        appendToFile(String.valueOf(JniFrameworkLoader.getJavahTime()/1000.0f)+",");
+        appendToFile(String.valueOf(JniFrameworkLoader.getBuildTime()/1000.0f)+",");
+        appendToFile(String.valueOf(JniFrameworkLoader.getLibLoadTime()/1000.0f)+",");
 
         ArrayList<SizesBean> dummySizesCollection = new ArrayList<>();
         dummySizesCollection.add(loadSizes(nativePath+ "/sizes.txt", noLines));
@@ -132,36 +113,46 @@ public class PairHmmMain {
         double kernelTime = sparkResultPairHmm.memcopyTime;
 
         appendToFile(String.valueOf(kernelTime)+",");
-        appendToFile(String.valueOf(totalActionTime)+",");
-        appendToFile(String.valueOf(sparkResultPairHmm.getTotalTimeSeconds())+",");
-
-        System.out.println(String.format("Hardware pairhmm done in %s ms", String.valueOf(totalActionTime)));
-
-        int counter = 0;
-        for(int x = 0; x < localRes.length; x+=16)
-        {
-            long sparkResult = 0L;
-            sparkResult += ((long)(resultSpark[x+3] & 0xFF)) << 24;
-            sparkResult += ((long)(resultSpark[x+2] & 0xFF)) << 16;
-            sparkResult += ((long)(resultSpark[x+1] & 0xFF)) << 8;
-            sparkResult += ((long)(resultSpark[x] & 0xFF));
-
-            long softwareResult = 0L;
-            softwareResult += ((long)(localRes[x+3] & 0xFF)) << 24;
-            softwareResult += ((long)(localRes[x+2] & 0xFF)) << 16;
-            softwareResult += ((long)(localRes[x+1] & 0xFF)) << 8;
-            softwareResult += ((long)(localRes[x] & 0xFF));
-
-            if(resultSpark[x] != localRes[x]) {
-                System.out.println(String.format("Different at pos: %d. local vs Spark: %s vs %s", x,
-                        Long.toHexString(softwareResult), Long.toHexString(sparkResult)));
-                counter++;
-            }
-        }
-        appendToFile(String.valueOf(counter));
+//        appendToFile(String.valueOf(totalActionTime)+",");
+        appendToFile(String.valueOf(sparkResultPairHmm.getTotalTimeSeconds()));
         appendToFile("\n");
+//        int counter = 0;
+//        for(int x = 0; x < localRes.length; x+=16)
+//        {
+//            float sparkFloatRes = ByteBuffer.wrap(new byte[]{((byte)(resultSpark[x+3] & 0xFF)),
+//                    ((byte)(resultSpark[x+2] & 0xFF)), ((byte)(resultSpark[x+1] & 0xFF)), ((byte)(resultSpark[x] & 0xFF))})
+//                    .order(ByteOrder.LITTLE_ENDIAN).getFloat();
+//
+//            float cpuFloatRes = ByteBuffer.wrap(new byte[]{((byte)(localRes[x+3] & 0xFF)),
+//                    ((byte)(localRes[x+2] & 0xFF)), ((byte)(localRes[x+1] & 0xFF)), ((byte)(localRes[x] & 0xFF))})
+//                    .order(ByteOrder.LITTLE_ENDIAN).getFloat();
+//
+//            if(sparkFloatRes != cpuFloatRes) {
+//                if(Math.abs(1-sparkFloatRes/cpuFloatRes) > ERROR_MARGIN_FLOAT) {
+//                    System.out.println(String.format("ERROR at position: %d, local vs Spark: %f vs %f", x, cpuFloatRes, sparkFloatRes));
+//                }
+//                counter++;
+//            }
+//        }
+//        appendToFile(String.valueOf(counter));
+//        appendToFile("\n");
 
         System.out.println(String.format("Done for sizes %d", noLines));
+        System.out.println(String.format("Hardware pairhmm done in %s ms", String.valueOf(totalActionTime)));
+    }
+
+    private static void createFile(){
+        PrintWriter logger = null;
+
+        try{
+            logger = new PrintWriter(nativePath+"/resultsJava.csv", "UTF-8");
+            logger.write("CodeGen time, javah time, build time, libload Time, kernel time, jFunction time\n");
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            if(logger != null)
+                logger.close();
+        }
     }
 
     public static void appendToFile(String field){
@@ -178,7 +169,6 @@ public class PairHmmMain {
             printWriter.close();
             bw.close();
             fw.close();
-            //more code
         } catch (IOException e) {
             e.printStackTrace();
         }
