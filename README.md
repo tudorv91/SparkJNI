@@ -1,13 +1,26 @@
 # SparkJNI
 
 # Build Java instructions
-First, make sure you have Maven installed. Next, go to the root of directory and run sudo mvn clean install. This creates the .jar file in the target folder.
+If you have Maven installed, go to the root of directory and run ```sudo mvn clean install```. This creates the .jar file in the target folder. If not, just skip this step, this public repo contains the pre-built jar file.
 
-#Build native instructions
-Create a folder on your user space and input the pairhmm.cpp kernel file (for running the example PairHMM software application on Spark).
+# Environment variables
+In order to run the example PairHMM file, you need to set up the following environment variables:
+```
+export SPARK_HOME=<where-spark-is-installed>
+export JAVA_HOME=<where-java-is-installed>
+export SPARK_JNI=<address-of-the-sparkjni-clone>
+```
 
 # Run
-Go to the Spark home directory. Then,
+Move to the C/C++ source folder:
 ```
-./bin/spark-submit --driver-java-options "-XX:+ShowMessageBoxOnError" --class org.tudelft.ewi.ceng.examples.pairHMM.PairHmmMain ${PATH_TO_SPARKJNI_JAR} ${NATIVE_CODE_PATH} ${APP_NAME} ${JAVA_HOME_PATH} ${RUN_MODE} 1024 --conf "spark.executor.memory=128g spark.driver.maxResultSize=64g spark.driver.memory=128g"
+cd cppSrc/
 ```
+And run. The command below submits the application to Spark. The size of the input batch should be a power of 2, up to 32768 (or bigger, but increase the Spark memory settings, if the system supports it). The path to the C/C++ sources is (in this case) in the ```cppSrc``` folder.
+```
+./run.sh <path-to-cpp-sources> pairhmm <size-of-batch-input-size>
+```
+
+#Inspect results
+The runtime benchmarks can be inspected in ```resultsJava.csv```. All values are in seconds.
+
