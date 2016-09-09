@@ -1,10 +1,10 @@
 # SparkJNI
 This framework is meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links.
 
-# Build Java instructions
+### Build Java instructions
 If you have Maven installed, go to the root of directory and run ```sudo mvn clean install```. This creates the .jar file in the target folder. If not, just skip this step, this public repo contains the pre-built jar file.
 
-# Environment variables
+### Environment variables
 In order to run the example PairHMM file, you need to set up the following environment variables:
 ```
 export SPARK_HOME=<where-spark-is-installed>
@@ -13,7 +13,7 @@ export SPARK_JNI=<address-of-the-sparkjni-clone>
 ```
 
 # Examples
-# Vector Operations
+## Vector Operations
 We define a list of vectors on which we apply a ```map``` transformation, than a reduce. The main program is given in the VectorOpsMain.java source file, in ..examples.VectorOps package. We use one container (VectorBean):
 ```
 @JNI_class public class VectorBean extends Bean {
@@ -109,7 +109,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorMul
 }
 ```
 The program can be run then, by packaging the jar and with ```./spark-submit```.
-# PairHMM
+## PairHMM
 First, flash the AlphaData card with the .dat file provided in the PairHMM sources folder.
 Then, move to the C/C++ source folder:
 ```
@@ -120,6 +120,6 @@ And run. The command below submits the application to Spark. The size of the inp
 ./run.sh <path-to-cpp-sources> pairhmm <size-of-batch-input-size>
 ```
 
-#Inspect results
+### Inspect results
 The runtime benchmarks can be inspected in ```resultsJava.csv```. All values are in seconds.
 
