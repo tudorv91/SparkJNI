@@ -4,14 +4,6 @@ This framework is meant to reduce the development effort of native-accelerated S
 ### Build Java instructions
 If you have Maven installed, go to the root of directory and run ```sudo mvn clean install```. This creates the .jar file in the target folder. If not, just skip this step, this public repo contains the pre-built jar file.
 
-### Environment variables
-In order to run the example PairHMM file, you need to set up the following environment variables:
-```
-export SPARK_HOME=<where-spark-is-installed>
-export JAVA_HOME=<where-java-is-installed>
-export SPARK_JNI=<address-of-the-sparkjni-clone>
-```
-
 # Examples
 ## Vector Operations
 We define a list of vectors on which we apply a ```map``` transformation, than a reduce. The main program is given in the VectorOpsMain.java source file, in ..examples.VectorOps package. We use one container (VectorBean):
@@ -110,6 +102,15 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorMul
 ```
 The program can be run then, by packaging the jar and with ```./spark-submit```.
 ## PairHMM
+This application performs the Pair-HMM DNA analysis pipeline stage on input data received from Spark, being accelerated on FPGA.
+### Environment variables
+In order to run the example PairHMM file, you need to set up the following environment variables:
+```
+export SPARK_HOME=<where-spark-is-installed>
+export JAVA_HOME=<where-java-is-installed>
+export SPARK_JNI=<address-of-the-sparkjni-clone>
+```
+
 First, flash the AlphaData card with the .dat file provided in the PairHMM sources folder.
 Then, move to the C/C++ source folder:
 ```
