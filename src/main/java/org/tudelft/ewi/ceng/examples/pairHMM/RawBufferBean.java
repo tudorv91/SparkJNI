@@ -1,11 +1,10 @@
 package org.tudelft.ewi.ceng.examples.pairHMM;
 
 import org.apache.spark.util.SerializableBuffer;
-import org.tudelft.ewi.ceng.Bean;
+import org.tudelft.ewi.ceng.sparkjni.utils.Bean;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * Created by root on 8/17/16.
