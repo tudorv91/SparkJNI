@@ -4,15 +4,10 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.tudelft.ewi.ceng.JniFrameworkLoader;
+import org.tudelft.ewi.ceng.sparkjni.utils.JniFrameworkLoader;
 import scala.Tuple2;
-import sun.misc.Unsafe;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;

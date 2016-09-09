@@ -1,10 +1,10 @@
 package org.tudelft.ewi.ceng.examples.pairHMM;
 
-import org.tudelft.ewi.ceng.Bean;
-import org.tudelft.ewi.ceng.annotations.JNI_class;
-import org.tudelft.ewi.ceng.annotations.JNI_field;
-import org.tudelft.ewi.ceng.annotations.JNI_method;
-import org.tudelft.ewi.ceng.annotations.JNI_param;
+import org.tudelft.ewi.ceng.sparkjni.utils.Bean;
+import org.tudelft.ewi.ceng.sparkjni.annotations.JNI_class;
+import org.tudelft.ewi.ceng.sparkjni.annotations.JNI_field;
+import org.tudelft.ewi.ceng.sparkjni.annotations.JNI_method;
+import org.tudelft.ewi.ceng.sparkjni.annotations.JNI_param;
 
 /**
  * Created by root on 8/29/16.
