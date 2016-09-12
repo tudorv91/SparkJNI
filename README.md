@@ -80,6 +80,7 @@ public class VectorOpsMain {
 ...
 }
 ```
+We can see that the implementation syntax does not differ from the original Spark, since we are complying and using classes as they came shipped with the Spark distribution. 
 After running the application for the first time, it will exit prematurely with a "no kernel file" message. Next, we have to populate the native functions with desired behavior, in the ```vectorOps.cpp``` kernel file:
 ```
 ...
