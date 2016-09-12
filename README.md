@@ -1,5 +1,7 @@
 # SparkJNI
-This framework is meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links.
+This framework is meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links:
+- Data links are consisted of Java objects (containers or beans) translated to C++, where they expose the data packaged in RDDs of the user application.
+- Native functions are JNI-wrapped into C++ kernels, making the implementation of transformations easier.
 
 ### Build Java instructions
 If you have Maven installed, go to the root of directory and run ```sudo mvn clean install```. This creates the .jar file in the target folder. If not, just skip this step, this public repo contains the pre-built jar file.
@@ -42,7 +44,7 @@ public class VectorMulJni extends JniMapFunction {
     public native VectorBean mapVectorMul(VectorBean inputVector);
 }
 ```
-These are used in the main class (VectorOpsMain):
+These are used in the main class (VectorOpsMain) for populating the desired transformations:
 ```
 public class VectorOpsMain {
 ...
@@ -78,7 +80,7 @@ public class VectorOpsMain {
 ...
 }
 ```
-Last, we have to populate the native functions with desired behavior, in the ```vectorOps.cpp``` kernel file:
+After running the application for the first time, it will exit prematurely with a "no kernel file" message. Next, we have to populate the native functions with desired behavior, in the ```vectorOps.cpp``` kernel file:
 ```
 ...
 JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorAddJni_reduceVectorAdd(JNIEnv *env, jobject caller, jobject v1obj, jobject v2obj){
@@ -100,7 +102,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorMul
     return v1.getJavaObject();
 }
 ```
-The program can be run then, by packaging the jar and with ```./spark-submit```.
+The program is ready now and can be run fully, by packaging the jar and with ```./spark-submit```.
 ## PairHMM
 This application performs the Pair-HMM DNA analysis pipeline stage on input data received from Spark, being accelerated on FPGA.
 ### Environment variables
