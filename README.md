@@ -48,27 +48,6 @@ These are used in the main class (VectorOpsMain) for populating the desired tran
 ```
 public class VectorOpsMain {
 ...
-    private static void initSparkJNI(String[] args){
-        if(args.length >= 3){
-            nativePath = args[0];
-            appName = args[1];
-            jdkPath = args[2];
-        } else {
-            System.out.println("Usage: <nativePath> <appName> <jdkPath>");
-        }
-
-        JniFrameworkLoader.setJdkPath(jdkPath);
-        JniFrameworkLoader.setNativePath(nativePath);
-        JniFrameworkLoader.setDoGenerateMakefile(true);
-        JniFrameworkLoader.setDoBuild(true);
-
-        // Register control and data transfer links (classes).
-        JniFrameworkLoader.registerContainer(VectorBean.class);
-        JniFrameworkLoader.registerJniFunction(VectorMulJni.class);
-        JniFrameworkLoader.registerJniFunction(VectorAddJni.class);
-        JniFrameworkLoader.deploy(appName, appName + ".cpp", null);
-    }
-
     public static void main(String[] args){
         initSparkJNI(args);
         String libPath = String.format("%s/%s.so", nativePath, appName);
