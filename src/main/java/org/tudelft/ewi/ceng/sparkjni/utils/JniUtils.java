@@ -1,3 +1,19 @@
+/**
+ * Copyright 2016 Tudor Alexandru Voicu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.tudelft.ewi.ceng.sparkjni.utils;//package org.apache.spark.examples;
 
 import java.lang.reflect.Field;
@@ -94,6 +110,55 @@ public class JniUtils {
     public static final String INFO_CALLING_REDUCE_METHOD = "Calling method %s";
     public static final String INFO_CALLING_MAP_FUNCTION = "Calling method %s";
     public static final String ERR_COULD_NOT_FIND_METHOD = "Could not find method %s in class %s";
+    // Constants
+    static final String NEW_MAKEFILE_SECTION = "program_NAME \t\t\t:= %s\n" +
+            "program_C_SRCS\t\t\t:= $(wildcard *.c)\n" +
+            "program_CPP_SRCS\t\t:= $(wildcard *.cpp)\n" +
+            "program_C_OBJS \t\t\t:= ${program_C_SRCS:.c=.o}\n" +
+            "JAVA_JDK\t\t\t\t:= %s\n" +
+            "program_INCLUDE_DIRS \t:= $(JAVA_JDK)/include $(JAVA_JDK)/include/linux %s\n" +
+            "program_LIBRARY_DIRS \t:= %s\n" +
+            "program_LIBRARIES \t\t:=  %s\n" +
+            "program_STATIC_LIBS\t\t:= %s\n" +
+            "DEFINES \t\t\t\t:= %s\n" +
+            "DEFINES_LINE\t\t\t:= $(addprefix -D, $(DEFINES))\n" +
+            "\n" +
+            "CFLAGS \t+= $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) \n" +
+            "CFLAGS\t+= -std=c11 -Wall -m64 -lrt -lpthread -fopenmp -fPIC\n" +
+            "CPPFLAGS\t+= $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir)) \n" +
+            "CPPFLAGS\t+= -shared -fPIC -std=c++11 -O3 -m64 -lrt -lpthread -fopenmp\n" +
+            "LDFLAGS \t+= $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))\n" +
+            "LDFLAGS \t+= $(foreach library,$(program_LIBRARIES),-l$(library))\n" +
+            "\n" +
+            "all: $(program_NAME)\n" +
+            "\n" +
+            "debug: CFLAGS += -DDEBUG\n" +
+            "debug: $(program_C_OBJS)\n" +
+            "\tgcc -o $(program_NAME) $(program_C_OBJS) $(program_STATIC_LIBS) $(LDFLAGS) $(CFLAGS)\n" +
+            "\n" +
+            "$(program_NAME):$(program_C_OBJS)\n" +
+            "\tg++ $(program_CPP_SRCS) -o $(program_NAME).so $(DEFINES_LINE) $(program_STATIC_LIBS) $(CPPFLAGS) $(program_C_OBJS) $(LDFLAGS)\n" +
+            "\t\n" +
+            "clean:\n" +
+            "\t@- $(RM) $(program_NAME)\n" +
+            "\t@- $(RM) $(program_C_OBJS)\n" +
+            "\n" +
+            "distclean: clean";
+    static final String JAVAH_SECTION = "javah -classpath %s -d %s %s";
+    static final String EXEC_MAKE_CLEAN = "make clean -C %s";
+    static final String EXEC_MAKE = "make -C %s";
+    // Messages
+    static final String ERROR_JAVAH_FAILED = "[ERROR] javah failed!";
+    static final String NATIVE_PATH_NOT_SET = "[ERROR]Please set native path with JniFrameworkLoader.setNativePath(String path). Exiting..";
+    static final String NATIVE_PATH_ERROR = "[ERROR]Specified native path does not exist or is not a valid directory. Exiting..";
+    static final String MAKEFILE_GENERATION_FAILED_ERROR = "[ERROR]Makefile generation failed. Exiting..";
+    static final String KERNEL_MISSING_NOTICE = "[INFO]Please provide a kernel file";
+    static final String CPP_BUILD_FAILED = "[ERROR]C++ build failed!";
+    static final String ERROR_KERNEL_FILE_GENERATION_FAILED = "[ERROR] Kernel file generation failed..";
+    public static final String KERNEL_PATH_STR = "%s/%s.cpp";
+    public static final String ERR_CPP_FILE_GENERATION_FAILED = "Cpp File generation failed";
+    public static final String ERR_NO_JNI_PROTOTYPES_FOUND_IN_USER_DIR = "No JNI prototypes found in user dir..";
+    public static final String ERR_SPARK_CONTEXT_IS_NULL_EXITING = "Spark context is null. Exiting..";
 
     public static String getArrayElementType(Field field) {
         if (!field.getType().isArray())
