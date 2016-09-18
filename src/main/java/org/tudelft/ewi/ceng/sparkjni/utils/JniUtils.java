@@ -16,7 +16,13 @@
 
 package org.tudelft.ewi.ceng.sparkjni.utils;//package org.apache.spark.examples;
 
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Created by Tudor on 7/6/2016.
@@ -159,6 +165,8 @@ public class JniUtils {
     public static final String ERR_CPP_FILE_GENERATION_FAILED = "Cpp File generation failed";
     public static final String ERR_NO_JNI_PROTOTYPES_FOUND_IN_USER_DIR = "No JNI prototypes found in user dir..";
     public static final String ERR_SPARK_CONTEXT_IS_NULL_EXITING = "Spark context is null. Exiting..";
+    public static final String ERR_INVALID_FORMATTING_FOR_FILE_AT_LINE = "Invalid formatting for file %s at line \n\"%s\"";
+    public static final int PROTOTYPE_WORD_NO_IN_LINE = 3;
 
     public static String getArrayElementType(Field field) {
         if (!field.getType().isArray())
@@ -305,5 +313,19 @@ public class JniUtils {
 
     public static String getCppReferenceTypeName(Class javaClass){
         return String.format("CPP%s", javaClass.getSimpleName());
+    }
+
+    static boolean isJniNativeFunction(Path path) throws IOException {
+        if(!path.toString().endsWith("h"))
+            return false;
+        for(String line: Files.readAllLines(path, Charset.defaultCharset()))
+            if(line.contains("JNIEXPORT"))
+                return true;
+        return false;
+    }
+
+    public static void checkNativePath(@Nonnull File nativeDir) {
+        if (!nativeDir.exists() || !nativeDir.isDirectory())
+            throw new RuntimeException(NATIVE_PATH_ERROR);
     }
 }

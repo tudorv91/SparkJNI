@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/jni-spark.iml" filepath="$PROJECT_DIR$/jni-spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SparkJNI.iml" filepath="$PROJECT_DIR$/.idea/SparkJNI.iml" />
     </modules>
   </component>
 </project>
