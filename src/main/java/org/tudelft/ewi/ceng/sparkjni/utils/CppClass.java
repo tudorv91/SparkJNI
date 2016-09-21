@@ -249,7 +249,7 @@ public class CppClass {
      * Use in cpp files declarations
      * @return
      */
-    private String getFieldLineImpl() {
+    public String getFieldLineImpl() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("\tJNIEnv* %s::env;\n", cppClassName));
         for(CppField cppField: cppFields){

@@ -27,7 +27,7 @@ public class VectorOpsMain {
         return jscSingleton;
     }
 
-    private static void initSparkJNI(String[] args){
+    public static void initSparkJNI(String[] args){
         if(args.length >= 3){
             nativePath = args[0];
             appName = args[1];

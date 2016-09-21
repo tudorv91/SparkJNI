@@ -27,49 +27,50 @@ import java.util.TreeMap;
  */
 public class JniFrameworkLoader {
     public static final String LIB_PATH_STR = "%s/%s.so";
-    private static String appName;
-    private static String userCppKernelFileName;
-    private static String libraryFullPath = null;
-
     private static boolean DEBUGGING_MODE = true;
-    private static ArrayList<CppClass> registeredCppContainers = new ArrayList<>();
-    private static ArrayList<Class> registeredJavaContainers = new ArrayList<>();
-    private static ArrayList<Class> registeredJniFunctions = new ArrayList<>();
-    private static TreeMap<String, ArrayList<CppClass>> jniHeaderFunctionPrototypes = new TreeMap<>();
-    private static ArrayList<String> jniHeaderFiles = new ArrayList<>();
-
-    private static String nativePath = null;
-    private static String classpath = null;
-
-    private static String userLibraries = "";
-    private static String userIncludeDirs = "";
-    private static String userLibraryDirs = "";
-    private static String userStaticLibraries = "";
-    private static String userDefines = "";
+    private static boolean doClean = true;
     private static boolean doBuild = true;
     private static boolean doGenerateMakefile = false;
-    private static JavaSparkContext javaSparkContext = null;
-    private static boolean doWriteKernelFile = false;
-    private static String jdkPath = null;
-    private static ArrayList<String> containerHeaderFiles = new ArrayList<>();
+    private static boolean doWriteKernelFiles = false;
 
+    private static String appName;
+    private static String nativePath;
+    private static String classpath;
+    private static String jdkPath;
+    private static String userLibraries;
+    private static String userIncludeDirs;
+    private static String userLibraryDirs;
+    private static String userStaticLibraries;
+    private static String userDefines;
+
+    private static ArrayList<Class> registeredJavaContainers = new ArrayList<>();
+    private static ArrayList<Class> registeredJniFunctions = new ArrayList<>();
+    private static ArrayList<String> jniHeaderFiles = new ArrayList<>();
+    private static ArrayList<String> containerHeaderFiles = new ArrayList<>();
+    private static ArrayList<CppClass> registeredCppContainers = new ArrayList<>();
+    private static ArrayList<KernelFile> kernelFiles = new ArrayList<>();
+    private static TreeMap<String, ArrayList<CppClass>> jniHeaderFunctionPrototypes = new TreeMap<>();
+
+    private static JavaSparkContext javaSparkContext = null;
+
+    private static long start = 0L;
     private static long genTime = 0L;
     private static long buildTime = 0L;
     private static long libLoadTime = 0L;
     private static long javahTime = 0L;
 
+    public static long getStart() {
+        return start;
+    }
     public static long getJavahTime() {
         return javahTime;
     }
-
     public static long getLibLoadTime() {
         return libLoadTime;
     }
-
     public static long getGenTime() {
         return genTime;
     }
-
     public static long getBuildTime() {
         return buildTime;
     }
@@ -79,49 +80,20 @@ public class JniFrameworkLoader {
     /**
      * Function which triggers the SparkJNI processes.
      * @param appName The target app name.
-     * @param kernelFileName The name of the kernel that provides with native functionality
      * @param sparkContext The Spark Context. Leave null if running without Spark.
      */
-    public static void deploy(String appName, String kernelFileName, JavaSparkContext sparkContext) {
-        long start = System.currentTimeMillis();
+    public static void deploy(String appName, JavaSparkContext sparkContext) {
+        start = System.currentTimeMillis();
         setAppName(appName);
-        setUserCppKernelFileName(kernelFileName);
         setSparkContext(sparkContext);
-//        searchForClasses();
+        loadClasspathVar();
+        processNativePath();
+        processCppContent();
+        loadNativeLib();
+    }
 
-        if(classpath == null)
-            classpath = JniFrameworkLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-
-        checkNativePath(nativePath);
-        File nativePathDir = new File(nativePath);
-        checkNativePathDir(nativePathDir);
-
-        CppClass.setNativeLibPath(nativePath);
-        if (!generateCppClasses())
-            throw new RuntimeException(JniUtils.ERR_CPP_FILE_GENERATION_FAILED);
-
-        writeCppHeaderPairs(registeredCppContainers);
-        String targetKernelPath = String.format(JniUtils.KERNEL_PATH_STR, nativePath, userCppKernelFileName);
-        libraryFullPath = String.format(LIB_PATH_STR, nativePath, appName);
-
-        long startJavah = System.currentTimeMillis();
-        javah(classpath);
-        collectNativeFunctionPrototypes();
-        javahTime = System.currentTimeMillis() - startJavah;
-
-        String templateFilePath = String.format("%s/%s_template.cpp", nativePath, appName);
-        KernelFile kernel = new KernelFile(registeredCppContainers, nativePath, templateFilePath,
-                jniHeaderFiles, jniHeaderFunctionPrototypes, containerHeaderFiles);
-
-        generateAndCheckMakefile();
-        writeKernelFile(kernel);
-
-        genTime = System.currentTimeMillis() - start - javahTime;
-        start = System.currentTimeMillis();
-        build(targetKernelPath);
-        buildTime = System.currentTimeMillis() - start;
-        start = System.currentTimeMillis();
-
+    private static void loadNativeLib(){
+        String libraryFullPath = String.format(LIB_PATH_STR, nativePath, appName);
         if (javaSparkContext != null)
             javaSparkContext.addFile(libraryFullPath);
         else
@@ -129,11 +101,46 @@ public class JniFrameworkLoader {
         libLoadTime = System.currentTimeMillis() - start;
     }
 
-    static void writeKernelFile(KernelFile kernel){
-        if (doWriteKernelFile) {
-            if (!kernel.writeKernelFile())
-                throw new RuntimeException(JniUtils.ERROR_KERNEL_FILE_GENERATION_FAILED);
-        }
+    private static void processNativePath(){
+        checkNativePath(nativePath);
+        checkNativePathDir(new File(nativePath));
+        CppClass.setNativeLibPath(nativePath);
+    }
+
+    private static void processCppContent(){
+        cleanHeaderFiles();
+        if (!generateCppClasses())
+            throw new RuntimeException(JniUtils.ERR_CPP_FILE_GENERATION_FAILED);
+
+        writeCppHeaderPairs(registeredCppContainers);
+
+        // TO-DO: Populate kernel files.
+        generateAndCheckMakefile();
+        writeKernelFiles();
+        build();
+
+        long startJavah = System.currentTimeMillis();
+        javah(classpath);
+        collectNativeFunctionPrototypes();
+        javahTime = System.currentTimeMillis() - startJavah;
+    }
+
+    private static void cleanHeaderFiles(){
+        JniDirAccessor dirAccessor = new JniDirAccessor(nativePath);
+        for(JniHeader header: dirAccessor.getJniHeaders())
+            header.removeHeaderFile();
+    }
+
+    private static void loadClasspathVar(){
+        if(classpath == null)
+            classpath = JniFrameworkLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    }
+
+    static void writeKernelFiles(){
+        if (doWriteKernelFiles)
+            for(KernelFile kernelFile: kernelFiles)
+                if (!kernelFile.writeKernelFile())
+                    throw new RuntimeException(JniUtils.ERROR_KERNEL_FILE_GENERATION_FAILED);
     }
 
     static void generateAndCheckMakefile(){
@@ -145,13 +152,15 @@ public class JniFrameworkLoader {
         }
     }
 
-    static void build(String targetKernelPath){
+    static void build(){
+        genTime = System.currentTimeMillis() - start - javahTime;
+        start = System.currentTimeMillis();
         if(doBuild) {
-            if (!buildAndLoadKernelLib(targetKernelPath)) {
-                System.err.println(JniUtils.ERR_SPARK_CONTEXT_IS_NULL_EXITING);
-                System.exit(1);
-            }
+            runProcess(String.format(JniUtils.EXEC_MAKE_CLEAN, nativePath));
+            runProcess(String.format(JniUtils.EXEC_MAKE, nativePath));
         }
+        buildTime = System.currentTimeMillis() - start;
+        start = System.currentTimeMillis();
     }
 
     private static void checkNativePath(String nativePath){
@@ -206,10 +215,10 @@ public class JniFrameworkLoader {
 
     /**
      * Trigger the writing of the template file.
-     * @param doWriteKernelFile
+     * @param doWriteKernelFiles
      */
-    public static void setDoWriteKernelFile(boolean doWriteKernelFile) {
-        JniFrameworkLoader.doWriteKernelFile = doWriteKernelFile;
+    public static void setDoWriteKernelFiles(boolean doWriteKernelFiles) {
+        JniFrameworkLoader.doWriteKernelFiles = doWriteKernelFiles;
     }
 
     /**
@@ -224,19 +233,8 @@ public class JniFrameworkLoader {
         JniFrameworkLoader.userLibraries = userLibraries;
     }
 
-    public static String getLibraryFilePath() {
-        return libraryFullPath;
-    }
-
     public static void setJdkPath(String jdkPath) {
         JniFrameworkLoader.jdkPath = jdkPath;
-    }
-
-    public static void setUserCppKernelFileName(String userCppKernelFileName) {
-        if (userCppKernelFileName.endsWith(".cpp"))
-            JniFrameworkLoader.userCppKernelFileName = userCppKernelFileName.substring(0, userCppKernelFileName.length() - 4);
-        else
-            JniFrameworkLoader.userCppKernelFileName = userCppKernelFileName;
     }
 
     public static void setNativePath(String nativePath) {
@@ -253,19 +251,6 @@ public class JniFrameworkLoader {
      */
     public static void registerJniFunction(Class jniFunctionClass) {
         registeredJniFunctions.add(jniFunctionClass);
-    }
-
-    private static boolean buildAndLoadKernelLib(String targetKernelPath){
-        if (new File(targetKernelPath).exists()) {
-            runProcess(String.format(JniUtils.EXEC_MAKE_CLEAN, nativePath));
-            runProcess(String.format(JniUtils.EXEC_MAKE, nativePath));
-        } else {
-            System.out.println(JniUtils.KERNEL_MISSING_NOTICE);
-            System.exit(0);
-            return false;
-        }
-
-        return true;
     }
 
     private static void writeCppHeaderPairs(ArrayList<CppClass> registeredContainers) {
@@ -353,20 +338,6 @@ public class JniFrameworkLoader {
         return true;
     }
 
-//    public static boolean searchForClasses() {
-//        Reflections reflections = new Reflections("");
-//        Set<Class<?>> containers = reflections.getTypesAnnotatedWith(JNI_class.class);
-//
-//        for (Class jniClass : containers)
-//            registerContainer(jniClass);
-//
-//        Set<Class<?>> jniFunctions = reflections.getTypesAnnotatedWith(JNI_functionClass.class);
-//        for (Class jniFunction : jniFunctions) {
-//            registerJniFunction(jniFunction);
-//        }
-//        return true;
-//    }
-
     public static boolean collectNativeFunctionPrototypes() {
         File nativeLibDir = new File(nativePath);
 
@@ -401,14 +372,6 @@ public class JniFrameworkLoader {
             return true;
         } else
             return false;
-    }
-
-    public static void generateCppKernelWrapper() {
-
-    }
-
-    public static void generateKernelHeader() {
-        StringBuilder sb = new StringBuilder();
     }
 
     private static void javah(String classpath) {
@@ -487,7 +450,6 @@ public class JniFrameworkLoader {
                 System.exit(7);
             }
         }
-
         return cppParameters;
     }
 
@@ -505,5 +467,9 @@ public class JniFrameworkLoader {
                 return true;
 
         return false;
+    }
+
+    public static boolean isDoClean() {
+        return doClean;
     }
 }
