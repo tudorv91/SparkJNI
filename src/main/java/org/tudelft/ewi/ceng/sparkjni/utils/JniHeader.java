@@ -29,8 +29,10 @@ public class JniHeader {
     private File jniHeaderFile;
     private String fullyQualifiedJavaClassName = null;
     private List<JniFunctionPrototype> jniFunctions = null;
+    private ArrayList<JniHeader> encapsulatingList = null;
 
-    public JniHeader(File jniHeaderFile) {
+    public JniHeader(File jniHeaderFile, ArrayList<JniHeader> encapsulatingList) {
+        this.encapsulatingList = encapsulatingList;
         this.jniHeaderFile = jniHeaderFile;
     }
 
@@ -66,6 +68,13 @@ public class JniHeader {
                     throw new RuntimeException(String.format(JniUtils.ERR_INVALID_FORMATTING_FOR_FILE_AT_LINE, jniHeaderFile.getName(), line));
                 }
             }
+        }
+    }
+
+    public void removeHeaderFile(){
+        encapsulatingList.remove(this);
+        if(jniHeaderFile.exists()) {
+            jniHeaderFile.delete();
         }
     }
 }

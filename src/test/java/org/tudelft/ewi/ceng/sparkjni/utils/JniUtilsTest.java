@@ -1,8 +1,9 @@
-package org.tudelft.ewi.ceng.sparkjni.fields;
+package org.tudelft.ewi.ceng.sparkjni.utils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.tudelft.ewi.ceng.TestUtils;
 import org.tudelft.ewi.ceng.sparkjni.annotations.JNI_param;
 import org.tudelft.ewi.ceng.sparkjni.jniFunctions.JniMapFunction;
 import org.tudelft.ewi.ceng.sparkjni.utils.*;
@@ -36,25 +37,17 @@ public class JniUtilsTest{
             "Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorAddJni_reduceVectorAdd: reduceVectorAdd" +
             "org.tudelft.ewi.ceng.examples.vectorOps.VectorMulJni" +
             "Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorMulJni_mapVectorMul: mapVectorMul";
-    private static String defaultTestFolder = "resources/JNI_UTILS_TEST";
-    private static String fullPath;
-    private static File testDir;
+    TestUtils utils;
 
     @Before
     public void init(){
-        testDir = new File(defaultTestFolder);
-        if(testDir.exists())
-            fail(String.format("Directory %s already exists", defaultTestFolder));
-        else
-            testDir.mkdir();
-
-        File resourcesDir = new File("resources/");
-        fullPath = resourcesDir.getAbsolutePath();
+        utils = new TestUtils("testApp");
+        utils.initTestDir();
     }
 
     @Test
     public void jniDirAccessorTest(){
-        JniDirAccessor jniDirAccessor = new JniDirAccessor(fullPath);
+        JniDirAccessor jniDirAccessor = new JniDirAccessor(utils.fullPath);
         List<JniHeader> headerList = jniDirAccessor.getJniHeaders();
 
         assertEquals(headerList.size(), 2);
@@ -62,9 +55,10 @@ public class JniUtilsTest{
         assertEquals(headerList.get(1).getFullyQualifiedJavaClassName(), FULLY_QUALIFIED_NAME_TEST_HEADE_MULJNI);
     }
 
-    @Test public void fullNativeHeaderTest(){
+    @Test
+    public void fullNativeHeaderTest(){
         StringBuilder sb = new StringBuilder();
-        JniDirAccessor dirAccessor = new JniDirAccessor(fullPath);
+        JniDirAccessor dirAccessor = new JniDirAccessor(utils.fullPath);
         List<JniHeader> headers = dirAccessor.getJniHeaders();
         for(JniHeader header: headers) {
             sb.append(header.getFullyQualifiedJavaClassName());
@@ -76,7 +70,6 @@ public class JniUtilsTest{
 
     @After
     public void clean(){
-        if(testDir != null && testDir.exists())
-            testDir.delete();
+        utils.cleanTestDir();
     }
 }
