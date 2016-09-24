@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Abstract to be inherited for all user-defined containers.
  */
 public abstract class Bean implements Serializable {
-    private static final int BILLION = 1000000000;
+    private static final int ONE_BILLION = 1000000000;
     long startRun;
     long endRun;
     long totalTime;
@@ -35,7 +35,7 @@ public abstract class Bean implements Serializable {
     }
 
     public double getTotalTimeSeconds() {
-        double seconds = ((double)getTotalTimeNanos())/ BILLION;
+        double seconds = ((double)getTotalTimeNanos())/ ONE_BILLION;
         return seconds;
     }
 

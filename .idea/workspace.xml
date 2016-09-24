@@ -2,24 +2,57 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4ae9b5d5-30d2-48b9-9eb1-f806cfe6b0ff" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/MapperTester.class" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.java" afterPath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/exceptions/HardSparkJniException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/exceptions/SoftSparkJniException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniLinkHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/MetadataHandler.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppArray.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/NativeHeader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/fields/CppArray.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader$1.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/KernelFile.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/NativeHeader.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org_tudelft_ewi_ceng_examples_vectorOps_VectorAddJni.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org_tudelft_ewi_ceng_examples_vectorOps_VectorMulJni.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-org.tudelft.ewi.ceng.sparkjni.fields.CppFieldTest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-org.tudelft.ewi.ceng.sparkjni.fields.JniUtilsTest.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/surefire-reports/org.tudelft.ewi.ceng.sparkjni.fields.CppFieldTest.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/surefire-reports/org.tudelft.ewi.ceng.sparkjni.fields.JniUtilsTest.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.class" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/IntFieldClass.class" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/SparkJni.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniFunctionPrototype.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniHeader.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/KernelFile.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/KernelFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.class" afterPath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/IntFieldClass.class" afterPath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/fields/IntFieldClass.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/SparkJNI.iml" afterPath="$PROJECT_DIR$/.idea/SparkJNI.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/methods/CppBeanGetterMethod.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/methods/CppBeanGetterMethod.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/Bean.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/Bean.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.class" afterPath="$PROJECT_DIR$/target/classes/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.class" afterPath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/utils/MapperTester.class" afterPath="$PROJECT_DIR$/target/test-classes/org/tudelft/ewi/ceng/sparkjni/utils/MapperTester.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.java" afterPath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/CppBeanGetterMethod.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/CppBeanGetterMethod.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/Bean.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/Bean.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java" afterPath="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java" afterPath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java" afterPath="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" />
     </list>
     <ignored path="SparkJNI.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,34 +78,80 @@
       <content type="file-editors">
         <state>
           <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="JniUtilsTest.java" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java">
+            <file leaf-file-name="JniHeader.java" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniHeader.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="405">
-                    <caret line="43" column="41" selection-start-line="43" selection-start-column="41" selection-end-line="43" selection-end-column="41" />
+                  <state relative-caret-position="39">
+                    <caret line="27" column="20" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
                     <folding />
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="TestUtils.java" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/TestUtils.java">
+            <file leaf-file-name="SparkJni.java" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/SparkJni.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="570">
-                    <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+                  <state relative-caret-position="480">
+                    <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
                     <folding>
-                      <element signature="imports" expanded="true" />
+                      <element signature="e#6017#6018#0" expanded="true" />
+                      <element signature="e#6076#6077#0" expanded="true" />
+                      <element signature="e#6980#6981#0" expanded="true" />
+                      <element signature="e#7043#7044#0" expanded="true" />
+                      <element signature="e#7096#7097#0" expanded="true" />
+                      <element signature="e#7147#7148#0" expanded="true" />
+                      <element signature="e#7206#7207#0" expanded="true" />
+                      <element signature="e#7263#7264#0" expanded="true" />
+                      <element signature="e#7316#7317#0" expanded="true" />
+                      <element signature="e#7367#7368#0" expanded="true" />
+                      <element signature="e#11875#11876#0" expanded="true" />
+                      <element signature="e#11922#11923#0" expanded="true" />
                     </folding>
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="JniHeader.java" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java">
+            <file leaf-file-name="JniDirAccessor.java" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="780">
-                    <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
-                    <folding />
+                  <state relative-caret-position="315">
+                    <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+                    <folding>
+                      <element signature="e#1049#1050#0" expanded="true" />
+                      <element signature="e#1081#1082#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="JniLinkHandler.java" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniLinkHandler.java">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="378">
+                    <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+                    <folding>
+                      <element signature="imports" expanded="true" />
+                      <element signature="e#1100#1101#0" expanded="true" />
+                      <element signature="e#1137#1138#0" expanded="true" />
+                      <element signature="e#1198#1199#0" expanded="true" />
+                      <element signature="e#1250#1251#0" expanded="true" />
+                      <element signature="e#1355#1356#0" expanded="true" />
+                      <element signature="e#1402#1403#0" expanded="true" />
+                      <element signature="e#1461#1462#0" expanded="true" />
+                      <element signature="e#1506#1507#0" expanded="true" />
+                      <element signature="e#1569#1570#0" expanded="true" />
+                      <element signature="e#1615#1616#0" expanded="true" />
+                      <element signature="e#1667#1668#0" expanded="true" />
+                      <element signature="e#1704#1705#0" expanded="true" />
+                      <element signature="e#1762#1763#0" expanded="true" />
+                      <element signature="e#1805#1806#0" expanded="true" />
+                      <element signature="e#1858#1859#0" expanded="true" />
+                      <element signature="e#1892#1893#0" expanded="true" />
+                      <element signature="e#1976#1977#0" expanded="true" />
+                      <element signature="e#2026#2027#0" expanded="true" />
+                      <element signature="e#2057#2058#0" expanded="true" />
+                      <element signature="e#2135#2136#0" expanded="true" />
+                    </folding>
                   </state>
                 </provider>
               </entry>
@@ -88,75 +167,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="JniFrameworkLoader.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
-              <caret line="93" column="0" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
-              <folding>
-                <element signature="e#2493#2494#0" expanded="true" />
-                <element signature="e#2521#2522#0" expanded="true" />
-                <element signature="e#2561#2562#0" expanded="true" />
-                <element signature="e#2593#2594#0" expanded="true" />
-                <element signature="e#2635#2636#0" expanded="true" />
-                <element signature="e#2669#2670#0" expanded="true" />
-                <element signature="e#2707#2708#0" expanded="true" />
-                <element signature="e#2737#2738#0" expanded="true" />
-                <element signature="e#2777#2778#0" expanded="true" />
-                <element signature="e#2809#2810#0" expanded="true" />
-                <element signature="e#16855#16856#0" expanded="true" />
-                <element signature="e#16885#16886#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JniDirAccessor.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="JniFunctionPrototype.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniFunctionPrototype.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="40" column="5" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
+            <state relative-caret-position="225">
+              <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NativeHeader.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/NativeHeader.java">
+      <file leaf-file-name="MetadataHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/MetadataHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="KernelFile.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/KernelFile.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CppClass.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3180">
-              <caret line="259" column="0" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="375">
+              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <element signature="e#695#696#0" expanded="true" />
+                <element signature="e#725#726#0" expanded="true" />
+                <element signature="e#771#772#0" expanded="true" />
+                <element signature="e#809#810#0" expanded="true" />
+                <element signature="e#846#847#0" expanded="true" />
+                <element signature="e#879#880#0" expanded="true" />
+                <element signature="e#931#932#0" expanded="true" />
+                <element signature="e#975#976#0" expanded="true" />
+                <element signature="e#1255#1256#0" expanded="true" />
+                <element signature="e#1297#1298#0" expanded="true" />
+                <element signature="e#1533#1534#0" expanded="true" />
+                <element signature="e#1571#1572#0" expanded="true" />
+                <element signature="e#1611#1612#0" expanded="true" />
+                <element signature="e#1647#1648#0" expanded="true" />
+                <element signature="e#1705#1706#0" expanded="true" />
+                <element signature="e#1755#1756#0" expanded="true" />
+                <element signature="e#1797#1798#0" expanded="true" />
+                <element signature="e#1835#1836#0" expanded="true" />
+                <element signature="e#1897#1898#0" expanded="true" />
+                <element signature="e#1951#1952#0" expanded="true" />
+                <element signature="e#1993#1994#0" expanded="true" />
+                <element signature="e#2031#2032#0" expanded="true" />
+                <element signature="e#2093#2094#0" expanded="true" />
+                <element signature="e#2147#2148#0" expanded="true" />
+                <element signature="e#2193#2194#0" expanded="true" />
+                <element signature="e#2235#2236#0" expanded="true" />
+                <element signature="e#2305#2306#0" expanded="true" />
+                <element signature="e#2367#2368#0" expanded="true" />
+                <element signature="e#2405#2406#0" expanded="true" />
+                <element signature="e#2439#2440#0" expanded="true" />
+                <element signature="e#2493#2494#0" expanded="true" />
+                <element signature="e#2539#2540#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -164,8 +223,53 @@
       <file leaf-file-name="VectorOpsMain.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state relative-caret-position="270">
+              <caret line="62" column="5" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VectorOpsMainTest.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="313">
+              <caret line="40" column="42" selection-start-line="40" selection-start-column="42" selection-end-line="40" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VectorMulJni.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorMulJni.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" column="63" selection-start-line="15" selection-start-column="63" selection-end-line="15" selection-end-column="63" />
+              <folding>
+                <element signature="e#314#315#0" expanded="true" />
+                <element signature="e#370#371#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PairHmmMain.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="69" column="31" selection-start-line="69" selection-start-column="31" selection-end-line="69" selection-end-column="31" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Bean.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/Bean.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -193,10 +297,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JavahUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototypeTest.groovy" />
-        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.java" />
         <option value="$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/DemoPattern.java" />
@@ -206,13 +307,30 @@
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClassTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.java" />
-        <option value="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/TestUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JavaLinkHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniFunctionPrototype.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/NativeHeader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/KernelFile.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/CppBeanGetterMethod.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/SparkJniException.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/HardSparkJniException.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/exceptions/HardSparkJniException.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/exceptions/SoftSparkJniException.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/MetadataHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/Bean.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniLinkHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.java" />
+        <option value="$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java" />
       </list>
     </option>
   </component>
@@ -259,7 +377,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -289,6 +406,62 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ceng" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ceng" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vectorOps" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -381,6 +554,82 @@
               <option name="myItemId" value="ceng" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sparkjni" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="javaLink" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ceng" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="examples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vectorOps" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SparkJNI" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ceng" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="examples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pairHMM" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -422,6 +671,7 @@
       </pane>
       <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -433,6 +683,16 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
+    <key name="IntroduceConstantDialog.RECENTS_KEY">
+      <recent name="org.tudelft.ewi.ceng.sparkjni.utils.MetadataHandler" />
+      <recent name="org.tudelft.ewi.ceng.TestUtils" />
+      <recent name="org.tudelft.ewi.ceng.sparkjni.fields.JniUtilsTest" />
+      <recent name="org.tudelft.ewi.ceng.sparkjni.utils.JniUtils" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+      <recent name="groovy.util.GroovyTestCase" />
+    </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="org.tudelft.ewi.ceng.examples.vectorOps" />
       <recent name="org.tudelft.ewi.ceng.sparkjni.utils" />
@@ -440,31 +700,25 @@
     <key name="MoveMembersDialog.RECENTS_KEY">
       <recent name="org.tudelft.ewi.ceng.sparkjni.utils.JniUtils" />
     </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-      <recent name="groovy.util.GroovyTestCase" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.tudelft.ewi.ceng.sparkjni.utils" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
       <recent name="$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields" />
     </key>
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="org.tudelft.ewi.ceng.sparkjni.utils" />
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.tudelft.ewi.ceng.sparkjni.exceptions" />
     </key>
-    <key name="IntroduceConstantDialog.RECENTS_KEY">
-      <recent name="org.tudelft.ewi.ceng.TestUtils" />
-      <recent name="org.tudelft.ewi.ceng.sparkjni.fields.JniUtilsTest" />
-      <recent name="org.tudelft.ewi.ceng.sparkjni.utils.JniUtils" />
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager" selected="JUnit.VectorOpsMainTest.vectorOpsTest">
     <configuration default="false" name="CppClassTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="org.tudelft.ewi.ceng.sparkjni.utils.*" />
+          <option name="PATTERN" value="org.tudelft.ewi.ceng.sparkjni.javaLink.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -490,7 +744,7 @@
     <configuration default="false" name="CppClassTest.getCppFieldByName" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="org.tudelft.ewi.ceng.sparkjni.utils.*" />
+          <option name="PATTERN" value="org.tudelft.ewi.ceng.sparkjni.javaLink.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -516,7 +770,7 @@
     <configuration default="false" name="CppClassTest.getFieldLineImpl" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="org.tudelft.ewi.ceng.sparkjni.utils.*" />
+          <option name="PATTERN" value="org.tudelft.ewi.ceng.sparkjni.javaLink.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -900,26 +1154,26 @@
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.49812534" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.4938404" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3292683" sideWeight="0.5040171" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3292683" sideWeight="0.5061596" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.4916979" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21049812" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.49598286" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.4938404" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.199187" sideWeight="0.4858061" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.4916979" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299411" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.199187" sideWeight="0.4858061" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -944,129 +1198,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.java" />
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5460">
-          <caret line="413" column="0" selection-start-line="413" selection-start-column="0" selection-end-line="426" selection-end-column="5" />
-          <folding>
-            <element signature="e#2493#2494#0" expanded="true" />
-            <element signature="e#2521#2522#0" expanded="true" />
-            <element signature="e#2561#2562#0" expanded="true" />
-            <element signature="e#2593#2594#0" expanded="true" />
-            <element signature="e#2635#2636#0" expanded="true" />
-            <element signature="e#2669#2670#0" expanded="true" />
-            <element signature="e#2707#2708#0" expanded="true" />
-            <element signature="e#2737#2738#0" expanded="true" />
-            <element signature="e#2777#2778#0" expanded="true" />
-            <element signature="e#2809#2810#0" expanded="true" />
-            <element signature="e#16855#16856#0" expanded="true" />
-            <element signature="e#16885#16886#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="3" selection-start-line="14" selection-start-column="3" selection-end-line="14" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="14" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="3" selection-start-line="14" selection-start-column="3" selection-end-line="14" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="3" selection-start-line="14" selection-start-column="3" selection-end-line="14" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.java" />
-    <entry file="file://$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5460">
-          <caret line="413" column="0" selection-start-line="413" selection-start-column="0" selection-end-line="426" selection-end-column="5" />
-          <folding>
-            <element signature="e#2493#2494#0" expanded="true" />
-            <element signature="e#2521#2522#0" expanded="true" />
-            <element signature="e#2561#2562#0" expanded="true" />
-            <element signature="e#2593#2594#0" expanded="true" />
-            <element signature="e#2635#2636#0" expanded="true" />
-            <element signature="e#2669#2670#0" expanded="true" />
-            <element signature="e#2707#2708#0" expanded="true" />
-            <element signature="e#2737#2738#0" expanded="true" />
-            <element signature="e#2777#2778#0" expanded="true" />
-            <element signature="e#2809#2810#0" expanded="true" />
-            <element signature="e#16855#16856#0" expanded="true" />
-            <element signature="e#16885#16886#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4740">
-          <caret line="316" column="0" selection-start-line="316" selection-start-column="0" selection-end-line="316" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="31" column="5" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.java" />
     <entry file="file://$PROJECT_DIR$/src/test/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/DemoPattern.java" />
@@ -1091,7 +1222,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniHeader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
@@ -1121,24 +1252,10 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototypeTest.groovy" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/org_tudelft_ewi_ceng_examples_vectorOps_VectorAddJni.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="14" selection-end-column="3" />
         </state>
       </provider>
     </entry>
@@ -1175,6 +1292,35 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClassTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/KernelFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppArray.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppField.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="24" column="22" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClass.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3180">
@@ -1183,26 +1329,115 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/jniFunctions/JniFunction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="27" column="22" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/NativeHeader.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/Destructor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1057#1058#0" expanded="false" />
+            <element signature="e#1088#1089#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/CppConstructor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="36" column="51" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="51" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1790#1791#0" expanded="false" />
+            <element signature="e#1821#1822#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/EmptyCppConstructor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#931#932#0" expanded="false" />
+            <element signature="e#962#963#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/CppBeanGetterMethod.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClassTest.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/exceptions/HardSparkJniException.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+        <state relative-caret-position="120">
+          <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+          <folding>
+            <element signature="e#201#202#0" expanded="true" />
+            <element signature="e#258#259#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/exceptions/SoftSparkJniException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/methods/NativeMethod.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="22" column="22" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding>
+            <element signature="e#1049#1050#0" expanded="true" />
+            <element signature="e#1081#1082#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="43" column="41" selection-start-line="43" selection-start-column="41" selection-end-line="43" selection-end-column="41" />
+        <state relative-caret-position="360">
+          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1217,82 +1452,172 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniHeader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+        <state relative-caret-position="39">
+          <caret line="27" column="20" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1656">
+          <caret line="162" column="63" selection-start-line="162" selection-start-column="63" selection-end-line="162" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniFunctionPrototype.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/SparkJni.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="false" />
+            <element signature="e#6017#6018#0" expanded="true" />
+            <element signature="e#6076#6077#0" expanded="true" />
+            <element signature="e#6980#6981#0" expanded="true" />
+            <element signature="e#7043#7044#0" expanded="true" />
+            <element signature="e#7096#7097#0" expanded="true" />
+            <element signature="e#7147#7148#0" expanded="true" />
+            <element signature="e#7206#7207#0" expanded="true" />
+            <element signature="e#7263#7264#0" expanded="true" />
+            <element signature="e#7316#7317#0" expanded="true" />
+            <element signature="e#7367#7368#0" expanded="true" />
+            <element signature="e#11875#11876#0" expanded="true" />
+            <element signature="e#11922#11923#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/Bean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/MetadataHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="e#695#696#0" expanded="true" />
+            <element signature="e#725#726#0" expanded="true" />
+            <element signature="e#771#772#0" expanded="true" />
+            <element signature="e#809#810#0" expanded="true" />
+            <element signature="e#846#847#0" expanded="true" />
+            <element signature="e#879#880#0" expanded="true" />
+            <element signature="e#931#932#0" expanded="true" />
+            <element signature="e#975#976#0" expanded="true" />
+            <element signature="e#1255#1256#0" expanded="true" />
+            <element signature="e#1297#1298#0" expanded="true" />
+            <element signature="e#1533#1534#0" expanded="true" />
+            <element signature="e#1571#1572#0" expanded="true" />
+            <element signature="e#1611#1612#0" expanded="true" />
+            <element signature="e#1647#1648#0" expanded="true" />
+            <element signature="e#1705#1706#0" expanded="true" />
+            <element signature="e#1755#1756#0" expanded="true" />
+            <element signature="e#1797#1798#0" expanded="true" />
+            <element signature="e#1835#1836#0" expanded="true" />
+            <element signature="e#1897#1898#0" expanded="true" />
+            <element signature="e#1951#1952#0" expanded="true" />
+            <element signature="e#1993#1994#0" expanded="true" />
+            <element signature="e#2031#2032#0" expanded="true" />
+            <element signature="e#2093#2094#0" expanded="true" />
+            <element signature="e#2147#2148#0" expanded="true" />
+            <element signature="e#2193#2194#0" expanded="true" />
+            <element signature="e#2235#2236#0" expanded="true" />
+            <element signature="e#2305#2306#0" expanded="true" />
+            <element signature="e#2367#2368#0" expanded="true" />
+            <element signature="e#2405#2406#0" expanded="true" />
+            <element signature="e#2439#2440#0" expanded="true" />
+            <element signature="e#2493#2494#0" expanded="true" />
+            <element signature="e#2539#2540#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/javaLink/JniLinkHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1100#1101#0" expanded="true" />
+            <element signature="e#1137#1138#0" expanded="true" />
+            <element signature="e#1198#1199#0" expanded="true" />
+            <element signature="e#1250#1251#0" expanded="true" />
+            <element signature="e#1355#1356#0" expanded="true" />
+            <element signature="e#1402#1403#0" expanded="true" />
+            <element signature="e#1461#1462#0" expanded="true" />
+            <element signature="e#1506#1507#0" expanded="true" />
+            <element signature="e#1569#1570#0" expanded="true" />
+            <element signature="e#1615#1616#0" expanded="true" />
+            <element signature="e#1667#1668#0" expanded="true" />
+            <element signature="e#1704#1705#0" expanded="true" />
+            <element signature="e#1762#1763#0" expanded="true" />
+            <element signature="e#1805#1806#0" expanded="true" />
+            <element signature="e#1858#1859#0" expanded="true" />
+            <element signature="e#1892#1893#0" expanded="true" />
+            <element signature="e#1976#1977#0" expanded="true" />
+            <element signature="e#2026#2027#0" expanded="true" />
+            <element signature="e#2057#2058#0" expanded="true" />
+            <element signature="e#2135#2136#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorMulJni.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="63" selection-start-line="15" selection-start-column="63" selection-end-line="15" selection-end-column="63" />
+          <folding>
+            <element signature="e#314#315#0" expanded="true" />
+            <element signature="e#370#371#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="69" column="31" selection-start-line="69" selection-start-column="31" selection-end-line="69" selection-end-column="31" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state relative-caret-position="270">
+          <caret line="62" column="5" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/NativeHeader.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
+        <state relative-caret-position="313">
+          <caret line="40" column="42" selection-start-line="40" selection-start-column="42" selection-end-line="40" selection-end-column="42" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/KernelFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFunctionPrototype.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="40" column="5" selection-start-line="40" selection-start-column="5" selection-end-line="40" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniHeader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/tudelft/ewi/ceng/sparkjni/utils/JniFrameworkLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="93" column="0" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
-          <folding>
-            <element signature="e#2493#2494#0" expanded="true" />
-            <element signature="e#2521#2522#0" expanded="true" />
-            <element signature="e#2561#2562#0" expanded="true" />
-            <element signature="e#2593#2594#0" expanded="true" />
-            <element signature="e#2635#2636#0" expanded="true" />
-            <element signature="e#2669#2670#0" expanded="true" />
-            <element signature="e#2707#2708#0" expanded="true" />
-            <element signature="e#2737#2738#0" expanded="true" />
-            <element signature="e#2777#2778#0" expanded="true" />
-            <element signature="e#2809#2810#0" expanded="true" />
-            <element signature="e#16855#16856#0" expanded="true" />
-            <element signature="e#16885#16886#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

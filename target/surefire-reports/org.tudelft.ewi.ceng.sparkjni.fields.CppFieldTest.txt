@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.tudelft.ewi.ceng.sparkjni.fields.CppFieldTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 sec - in org.tudelft.ewi.ceng.sparkjni.fields.CppFieldTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.05 sec - in org.tudelft.ewi.ceng.sparkjni.fields.CppFieldTest

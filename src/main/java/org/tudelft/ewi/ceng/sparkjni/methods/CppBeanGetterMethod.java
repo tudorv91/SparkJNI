@@ -43,7 +43,6 @@ public class CppBeanGetterMethod extends NativeMethod{
 
             methodBody = constructMethodImpl();
             this.accessor = accessor;
-
         } else
             isValid = false;
     }

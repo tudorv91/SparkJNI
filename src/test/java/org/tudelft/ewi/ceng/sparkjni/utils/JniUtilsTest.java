@@ -4,12 +4,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.tudelft.ewi.ceng.TestUtils;
-import org.tudelft.ewi.ceng.sparkjni.annotations.JNI_param;
+import org.tudelft.ewi.ceng.sparkjni.javaLink.JniFunctionPrototype;
+import org.tudelft.ewi.ceng.sparkjni.javaLink.JniHeader;
 import org.tudelft.ewi.ceng.sparkjni.jniFunctions.JniMapFunction;
-import org.tudelft.ewi.ceng.sparkjni.utils.*;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
