@@ -15,7 +15,7 @@
  */
 package org.tudelft.ewi.ceng.sparkjni.fields;
 
-import org.tudelft.ewi.ceng.sparkjni.utils.JniFrameworkLoader;
+import org.tudelft.ewi.ceng.sparkjni.utils.SparkJni;
 import org.tudelft.ewi.ceng.sparkjni.utils.JniUtils;
 
 import java.lang.reflect.Field;
@@ -27,7 +27,7 @@ public class CppReferenceField extends CppField {
     public CppReferenceField(Field field) {
         super(field);
         type = JniUtils.getCppReferenceTypeName(javaField.getType());
-        if(!JniFrameworkLoader.isTypeRegistered(type))
+        if(!SparkJni.getJniHandler().isTypeRegistered(type))
             return;
 
         this.readableType = type;

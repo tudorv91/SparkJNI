@@ -30,8 +30,7 @@ public class JniConstructor extends NativeMethod {
         super(cppClass);
     }
 
-    public JniConstructor() {
-    }
+    public JniConstructor() {}
     // Include it in constructor
     // Here we have unique indentation
     public String generateConstructorImpl() {

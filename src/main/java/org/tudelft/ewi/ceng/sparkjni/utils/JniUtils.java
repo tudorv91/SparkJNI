@@ -150,17 +150,17 @@ public class JniUtils {
             "\t@- $(RM) $(program_C_OBJS)\n" +
             "\n" +
             "distclean: clean";
-    static final String JAVAH_SECTION = "javah -classpath %s -d %s %s";
+    public static final String JAVAH_SECTION = "javah -classpath %s -d %s %s";
     static final String EXEC_MAKE_CLEAN = "make clean -C %s";
     static final String EXEC_MAKE = "make -C %s";
     // Messages
-    static final String ERROR_JAVAH_FAILED = "[ERROR] javah failed!";
-    static final String NATIVE_PATH_NOT_SET = "[ERROR]Please set native path with JniFrameworkLoader.setNativePath(String path). Exiting..";
+    public static final String ERROR_JAVAH_FAILED = "[ERROR] javah failed!";
+    static final String NATIVE_PATH_NOT_SET = "[ERROR]Please set native path with SparkJni.setNativePath(String path). Exiting..";
     static final String NATIVE_PATH_ERROR = "[ERROR]Specified native path does not exist or is not a valid directory. Exiting..";
     static final String MAKEFILE_GENERATION_FAILED_ERROR = "[ERROR]Makefile generation failed. Exiting..";
     static final String KERNEL_MISSING_NOTICE = "[INFO]Please provide a kernel file";
     static final String CPP_BUILD_FAILED = "[ERROR]C++ build failed!";
-    static final String ERROR_KERNEL_FILE_GENERATION_FAILED = "[ERROR] Kernel file generation failed..";
+    static final String ERROR_KERNEL_FILE_GENERATION_FAILED = "Kernel file generation failed..";
     public static final String KERNEL_PATH_STR = "%s/%s.cpp";
     public static final String ERR_CPP_FILE_GENERATION_FAILED = "Cpp File generation failed";
     public static final String ERR_NO_JNI_PROTOTYPES_FOUND_IN_USER_DIR = "No JNI prototypes found in user dir..";

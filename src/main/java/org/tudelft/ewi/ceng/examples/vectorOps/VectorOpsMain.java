@@ -3,10 +3,9 @@ package org.tudelft.ewi.ceng.examples.vectorOps;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.tudelft.ewi.ceng.sparkjni.utils.JniFrameworkLoader;
+import org.tudelft.ewi.ceng.sparkjni.utils.SparkJni;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by root on 9/8/16.
@@ -36,15 +35,15 @@ public class VectorOpsMain {
             System.out.println("Usage: <nativePath> <appName> <jdkPath>");
         }
 
-        JniFrameworkLoader.setJdkPath(jdkPath);
-        JniFrameworkLoader.setNativePath(nativePath);
-        JniFrameworkLoader.setDoGenerateMakefile(true);
-        JniFrameworkLoader.setDoBuild(true);
+        SparkJni.setJdkPath(jdkPath);
+        SparkJni.setNativePath(nativePath);
+        SparkJni.setDoGenerateMakefile(true);
+        SparkJni.setDoBuild(true);
 
-        JniFrameworkLoader.registerContainer(VectorBean.class);
-        JniFrameworkLoader.registerJniFunction(VectorMulJni.class);
-        JniFrameworkLoader.registerJniFunction(VectorAddJni.class);
-        JniFrameworkLoader.deploy(appName, appName + ".cpp", null);
+        SparkJni.registerContainer(VectorBean.class);
+        SparkJni.registerJniFunction(VectorMulJni.class);
+        SparkJni.registerJniFunction(VectorAddJni.class);
+        SparkJni.deploy(appName, null);
     }
 
     private static ArrayList<VectorBean> generateVectors(int noVectors, int vectorSize){

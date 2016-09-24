@@ -1,15 +1,12 @@
 package org.tudelft.ewi.ceng.examples.vectorOps;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.tudelft.ewi.ceng.TestUtils;
-import org.tudelft.ewi.ceng.sparkjni.utils.JniFrameworkLoader;
+import org.tudelft.ewi.ceng.sparkjni.utils.SparkJni;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -33,15 +30,15 @@ public class VectorOpsMainTest {
     }
 
     public void initSparkJNI(){
-        JniFrameworkLoader.setJdkPath(testUtils.jdkPath);
-        JniFrameworkLoader.setNativePath(testUtils.defaultTestFolder);
-        JniFrameworkLoader.setDoGenerateMakefile(true);
-        JniFrameworkLoader.setDoBuild(true);
+        SparkJni.setJdkPath(testUtils.jdkPath);
+        SparkJni.setNativePath(testUtils.defaultTestFolder);
+        SparkJni.setDoGenerateMakefile(true);
+        SparkJni.setDoBuild(true);
 
-        JniFrameworkLoader.registerContainer(VectorBean.class);
-        JniFrameworkLoader.registerJniFunction(VectorMulJni.class);
-        JniFrameworkLoader.registerJniFunction(VectorAddJni.class);
-        JniFrameworkLoader.deploy(testUtils.appName, testUtils.appName + ".cpp", null);
+        SparkJni.registerContainer(VectorBean.class);
+        SparkJni.registerJniFunction(VectorMulJni.class);
+        SparkJni.registerJniFunction(VectorAddJni.class);
+        SparkJni.deploy(testUtils.appName, null);
     }
 
     private static void generateVectors(){

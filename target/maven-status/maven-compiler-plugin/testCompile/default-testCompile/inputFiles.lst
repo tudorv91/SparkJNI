@@ -1,2 +1,5 @@
-/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/tudelft/ewi/ceng/sparkjni/fields/JniUtilsTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/tudelft/ewi/ceng/TestUtils.java
 /home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/CppClassTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.java

@@ -4,7 +4,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.tudelft.ewi.ceng.sparkjni.utils.JniFrameworkLoader;
+import org.tudelft.ewi.ceng.sparkjni.utils.SparkJni;
 import scala.Tuple2;
 
 import java.io.*;
@@ -45,39 +45,39 @@ public class PairHmmMain {
         }
 
         if(modeString.equals("FPGA")) {
-            JniFrameworkLoader.setUserIncludeDirs("/tools/ppc_64/libcxl");
-            JniFrameworkLoader.setUserLibraryDirs("/tools/ppc_64/libcxl");
-            JniFrameworkLoader.setUserStaticLibraries("/tools/ppc_64/libcxl/libcxl.a");
-            JniFrameworkLoader.setUserDefines("FPGA_GO");
+            SparkJni.setUserIncludeDirs("/tools/ppc_64/libcxl");
+            SparkJni.setUserLibraryDirs("/tools/ppc_64/libcxl");
+            SparkJni.setUserStaticLibraries("/tools/ppc_64/libcxl/libcxl.a");
+            SparkJni.setUserDefines("FPGA_GO");
             nativeFuncName = "calculateHardware";
         } else {
-            JniFrameworkLoader.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
-            JniFrameworkLoader.setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
+            SparkJni.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
+            SparkJni.setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
         }
 
-        JniFrameworkLoader.setJdkPath(jdkPath);
-        JniFrameworkLoader.setNativePath(nativePath);
-        JniFrameworkLoader.setDoGenerateMakefile(true);
-        JniFrameworkLoader.setDoBuild(true);
+        SparkJni.setJdkPath(jdkPath);
+        SparkJni.setNativePath(nativePath);
+        SparkJni.setDoGenerateMakefile(true);
+        SparkJni.setDoBuild(true);
 
-        JniFrameworkLoader.registerJniFunction(PairHmmJniFunction.class);
-        JniFrameworkLoader.registerJniFunction(LoadSizesJniFunction.class);
-        JniFrameworkLoader.registerJniFunction(DataLoaderJniFunction.class);
-        JniFrameworkLoader.registerContainer(WorkloadPairHmmBean.class);
-        JniFrameworkLoader.registerContainer(PairHmmBean.class);
-        JniFrameworkLoader.registerContainer(SizesBean.class);
-        JniFrameworkLoader.registerContainer(ByteArrBean.class);
-        JniFrameworkLoader.deploy(appName, appName + ".cpp", null);
+        SparkJni.registerJniFunction(PairHmmJniFunction.class);
+        SparkJni.registerJniFunction(LoadSizesJniFunction.class);
+        SparkJni.registerJniFunction(DataLoaderJniFunction.class);
+        SparkJni.registerContainer(WorkloadPairHmmBean.class);
+        SparkJni.registerContainer(PairHmmBean.class);
+        SparkJni.registerContainer(SizesBean.class);
+        SparkJni.registerContainer(ByteArrBean.class);
+        SparkJni.deploy(appName, null);
     }
 
     public static void main(String[] args) throws Exception {
         initSparkJNI(args);
         createFile();
         String libPath = nativePath + "/pairhmm.so";
-        appendToFile(String.valueOf(JniFrameworkLoader.getGenTime()/1000.0f)+",");
-        appendToFile(String.valueOf(JniFrameworkLoader.getJavahTime()/1000.0f)+",");
-        appendToFile(String.valueOf(JniFrameworkLoader.getBuildTime()/1000.0f)+",");
-        appendToFile(String.valueOf(JniFrameworkLoader.getLibLoadTime()/1000.0f)+",");
+        appendToFile(String.valueOf(SparkJni.getGenTime()/1000.0f)+",");
+        appendToFile(String.valueOf(SparkJni.getJavahTime()/1000.0f)+",");
+        appendToFile(String.valueOf(SparkJni.getBuildTime()/1000.0f)+",");
+        appendToFile(String.valueOf(SparkJni.getLibLoadTime()/1000.0f)+",");
 
         ArrayList<SizesBean> dummySizesCollection = new ArrayList<>();
         dummySizesCollection.add(loadSizes(nativePath+ "/sizes.txt", noLines));

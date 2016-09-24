@@ -15,6 +15,8 @@
  */
 package org.tudelft.ewi.ceng.sparkjni.utils;
 
+import org.tudelft.ewi.ceng.sparkjni.javaLink.JniHeader;
+
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class JniDirAccessor {
     private void processFile(File file) {
         try {
             if(JniUtils.isJniNativeFunction(file.toPath()))
-                jniHeaders.add(new JniHeader(file));
+                jniHeaders.add(new JniHeader(file, jniHeaders));
         } catch (IOException e) {
             e.printStackTrace();
         }

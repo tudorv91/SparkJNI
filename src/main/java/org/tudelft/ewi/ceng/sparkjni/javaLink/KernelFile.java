@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.tudelft.ewi.ceng.sparkjni.utils;
+package org.tudelft.ewi.ceng.sparkjni.javaLink;
+
+import org.tudelft.ewi.ceng.sparkjni.utils.CppClass;
+import org.tudelft.ewi.ceng.sparkjni.utils.JniUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
