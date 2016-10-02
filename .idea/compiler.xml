@@ -25,7 +25,7 @@
         <module name="SparkJNI" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.7">
       <module name="SparkJNI" target="1.7" />
     </bytecodeTargetLevel>
   </component>

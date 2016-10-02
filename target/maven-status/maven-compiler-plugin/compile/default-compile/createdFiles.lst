@@ -7,7 +7,6 @@ org/tudelft/ewi/ceng/examples/pairHMM/ImageBean.class
 org/tudelft/ewi/ceng/sparkjni/javaLink/JniLinkHandler.class
 org/tudelft/ewi/ceng/sparkjni/methods/Destructor.class
 org/tudelft/ewi/ceng/sparkjni/exceptions/SoftSparkJniException.class
-org/tudelft/ewi/ceng/sparkjni/utils/Bean.class
 org/tudelft/ewi/ceng/sparkjni/annotations/JNI_functionClass.class
 org/tudelft/ewi/ceng/sparkjni/utils/MetadataHandler.class
 org/tudelft/ewi/ceng/examples/pairHMM/PairHmmJniFunction.class
@@ -15,6 +14,7 @@ org/tudelft/ewi/ceng/sparkjni/fields/CppReferenceField.class
 org/tudelft/ewi/ceng/sparkjni/methods/EmptyCppConstructor.class
 org/tudelft/ewi/ceng/sparkjni/utils/JniDirAccessor.class
 org/tudelft/ewi/ceng/sparkjni/annotations/JNI_class.class
+org/tudelft/ewi/ceng/sparkjni/utils/CppSyntax.class
 org/tudelft/ewi/ceng/examples/pairHMM/ByteArrBean.class
 org/tudelft/ewi/ceng/examples/vectorOps/VectorMulJni.class
 org/tudelft/ewi/ceng/sparkjni/javaLink/JniHeader.class
@@ -25,8 +25,9 @@ org/tudelft/ewi/ceng/sparkjni/fields/CppRawTypeField.class
 org/tudelft/ewi/ceng/examples/vectorOps/VectorBean.class
 org/tudelft/ewi/ceng/examples/pairHMM/LoadSizesJniFunction.class
 org/tudelft/ewi/ceng/sparkjni/annotations/JNI_method.class
-org/tudelft/ewi/ceng/sparkjni/utils/CppClass.class
+org/tudelft/ewi/ceng/sparkjni/utils/CppBean.class
 org/tudelft/ewi/ceng/examples/pairHMM/PairHmmMain.class
+org/tudelft/ewi/ceng/sparkjni/utils/JavaBean.class
 org/tudelft/ewi/ceng/sparkjni/annotations/JNI_field.class
 org/tudelft/ewi/ceng/examples/pairHMM/RawBufferBean.class
 org/tudelft/ewi/ceng/examples/vectorOps/VectorAddJni.class
@@ -35,6 +36,7 @@ org/tudelft/ewi/ceng/examples/pairHMM/WorkloadPairHmmBean.class
 org/tudelft/ewi/ceng/sparkjni/utils/SparkJni$1.class
 org/tudelft/ewi/ceng/sparkjni/methods/JniConstructor.class
 org/tudelft/ewi/ceng/examples/pairHMM/SizesBean.class
+org/tudelft/ewi/ceng/sparkjni/exceptions/Messages.class
 org/tudelft/ewi/ceng/sparkjni/jniFunctions/JniMapFunction.class
 org/tudelft/ewi/ceng/sparkjni/methods/NativeMethod.class
 org/tudelft/ewi/ceng/sparkjni/fields/CppField.class
