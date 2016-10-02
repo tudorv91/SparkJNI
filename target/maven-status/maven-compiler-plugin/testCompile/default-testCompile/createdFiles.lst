@@ -1,8 +1,1 @@
-org/tudelft/ewi/ceng/TestUtils.class
-org/tudelft/ewi/ceng/sparkjni/utils/JniUtilsTest.class
-org/tudelft/ewi/ceng/examples/vectorOps/VectorOpsMainTest.class
-org/tudelft/ewi/ceng/sparkjni/utils/BeanClass.class
-org/tudelft/ewi/ceng/sparkjni/fields/CppFieldTest.class
-org/tudelft/ewi/ceng/sparkjni/utils/CppClassTest.class
 org/tudelft/ewi/ceng/sparkjni/utils/MapperTester.class
-org/tudelft/ewi/ceng/sparkjni/fields/IntFieldClass.class
