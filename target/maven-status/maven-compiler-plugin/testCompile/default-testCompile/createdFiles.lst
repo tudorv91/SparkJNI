@@ -1,1 +1,10 @@
-org/tudelft/ewi/ceng/sparkjni/utils/MapperTester.class
+org/heterojni/sparkjni/fields/CppFieldTest.class
+org/heterojni/sparkjni/jniLink/TestMapperJniFunc.class
+org/heterojni/sparkjni/utils/BeanClass.class
+org/heterojni/examples/vectorOps/VectorOpsMainTest.class
+org/heterojni/sparkjni/utils/CppBeanTest.class
+org/heterojni/sparkjni/utils/JniUtilsTest.class
+org/heterojni/TestUtils.class
+org/heterojni/sparkjni/jniLink/FunctionSignatureMapperProviderTest.class
+org/heterojni/sparkjni/fields/IntFieldClass.class
+org/heterojni/sparkjni/jniLink/TestReduceJniFunc.class

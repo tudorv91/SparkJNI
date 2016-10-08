@@ -1,0 +1,28 @@
+package org.heterojni.sparkjni.exceptions;
+
+/**
+ * Created by root on 9/24/16.
+ */
+public class Messages {
+    public static final String INFO_CALLING_REDUCE_METHOD = "Calling method %s";
+    public static final String INFO_CALLING_MAP_FUNCTION = "Calling method %s";
+    public static final String ERR_COULD_NOT_FIND_METHOD = "Could not find method %s in class %s";
+    // Messages
+    public static final String ERR_JAVAH_FAILED = "[ERROR] javah failed!";
+    public static final String NATIVE_PATH_NOT_SET = "[ERROR]Please set native path with SparkJni.setNativePath(String path). Exiting..";
+    public static final String NATIVE_PATH_ERROR = "[ERROR]Specified native path does not exist or is not a valid directory. Exiting..";
+    public static final String MAKEFILE_GENERATION_FAILED_ERROR = "[ERROR]Makefile generation failed. Exiting..";
+    public static final String ERR_CPP_FILE_GENERATION_FAILED = "Cpp File generation failed";
+    public static final String ERR_NO_JNI_PROTOTYPES_FOUND_IN_USER_DIR = "No JNI prototypes found in user dir..";
+    public static final String ERR_SPARK_CONTEXT_IS_NULL_EXITING = "Spark context is null. Exiting..";
+    public static final String ERR_INVALID_FORMATTING_FOR_FILE_AT_LINE = "Invalid formatting for file %s at line \n\"%s\"";
+    public static final String ERR_JNI_FUNCTION_CLASS_DOES_NOT_INHERIT_JNI_FUNCTION = "User-defined JNI function class does not inherit JniFunction";
+    public static final String KERNEL_MISSING_NOTICE = "[INFO]Please provide a kernel file";
+    public static final String ERR_KERNEL_FILE_GENERATION_FAILED = "Kernel file generation failed..";
+    public static final String ERR_PROVIDED_JCLASS_NULL_STR = "Provided java class object is null..!";
+    public static final String ERR_CONSTRUCTOR_OBJECT_METHOD_IS_NULL_STR = "Constructor object method is null";
+    public static final String ERR_CPP_BUILD_FAILED = "Run process command failed!";
+    public static final String ERR_PLEASE_DO_SET_THE_JDK_PATH = "Please do set the JDK PATH..";
+    public static final String ERR_FIELD_WITH_TYPE_IS_NOT_AN_ARRAY = "Field %s with type %s is not an array..";
+    public static final String ERR_CLASS_NOT_FOUND = "Class not found %s";
+}
