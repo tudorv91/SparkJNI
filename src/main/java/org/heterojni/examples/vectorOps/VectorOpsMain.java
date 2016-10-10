@@ -4,18 +4,17 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.heterojni.sparkjni.utils.SparkJni;
+import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
 
 import java.util.ArrayList;
 
-/**
- * Created by root on 9/8/16.
- */
 public class VectorOpsMain {
     private static JavaSparkContext jscSingleton;
     private static String jdkPath = null;
     private static String nativePath = null;
     private static String appName = "vectorOps";
     private static final boolean debug = true;
+    private static SparkJni sparkJni;
 
     public static JavaSparkContext getSparkContext(){
         if(jscSingleton == null){
@@ -35,15 +34,19 @@ public class VectorOpsMain {
             System.out.println("Usage: <nativePath> <appName> <jdkPath>");
         }
 
-        SparkJni.setJdkPath(jdkPath);
-        SparkJni.setNativePath(nativePath);
-        SparkJni.setDoGenerateMakefile(true);
-        SparkJni.setDoBuild(true);
+        sparkJni = new SparkJniSingletonBuilder()
+                .nativePath(nativePath)
+                .jdkPath(jdkPath)
+                .appName(appName)
+                .build();
 
-        SparkJni.registerContainer(VectorBean.class);
-        SparkJni.registerJniFunction(VectorMulJni.class);
-        SparkJni.registerJniFunction(VectorAddJni.class);
-        SparkJni.deploy(appName, null);
+        sparkJni.setDoGenerateMakefile(true)
+                .setDoBuild(true);
+
+        sparkJni.registerContainer(VectorBean.class)
+                .registerJniFunction(VectorMulJni.class)
+                .registerJniFunction(VectorAddJni.class);
+        sparkJni.deploy();
     }
 
     private static ArrayList<VectorBean> generateVectors(int noVectors, int vectorSize){

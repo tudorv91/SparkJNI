@@ -15,11 +15,11 @@
  */
 package org.heterojni.sparkjni.jniLink.linkHandlers;
 
-import org.heterojni.sparkjni.exceptions.Messages;
-import org.heterojni.sparkjni.exceptions.SoftSparkJniException;
+import org.heterojni.sparkjni.utils.JniLinkHandler;
+import org.heterojni.sparkjni.utils.exceptions.Messages;
+import org.heterojni.sparkjni.utils.exceptions.SoftSparkJniException;
 import org.heterojni.sparkjni.jniLink.linkContainers.*;
 import org.heterojni.sparkjni.utils.JniUtils;
-import org.heterojni.sparkjni.utils.SparkJni;
 import org.immutables.value.Value;
 
 import java.lang.reflect.Method;
@@ -33,7 +33,7 @@ public abstract class FunctionSignatureMapperProvider {
     abstract String fullyQualifiedJavaClass();
 
     /**
-     * DO NOT USE this method here. Use it with ImmutableFunctionSignatureMapperProvider.
+     * DO NOT USE this method here. Use it with ImmutableAbstractFunctionSignatureMapperProvider.
      * @return
      * @throws Exception
      */
@@ -53,15 +53,17 @@ public abstract class FunctionSignatureMapperProvider {
             throw new SoftSparkJniException(
                     String.format(Messages.ERR_INVALID_FORMATTING_FOR_FILE_AT_LINE, jniFuncName, parametersLine));
         }
-        Class enclosingClass = SparkJni.getJniHandler().getJavaClassByName(fullyQualifiedJavaClass);
+        Class enclosingClass = JniLinkHandler.getJniLinkHandlerSingleton().getJavaClassByName(fullyQualifiedJavaClass);
         Method jniMethod = JniUtils.getClassMethodyName(enclosingClass, definingJavaMethodName);
         for(Class parameterType: jniMethod.getParameterTypes()){
-            TypeMapper typeMapper = ImmutableTypeMapper.builder()
-                    .javaType(parameterType)
-                    .cppType(SparkJni.getJniHandler().getContainerByJavaClass(parameterType))
-                    .jniType("jobject")
-                    .build();
-            parameterList.add(typeMapper);
+            try {
+                TypeMapper typeMapper = ImmutableTypeMapper.builder()
+                        .javaType(parameterType)
+                        .cppType(JniLinkHandler.getJniLinkHandlerSingleton().getContainerByJavaClass(parameterType))
+                        .jniType("jobject")
+                        .build();
+                parameterList.add(typeMapper);
+            } catch (NullPointerException e){}
         }
 
         EntityNameMapper functionNameMapper = ImmutableEntityNameMapper.builder()
@@ -71,7 +73,7 @@ public abstract class FunctionSignatureMapperProvider {
                 .build();
 
         TypeMapper returnTypeMapper = ImmutableTypeMapper.builder()
-                .cppType(SparkJni.getJniHandler().getContainerByJavaClass(jniMethod.getReturnType()))
+                .cppType(JniLinkHandler.getJniLinkHandlerSingleton().getContainerByJavaClass(jniMethod.getReturnType()))
                 .javaType(jniMethod.getReturnType())
                 .jniType(jniDefinedReturnType)
                 .build();

@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.heterojni.sparkjni.utils.CppBean;
+import org.heterojni.sparkjni.dataLink.CppBean;
 
 /**
  * Immutable implementation of {@link TypeMapper}.

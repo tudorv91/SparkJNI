@@ -6,7 +6,7 @@ import java.util.List;
 
 @Value.Immutable
 public interface JniMetaContainer {
-    List<JniHeaderContainer> jniHeaderContainers();
+    List<JniHeader> jniHeaderContainers();
     String appName();
     String nativePathName();
 }

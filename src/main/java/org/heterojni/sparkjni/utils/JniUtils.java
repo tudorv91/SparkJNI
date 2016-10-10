@@ -16,12 +16,11 @@
 
 package org.heterojni.sparkjni.utils;//package org.apache.spark.examples;
 
-import org.heterojni.sparkjni.exceptions.Messages;
+import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
+import org.heterojni.sparkjni.utils.exceptions.Messages;
 
 import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -86,16 +85,12 @@ public class JniUtils {
 
     public static String generateIncludeStatements(boolean includeExternalLibs, String[] jniHeaderFiles) {
         StringBuilder sb = new StringBuilder();
-
         if (includeExternalLibs)
             sb.append(CppSyntax.DEFAULT_INCLUDE_STATEMENTS);
-
         if (jniHeaderFiles == null)
             return sb.toString();
-
         for (String file : jniHeaderFiles)
             sb.append(String.format("#include \"%s\"\n", file));
-
         return sb.toString();
     }
 
@@ -204,7 +199,7 @@ public class JniUtils {
         return String.format("CPP%s", javaClass.getSimpleName());
     }
 
-    static boolean isJniNativeFunction(Path path) throws IOException {
+    public static boolean isJniNativeFunction(Path path) throws IOException {
         if(!path.toString().endsWith("h"))
             return false;
         for(String line: Files.readAllLines(path, Charset.defaultCharset()))
@@ -257,5 +252,47 @@ public class JniUtils {
             writer.close();
         }
         return true;
+    }
+
+    public static String generateDefaultHeaderWrapperFileName(String appName, String nativePath){
+        return String.format("%s/%s.h", nativePath, appName);
+    }
+
+    public static String generateDefaultKernelFileName(String appName, String nativePath){
+        return String.format("%s/%s.cpp", nativePath, appName);
+    }
+
+    public static String generateDefaultLibPath(String appName, String nativePath) {
+        return String.format("%s/%s.so", nativePath, appName);
+    }
+
+    public static void runProcess(String proc) {
+        try {
+            Process process = Runtime.getRuntime().exec(proc);
+            InputStream errors = process.getErrorStream(),
+                    input = process.getInputStream();
+            InputStreamReader errorStreamReader = new InputStreamReader(errors),
+                    inputStreamReader = new InputStreamReader(input);
+            BufferedReader errorBufferedReader = new BufferedReader(errorStreamReader),
+                    inputBufferedReader = new BufferedReader(inputStreamReader);
+            String line = null;
+
+            while ((line = errorBufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            while ((line = inputBufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            if (process.waitFor() != 0) {
+                throw new HardSparkJniException(String.format("[ERROR] %s:\n\t%s",
+                        Messages.ERR_CPP_BUILD_FAILED, proc));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 }

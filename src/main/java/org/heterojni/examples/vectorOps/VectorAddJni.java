@@ -1,6 +1,6 @@
 package org.heterojni.examples.vectorOps;
 
-import org.heterojni.sparkjni.jniFunctions.JniReduceFunction;
+import org.heterojni.sparkjni.jniLink.jniFunctions.JniReduceFunction;
 
 /**
  * Created by root on 9/9/16.

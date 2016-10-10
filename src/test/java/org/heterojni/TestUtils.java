@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.heterojni.sparkjni.utils.JniUtils;
+import org.heterojni.sparkjni.utils.SparkJni;
+import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,10 +19,10 @@ public class TestUtils {
     public static final String CLUSTER_CONF_LOCAL_4 = "local[4]";
     public static final String JAVA_HOME_ENV = "JAVA_HOME";
     public String defaultTestFolder = "resources/%s";
-    public String fullPath;
     public File testDir;
-    public static String jdkPath;
-    public static String appName;
+    public String fullPath;
+    public String jdkPath;
+    public String appName;
     private static JavaSparkContext jscSingleton = null;
 
     public TestUtils(Class callerClass){
@@ -32,11 +34,10 @@ public class TestUtils {
     public void initTestDir(){
         testDir = new File(defaultTestFolder);
         if(testDir.exists())
-            testDir.delete();
+            cleanTestDir();
         testDir.mkdir();
 
-        File resourcesDir = new File(defaultTestFolder);
-        fullPath = resourcesDir.getAbsolutePath();
+        fullPath = testDir.getAbsolutePath();
     }
 
     public void cleanTestDir(){
@@ -47,7 +48,7 @@ public class TestUtils {
         }
     }
 
-    public static JavaSparkContext getSparkContext(){
+    public JavaSparkContext getSparkContext(){
         if(jscSingleton == null){
             SparkConf sparkConf = new SparkConf().setAppName(appName);
             sparkConf.setMaster(CLUSTER_CONF_LOCAL_4);
@@ -58,5 +59,15 @@ public class TestUtils {
 
     public static String getAbsolutePathFor(String relativePath){
         return JniUtils.class.getClassLoader().getResource(relativePath).toString();
+    }
+
+    public SparkJni getSparkJni(){
+        SparkJni.reset();
+        SparkJni sparkJni =  new SparkJniSingletonBuilder()
+                .appName(appName)
+                .jdkPath(jdkPath)
+                .nativePath(fullPath)
+                .build();
+        return sparkJni;
     }
 }

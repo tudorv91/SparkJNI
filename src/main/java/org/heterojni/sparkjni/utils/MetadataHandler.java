@@ -1,7 +1,7 @@
 package org.heterojni.sparkjni.utils;
 
-import org.heterojni.sparkjni.exceptions.HardSparkJniException;
-import org.heterojni.sparkjni.exceptions.Messages;
+import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
+import org.heterojni.sparkjni.utils.exceptions.Messages;
 
 /**
  * Created by root on 9/24/16.
@@ -100,5 +100,9 @@ public class MetadataHandler {
         if(handler == null)
             handler = new MetadataHandler();
         return handler;
+    }
+
+    protected static void reset(){
+        handler = null;
     }
 }

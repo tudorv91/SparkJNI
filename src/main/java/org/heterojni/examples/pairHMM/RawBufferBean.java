@@ -1,7 +1,7 @@
 package org.heterojni.examples.pairHMM;
 
 import org.apache.spark.util.SerializableBuffer;
-import org.heterojni.sparkjni.utils.JavaBean;
+import org.heterojni.sparkjni.dataLink.JavaBean;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;

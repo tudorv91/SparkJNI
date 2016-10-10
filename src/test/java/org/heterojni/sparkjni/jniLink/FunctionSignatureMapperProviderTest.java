@@ -1,22 +1,23 @@
 package org.heterojni.sparkjni.jniLink;
 
 import org.heterojni.TestUtils;
-import org.heterojni.sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
-import org.heterojni.sparkjni.jniLink.linkHandlers.FunctionSignatureMapperProvider;
-import org.heterojni.sparkjni.jniLink.linkHandlers.JniHeaderHandler;
-import org.heterojni.sparkjni.jniFunctions.JniMapFunction;
-import org.heterojni.sparkjni.jniFunctions.JniReduceFunction;
-import org.heterojni.sparkjni.jniLink.linkHandlers.JniLinkHandler;
-import org.heterojni.sparkjni.utils.JniDirAccessor;
-import org.heterojni.sparkjni.utils.MetadataHandler;
-import org.junit.*;
 import org.heterojni.examples.vectorOps.VectorBean;
-import org.heterojni.sparkjni.annotations.JNI_functionClass;
+import org.heterojni.sparkjni.jniLink.linkHandlers.FunctionSignatureMapperProvider;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
+import org.heterojni.sparkjni.jniLink.jniFunctions.JniMapFunction;
+import org.heterojni.sparkjni.jniLink.jniFunctions.JniReduceFunction;
+import org.heterojni.sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniHeader;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.jniLink.linkHandlers.ImmutableJniRootContainerProvider;
+import org.heterojni.sparkjni.utils.JniLinkHandler;
 import org.heterojni.sparkjni.utils.JniUtils;
 import org.heterojni.sparkjni.utils.SparkJni;
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -48,42 +49,43 @@ import static junit.framework.TestCase.assertNotNull;
 }
 
 public class FunctionSignatureMapperProviderTest {
-    FunctionSignatureMapperProvider prototype;
-    TestUtils testUtils;
-    JniDirAccessor jniDirAccessor;
-    @Before
-    public void setUp() throws Exception {
+    static TestUtils testUtils;
+    static JniRootContainer jniRootContainer;
+    static SparkJni sparkJni;
+    @BeforeClass
+    public static void setUp() throws Exception {
         testUtils = new TestUtils(FunctionSignatureMapperProvider.class);
         testUtils.initTestDir();
-        SparkJni.reset();
-        SparkJni.setNativePath(testUtils.defaultTestFolder);
-        SparkJni.registerContainer(VectorBean.class);
-        SparkJni.registerJniFunction(TestMapperJniFunc.class);
-        SparkJni.registerJniFunction(TestReduceJniFunc.class);
-        JniLinkHandler.getJniLinkHandlerSingleton().generateCppBeanClasses();
-        SparkJni.setJdkPath(testUtils.jdkPath);
-        jniDirAccessor = new JniDirAccessor(testUtils.defaultTestFolder);
-        SparkJni.getJniHandler().javah(JniUtils.getClasspath());
-        SparkJni.getJniHandler().deployLink();
-}
+
+        sparkJni = testUtils.getSparkJni()
+                .registerContainer(VectorBean.class)
+                .registerJniFunction(TestMapperJniFunc.class)
+                .registerJniFunction(TestReduceJniFunc.class);
+
+        sparkJni.getJniHandler().generateCppBeanClasses();
+        sparkJni.getJniHandler().javah(JniUtils.getClasspath());
+        jniRootContainer = ImmutableJniRootContainerProvider.builder().build()
+                .buildJniRootContainer(testUtils.defaultTestFolder, testUtils.appName);
+        sparkJni.getJniHandler().deployLink();
+    }
 
     @After
     public void tearDown() throws Exception {
         testUtils.cleanTestDir();
     }
 
-    private JniHeaderHandler getJniHeaderByName(CopyOnWriteArrayList<JniHeaderHandler> jniHeaderHandlers, String name){
-        for(JniHeaderHandler jniHeaderHandler : jniHeaderHandlers){
-            if(jniHeaderHandler.getFullyQualifiedJavaClassName().contains(name))
-                return jniHeaderHandler;
+    private JniHeader getJniHeaderByName(List<JniHeader> jniHeaders, String name){
+        for(JniHeader jniHeader : jniHeaders){
+            if(jniHeader.fullyQualifiedJavaClassName().contains(name))
+                return jniHeader;
         }
         return null;
     }
 
     @Test
     public void testMapperJniFunctionPrototype() throws Exception {
-        JniHeaderHandler mapperHeader = getJniHeaderByName(jniDirAccessor.getJniHeaderHandlers(), "TestMapperJniFunc");
-        List<FunctionSignatureMapper> functionSignatureMappers = mapperHeader.getJniFunctions();
+        JniHeader mapperHeader = getJniHeaderByName(jniRootContainer.jniHeaders(), "TestMapperJniFunc");
+        List<FunctionSignatureMapper> functionSignatureMappers = mapperHeader.jniFunctions();
         assertEquals(functionSignatureMappers.size(), 1);
         assertNotNull(mapperHeader);
 
@@ -95,9 +97,9 @@ public class FunctionSignatureMapperProviderTest {
 
     @Test
     public void testReduceJniFunctionPrototype() throws Exception {
-        JniHeaderHandler reduceHeader = getJniHeaderByName(jniDirAccessor.getJniHeaderHandlers(), "TestReduceJniFunc");
+        JniHeader reduceHeader = getJniHeaderByName(jniRootContainer.jniHeaders(), "TestReduceJniFunc");
         assertNotNull(reduceHeader);
-        List<FunctionSignatureMapper> functionSignatureMappers = reduceHeader.getJniFunctions();
+        List<FunctionSignatureMapper> functionSignatureMappers = reduceHeader.jniFunctions();
         assertEquals(functionSignatureMappers.size(), 1);
 
         FunctionSignatureMapper functionSignatureMapper = functionSignatureMappers.get(0);

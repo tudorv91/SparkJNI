@@ -30,8 +30,8 @@ public class VectorAddJni extends JniReduceFunction {
     public VectorAddJni() {
     }
 
-    public VectorAddJni(String nativeLibPath, String nativeFunctionName) {
-        super(nativeLibPath, nativeFunctionName);
+    public VectorAddJni(String nativePath, String nativeFunctionName) {
+        super(nativePath, nativeFunctionName);
     }
 
     public native VectorBean reduceVectorAdd(VectorBean v1, VectorBean v2);
@@ -43,8 +43,8 @@ public class VectorMulJni extends JniMapFunction {
     public VectorMulJni() {
     }
 
-    public VectorMulJni(String nativeLibPath, String nativeFunctionName) {
-        super(nativeLibPath, nativeFunctionName);
+    public VectorMulJni(String nativePath, String nativeFunctionName) {
+        super(nativePath, nativeFunctionName);
     }
 
     public native VectorBean mapVectorMul(VectorBean inputVector);

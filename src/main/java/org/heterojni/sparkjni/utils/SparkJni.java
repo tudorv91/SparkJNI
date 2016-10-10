@@ -15,74 +15,75 @@
  */
 package org.heterojni.sparkjni.utils;
 
+import com.google.common.reflect.ClassPath;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.heterojni.sparkjni.exceptions.HardSparkJniException;
-import org.heterojni.sparkjni.exceptions.Messages;
-import org.heterojni.sparkjni.jniLink.linkHandlers.JniHeaderHandler;
-import org.heterojni.sparkjni.jniLink.linkHandlers.JniLinkHandler;
+import org.heterojni.sparkjni.jniLink.linkHandlers.*;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_class;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
+import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
+import org.heterojni.sparkjni.utils.exceptions.Messages;
+import org.heterojni.sparkjni.utils.exceptions.SoftSparkJniException;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.immutables.builder.Builder;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * Top level class with static functionality that handles the SparkJNI execution.
  */
 public class SparkJni {
-    public static final String LIB_PATH_STR = "%s/%s.so";
-    private static boolean doClean = true;
-    private static boolean doBuild = true;
-    private static boolean doGenerateMakefile = true;
-
-    private static boolean doForceOverwriteKernelFiles = true;
+    private boolean doClean = true;
+    private boolean doBuild = true;
+    private boolean doGenerateMakefile = true;
+    private boolean doForceOverwriteKernelFiles = true;
 
     private static JniLinkHandler jniLinkHandler;
-
     private static MetadataHandler metadataHandler;
+
+    private static JniRootContainer jniRootContainer;
+
     private static JavaSparkContext javaSparkContext;
-    private static long start = 0L;
+    private long start = 0L;
+    private long genTime = 0L;
 
-    private static long genTime = 0L;
-    private static long buildTime = 0L;
-    private static long libLoadTime = 0L;
-    private static long javahTime = 0L;
-    public static long getJavahTime() {
-        return javahTime;
+    private long buildTime = 0L;
+    private long libLoadTime = 0L;
+    private long javahTime = 0L;
+    private static SparkJni sparkJniSingleton = null;
+
+    private SparkJni(){}
+
+    @Builder.Factory
+    public static SparkJni sparkJniSingleton(String appName, String nativePath, String jdkPath) {
+        if(sparkJniSingleton == null){
+            sparkJniSingleton = new SparkJni();
+            sparkJniSingleton.initVars(appName, nativePath, jdkPath);
+        }
+        return sparkJniSingleton;
     }
 
-    public static long getLibLoadTime() {
-        return libLoadTime;
+    public static SparkJni getSparkJniSingleton(){
+        return sparkJniSingleton;
     }
-    public static long getGenTime() {
-        return genTime;
-    }
-    public static long getBuildTime() {
-        return buildTime;
-    }
-    static{
+
+    private void initVars(String appName, String nativePath, String jdkPath){
         metadataHandler = MetadataHandler.getHandler();
+        setAppName(appName);
+        setNativePath(nativePath);
+        setJdkPath(jdkPath);
         jniLinkHandler = JniLinkHandler.getJniLinkHandlerSingleton();
     }
 
-    private SparkJni() {}
-
-    /**
-     * Function which triggers the SparkJNI processes.
-     * @param appName The target app name.
-     * @param sparkContext The Spark Context. Leave null if running without Spark.
-     */
-    public static void deploy(String appName, JavaSparkContext sparkContext) {
-        initVars(appName, sparkContext);
+    public void deploy() {
+        start = System.currentTimeMillis();
         processCppContent();
         loadNativeLib();
     }
 
-    private static void initVars(String appName, JavaSparkContext sparkContext){
-        start = System.currentTimeMillis();
-        setAppName(appName);
-        setSparkContext(sparkContext);
-    }
-
-    private static void loadNativeLib(){
-        String libraryFullPath = String.format(LIB_PATH_STR, metadataHandler.getNativePath(), metadataHandler.getAppName());
+    private void loadNativeLib(){
+        String libraryFullPath = JniUtils.generateDefaultLibPath(metadataHandler.getAppName(), metadataHandler.getNativePath());
         if (javaSparkContext != null)
             javaSparkContext.addFile(libraryFullPath);
         else
@@ -90,9 +91,13 @@ public class SparkJni {
         libLoadTime = System.currentTimeMillis() - start;
     }
 
-    private static void processCppContent(){
+    private void processCppContent(){
         checkNativePath();
-        cleanHeaderFiles();
+        try {
+            cleanHeaderFiles();
+        } catch (SoftSparkJniException ex){
+            ex.printStackTrace();
+        }
         if(jniLinkHandler != null)
             jniLinkHandler.deployLink();
         else
@@ -105,23 +110,38 @@ public class SparkJni {
 
         // TO-DO: Populate kernel files.
         generateAndCheckMakefile();
+        generateJniRootContainer();
         generateKernelFiles();
         build();
     }
 
-    private static void cleanHeaderFiles(){
-        JniDirAccessor dirAccessor = new JniDirAccessor(metadataHandler.getNativePath());
-        for(JniHeaderHandler header: dirAccessor.getJniHeaderHandlers())
-            if(header.removeHeaderFile())
-                dirAccessor.getJniHeaderHandlers().remove(header);
+    private void generateJniRootContainer() {
+        jniRootContainer = ImmutableJniRootContainerProvider.builder().build()
+                .buildJniRootContainer(metadataHandler.getNativePath(), metadataHandler.getAppName());
     }
 
-    static void generateKernelFiles(){
-        if (!jniLinkHandler.getKernelFile().writeKernelWrapperFile())
+    private void cleanHeaderFiles() throws SoftSparkJniException{
+        File nativeDir = new File(metadataHandler.getNativePath());
+        if(nativeDir.isDirectory()) {
+            for (File file : nativeDir.listFiles()) {
+                try {
+                    if (JniUtils.isJniNativeFunction(file.toPath()))
+                        file.delete();
+                } catch (IOException ex) {
+                }
+            }
+        }
+    }
+
+    void generateKernelFiles(){
+        String defaultKernelWrapperFileName = JniUtils
+                .generateDefaultHeaderWrapperFileName(metadataHandler.getAppName(), metadataHandler.getNativePath());
+        if (!getKernelFileWrapperHeader().writeKernelWrapperFile())
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
+        getKernelFileForHeader(defaultKernelWrapperFileName).writeKernelFile();
     }
 
-    static void generateAndCheckMakefile(){
+    void generateAndCheckMakefile(){
         if (doGenerateMakefile)
             if (!generateMakefile()) {
                 System.err.println(Messages.MAKEFILE_GENERATION_FAILED_ERROR);
@@ -129,19 +149,19 @@ public class SparkJni {
             }
     }
 
-    static void build(){
+    void build(){
         String nativePath = metadataHandler.getNativePath();
         genTime = System.currentTimeMillis() - start - javahTime;
         start = System.currentTimeMillis();
         if(doBuild) {
-            runProcess(String.format(CppSyntax.EXEC_MAKE_CLEAN, nativePath));
-            runProcess(String.format(CppSyntax.EXEC_MAKE, nativePath));
+            JniUtils.runProcess(String.format(CppSyntax.EXEC_MAKE_CLEAN, nativePath));
+            JniUtils.runProcess(String.format(CppSyntax.EXEC_MAKE, nativePath));
         }
         buildTime = System.currentTimeMillis() - start;
         start = System.currentTimeMillis();
     }
 
-    private static void checkNativePath(){
+    private void checkNativePath(){
         if (metadataHandler.getNativePath() == null) {
             System.err.println(Messages.NATIVE_PATH_NOT_SET);
             System.exit(1);
@@ -157,87 +177,100 @@ public class SparkJni {
      * Enable automatic makefile generation at the end of the deployment stage.
      * @param doGenerateMakefile
      */
-    public static void setDoGenerateMakefile(boolean doGenerateMakefile) {
-        SparkJni.doGenerateMakefile = doGenerateMakefile;
+    public SparkJni setDoGenerateMakefile(boolean doGenerateMakefile) {
+        this.doGenerateMakefile = doGenerateMakefile;
+        return this;
     }
 
     /**
      * Enable building the shared native library.
      * @param doBuild
      */
-    public static void setDoBuild(boolean doBuild) {
-        SparkJni.doBuild = doBuild;
+    public SparkJni setDoBuild(boolean doBuild) {
+        this.doBuild = doBuild;
+        return this;
     }
 
     /**
      * Set the user defines pragma for the build stage flags.
      * @param userDefines
      */
-    public static void setUserDefines(String userDefines) {
+    public SparkJni setUserDefines(String userDefines) {
         metadataHandler.setUserDefines(userDefines);
+        return this;
     }
 
     /**
      * Set the personalized user directories.
      * @param userLibraryDirs
      */
-    public static void setUserLibraryDirs(String userLibraryDirs) {
+    public SparkJni setUserLibraryDirs(String userLibraryDirs) {
         metadataHandler.setUserLibraryDirs(userLibraryDirs);
+        return this;
     }
 
-    public static void setSparkContext(JavaSparkContext javaSparkContext) {
-        SparkJni.javaSparkContext = javaSparkContext;
+    public SparkJni setSparkContext(JavaSparkContext javaSparkContext) {
+        this.javaSparkContext = javaSparkContext;
+        return this;
     }
 
     /**
      * Trigger the writing of the template file.
      * @param doForceOverwriteKernelFiles
      */
-    public static void setDoForceOverwriteKernelFiles(boolean doForceOverwriteKernelFiles) {
-        SparkJni.doForceOverwriteKernelFiles = doForceOverwriteKernelFiles;
+    public SparkJni setDoForceOverwriteKernelFiles(boolean doForceOverwriteKernelFiles) {
+        this.doForceOverwriteKernelFiles = doForceOverwriteKernelFiles;
+        return this;
     }
 
     /**
      * Set the personalized user include directories.
      * @param userIncludeDirs
      */
-    public static void setUserIncludeDirs(String userIncludeDirs) {
+    public SparkJni setUserIncludeDirs(String userIncludeDirs) {
         metadataHandler.setUserIncludeDirs(userIncludeDirs);
+        return this;
     }
 
-    public static void setUserLibraries(String userLibraries) {
+    public SparkJni setUserLibraries(String userLibraries) {
         metadataHandler.setUserLibraries(userLibraries);
+        return this;
     }
 
-    public static void setJdkPath(String jdkPath) {
+    private SparkJni setJdkPath(String jdkPath) {
         metadataHandler.setJdkPath(jdkPath);
+        return this;
     }
 
-    public static void setNativePath(String nativePath) {
+    private SparkJni setNativePath(String nativePath) {
         metadataHandler.setNativePath(nativePath);
+        return this;
     }
 
-    public static void setAppName(String appName) {
+    private SparkJni setAppName(String appName) {
         metadataHandler.setAppName(appName);
+        return this;
     }
 
     /**
      * Register the user-defined jni function.
      * @param jniFunctionClass
      */
-    public static void registerJniFunction(Class jniFunctionClass) {
+    public SparkJni registerJniFunction(Class jniFunctionClass) {
         jniLinkHandler.registerJniFunction(jniFunctionClass);
+        return this;
     }
 
     /**
      * Register the user-defined JavaBean container.
      * @param beanClass
      */
-    public static void registerContainer(Class beanClass) {
+    public SparkJni registerContainer(Class beanClass) {
         jniLinkHandler.registerBean(beanClass);
+        return this;
     }
 
-    private static boolean generateMakefile() {
+    private boolean generateMakefile() {
         String newMakefileContent = String.format(CppSyntax.NEW_MAKEFILE_SECTION,
                 metadataHandler.getAppName(), metadataHandler.getJdkPath(), metadataHandler.getUserIncludeDirs(),
                 metadataHandler.getUserLibraryDirs(), metadataHandler.getUserLibraries(),
@@ -258,7 +291,7 @@ public class SparkJni {
         return true;
     }
 
-    public static boolean collectNativeFunctionPrototypes() {
+    public boolean collectNativeFunctionPrototypes() {
         File nativeLibDir = new File(metadataHandler.getNativePath());
 
         if (nativeLibDir.exists() && nativeLibDir.isDirectory()) {
@@ -294,49 +327,65 @@ public class SparkJni {
             return false;
     }
 
-    public static void runProcess(String proc) {
+    /**
+     * @TO-DO Find faster solution and enable it.
+     */
+    public void loadAnnotatedClasses(){
+        ClassLoader sparkJniClassloader = SparkJni.class.getClassLoader();
         try {
-            Process process = Runtime.getRuntime().exec(proc);
-            InputStream errors = process.getErrorStream(),
-                    input = process.getInputStream();
-            InputStreamReader errorStreamReader = new InputStreamReader(errors),
-                    inputStreamReader = new InputStreamReader(input);
-            BufferedReader errorBufferedReader = new BufferedReader(errorStreamReader),
-                    inputBufferedReader = new BufferedReader(inputStreamReader);
-            String line = null;
-
-            while ((line = errorBufferedReader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            while ((line = inputBufferedReader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            if (process.waitFor() != 0) {
-                throw new HardSparkJniException(String.format("[ERROR] %s:\n\t%s",
-                        Messages.ERR_CPP_BUILD_FAILED, proc));
+            Set<ClassPath.ClassInfo> classesInPackage = ClassPath.from(sparkJniClassloader).getTopLevelClasses();
+            for(ClassPath.ClassInfo classInfo: classesInPackage){
+                try {
+                    Class candidate = Class.forName(classInfo.getName());
+                    if(loadJNIContainersAnnotatedClass(candidate))
+                        continue;
+                    if(loadJNIfuncsAnnotatedClass(candidate))
+                        continue;
+                } catch(Error err){
+                    System.err.println("Error");
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void setUserStaticLibraries(String userStaticLibraries) {
-        metadataHandler.setUserStaticLibraries(userStaticLibraries);
+    private boolean loadJNIfuncsAnnotatedClass(Class candidate) throws Error{
+        Annotation annotation = candidate.getAnnotation(JNI_functionClass.class);
+        if (annotation != null) {
+            registerJniFunction(candidate);
+            System.out.println(String.format("Registered JNI function class %s", candidate.getName()));
+            return true;
+        }
+        return false;
     }
 
-    public static boolean isDoClean() {
+    private boolean loadJNIContainersAnnotatedClass(Class candidate) throws Error{
+        Annotation annotation = candidate.getAnnotation(JNI_class.class);
+        if (annotation != null) {
+            registerContainer(candidate);
+            System.out.println(String.format("Registered JNI container class %s", candidate.getName()));
+            return true;
+        }
+        return false;
+    }
+
+    public SparkJni setUserStaticLibraries(String userStaticLibraries) {
+        metadataHandler.setUserStaticLibraries(userStaticLibraries);
+        return this;
+    }
+
+    public boolean isDoClean() {
         return doClean;
     }
 
-    public static JniLinkHandler getJniHandler() {
+    public JniLinkHandler getJniHandler() {
         return jniLinkHandler;
     }
 
-    public static long getStart() {
+    public long getStart() {
         return start;
     }
 
@@ -345,10 +394,40 @@ public class SparkJni {
      * between application launches. Or transform to singleton.
      */
     public static void reset() {
-        getJniHandler().reset();
+        sparkJniSingleton = null;
+        MetadataHandler.reset();
+        JniLinkHandler.reset();
     }
 
-    public static boolean isDoForceOverwriteKernelFiles() {
+    public boolean isDoForceOverwriteKernelFiles() {
         return doForceOverwriteKernelFiles;
+    }
+
+    public long getJavahTime() {
+        return javahTime;
+    }
+    public long getLibLoadTime() {
+        return libLoadTime;
+    }
+    public long getGenTime() {
+        return genTime;
+    }
+    public long getBuildTime() {
+        return buildTime;
+    }
+
+    public KernelFileWrapperHeader getKernelFileWrapperHeader() {
+        return new KernelFileWrapperHeader(jniLinkHandler.getContainerHeaderFiles(), jniRootContainer);
+    }
+
+    public KernelFile getKernelFileForHeader(String kernelFileName){
+        return ImmutableKernelFile.builder()
+                .jniRootContainer(jniRootContainer)
+                .kernelWrapperFileName(kernelFileName)
+                .build();
+    }
+
+    public JniRootContainer getJniRootContainer() {
+        return jniRootContainer;
     }
 }
