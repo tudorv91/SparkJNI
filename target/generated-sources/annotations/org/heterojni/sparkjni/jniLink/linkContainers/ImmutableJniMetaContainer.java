@@ -25,12 +25,12 @@ import javax.annotation.concurrent.NotThreadSafe;
 @Immutable
 public final class ImmutableJniMetaContainer
     implements JniMetaContainer {
-  private final ImmutableList<JniHeaderContainer> jniHeaderContainers;
+  private final ImmutableList<JniHeader> jniHeaderContainers;
   private final String appName;
   private final String nativePathName;
 
   private ImmutableJniMetaContainer(
-      ImmutableList<JniHeaderContainer> jniHeaderContainers,
+      ImmutableList<JniHeader> jniHeaderContainers,
       String appName,
       String nativePathName) {
     this.jniHeaderContainers = jniHeaderContainers;
@@ -42,7 +42,7 @@ public final class ImmutableJniMetaContainer
    * @return The value of the {@code jniHeaderContainers} attribute
    */
   @Override
-  public ImmutableList<JniHeaderContainer> jniHeaderContainers() {
+  public ImmutableList<JniHeader> jniHeaderContainers() {
     return jniHeaderContainers;
   }
 
@@ -67,8 +67,8 @@ public final class ImmutableJniMetaContainer
    * @param elements The elements to set
    * @return A modified copy of {@code this} object
    */
-  public final ImmutableJniMetaContainer withJniHeaderContainers(JniHeaderContainer... elements) {
-    ImmutableList<JniHeaderContainer> newValue = ImmutableList.copyOf(elements);
+  public final ImmutableJniMetaContainer withJniHeaderContainers(JniHeader... elements) {
+    ImmutableList<JniHeader> newValue = ImmutableList.copyOf(elements);
     return new ImmutableJniMetaContainer(newValue, this.appName, this.nativePathName);
   }
 
@@ -78,9 +78,9 @@ public final class ImmutableJniMetaContainer
    * @param elements An iterable of jniHeaderContainers elements to set
    * @return A modified copy of {@code this} object
    */
-  public final ImmutableJniMetaContainer withJniHeaderContainers(Iterable<? extends JniHeaderContainer> elements) {
+  public final ImmutableJniMetaContainer withJniHeaderContainers(Iterable<? extends JniHeader> elements) {
     if (this.jniHeaderContainers == elements) return this;
-    ImmutableList<JniHeaderContainer> newValue = ImmutableList.copyOf(elements);
+    ImmutableList<JniHeader> newValue = ImmutableList.copyOf(elements);
     return new ImmutableJniMetaContainer(newValue, this.appName, this.nativePathName);
   }
 
@@ -189,7 +189,7 @@ public final class ImmutableJniMetaContainer
     private static final long INIT_BIT_NATIVE_PATH_NAME = 0x2L;
     private long initBits = 0x3L;
 
-    private ImmutableList.Builder<JniHeaderContainer> jniHeaderContainers = ImmutableList.builder();
+    private ImmutableList.Builder<JniHeader> jniHeaderContainers = ImmutableList.builder();
     private @Nullable String appName;
     private @Nullable String nativePathName;
 
@@ -217,7 +217,7 @@ public final class ImmutableJniMetaContainer
      * @param element A jniHeaderContainers element
      * @return {@code this} builder for use in a chained invocation
      */
-    public final Builder addJniHeaderContainers(JniHeaderContainer element) {
+    public final Builder addJniHeaderContainers(JniHeader element) {
       this.jniHeaderContainers.add(element);
       return this;
     }
@@ -227,7 +227,7 @@ public final class ImmutableJniMetaContainer
      * @param elements An array of jniHeaderContainers elements
      * @return {@code this} builder for use in a chained invocation
      */
-    public final Builder addJniHeaderContainers(JniHeaderContainer... elements) {
+    public final Builder addJniHeaderContainers(JniHeader... elements) {
       this.jniHeaderContainers.add(elements);
       return this;
     }
@@ -237,7 +237,7 @@ public final class ImmutableJniMetaContainer
      * @param elements An iterable of jniHeaderContainers elements
      * @return {@code this} builder for use in a chained invocation
      */
-    public final Builder jniHeaderContainers(Iterable<? extends JniHeaderContainer> elements) {
+    public final Builder jniHeaderContainers(Iterable<? extends JniHeader> elements) {
       this.jniHeaderContainers = ImmutableList.builder();
       return addAllJniHeaderContainers(elements);
     }
@@ -247,7 +247,7 @@ public final class ImmutableJniMetaContainer
      * @param elements An iterable of jniHeaderContainers elements
      * @return {@code this} builder for use in a chained invocation
      */
-    public final Builder addAllJniHeaderContainers(Iterable<? extends JniHeaderContainer> elements) {
+    public final Builder addAllJniHeaderContainers(Iterable<? extends JniHeader> elements) {
       this.jniHeaderContainers.addAll(elements);
       return this;
     }

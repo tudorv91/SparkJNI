@@ -1,14 +1,17 @@
 package org.heterojni.examples.vectorOps;
 
+import com.google.common.base.Optional;
 import org.apache.spark.api.java.JavaRDD;
 import org.heterojni.TestUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniHeader;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.utils.JniUtils;
+import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
+import org.junit.*;
 import org.heterojni.sparkjni.utils.SparkJni;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -20,27 +23,25 @@ public class VectorOpsMainTest {
     private static int vectorSize = 64;
     private static ArrayList<VectorBean> vectorOfBeans;
     private static TestUtils testUtils;
+    private static SparkJni sparkJni;
 
     @Before
     public void init(){
-        testUtils = new TestUtils(this.getClass());
+        testUtils = new TestUtils(VectorOpsMainTest.class);
         testUtils.initTestDir();
-        assertNotNull(TestUtils.jdkPath);
+        assertNotNull(testUtils.jdkPath);
         initSparkJNI();
         generateVectors();
     }
 
-    public void initSparkJNI(){
-        SparkJni.setJdkPath(testUtils.jdkPath);
-        SparkJni.setNativePath(testUtils.fullPath);
-        SparkJni.setDoGenerateMakefile(true);
-        SparkJni.setDoBuild(true);
-
-        SparkJni.registerContainer(VectorBean.class);
-        SparkJni.registerJniFunction(VectorMulJni.class);
-        SparkJni.registerJniFunction(VectorAddJni.class);
-        SparkJni.getJniHandler().getKernelFile();
-        SparkJni.deploy(testUtils.appName, null);
+    public static void initSparkJNI(){
+        sparkJni = testUtils.getSparkJni()
+                .setDoGenerateMakefile(true)
+                .setDoBuild(true);
+        sparkJni.registerContainer(VectorBean.class);
+        sparkJni.registerJniFunction(VectorMulJni.class)
+                .registerJniFunction(VectorAddJni.class)
+                .deploy();
     }
 
     private static void generateVectors(){
@@ -66,8 +67,21 @@ public class VectorOpsMainTest {
     }
 
     @Test
+    public void jniRootContainerTest(){
+        JniRootContainer jniRootContainer = sparkJni.getJniRootContainer();
+        assertEquals(testUtils.appName, jniRootContainer.appName());
+
+        List<JniHeader> jniHeaders = jniRootContainer.jniHeaders();
+        assertEquals(2, jniHeaders.size());
+
+        for(JniHeader jniHeader: jniHeaders){
+            assertTrue(jniHeader.jniHeaderFile().exists());
+        }
+    }
+
+    @Test
     public void vectorOpsTest(){
-        String libPath = String.format("%s/%s.so", testUtils.fullPath, testUtils.appName);
+        String libPath = JniUtils.generateDefaultLibPath(testUtils.appName, testUtils.fullPath);
         JavaRDD<VectorBean> vectorsRdd = testUtils.getSparkContext().parallelize(vectorOfBeans);
         JavaRDD<VectorBean> mulResults = vectorsRdd.map(new VectorMulJni(libPath, "mapVectorMul"));
         VectorBean results = mulResults.reduce(new VectorAddJni(libPath, "reduceVectorAdd"));
@@ -75,12 +89,7 @@ public class VectorOpsMainTest {
     }
 
     @After
-    public static void clean(){
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void clean(){
         testUtils.cleanTestDir();
     }
 }

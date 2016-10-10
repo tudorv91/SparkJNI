@@ -1,6 +1,6 @@
 package org.heterojni.examples.vectorOps;
 
-import org.heterojni.sparkjni.jniFunctions.JniMapFunction;
+import org.heterojni.sparkjni.jniLink.jniFunctions.JniMapFunction;
 
 /**
  * Created by root on 9/8/16.

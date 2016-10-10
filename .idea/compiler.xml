@@ -27,6 +27,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="1.7">
       <module name="SparkJNI" target="1.7" />
+      <module name="SparkJniExamples" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

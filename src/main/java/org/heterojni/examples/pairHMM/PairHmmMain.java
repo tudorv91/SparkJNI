@@ -5,6 +5,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.heterojni.sparkjni.utils.SparkJni;
+import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
 import scala.Tuple2;
 
 import java.io.*;
@@ -24,6 +25,7 @@ public class PairHmmMain {
             nativePath = "/home/tudor/Desktop/Thesis/projects/PairHMM_TACC",
             nativeFuncName = "calculateSoftware";
     private static int noLines = 32768;
+    private static SparkJni sparkJni;
     public static JavaSparkContext getSparkContext(){
         if(jscSingleton == null){
             SparkConf sparkConf = new SparkConf().setAppName(appName);
@@ -44,40 +46,44 @@ public class PairHmmMain {
             System.out.println("Usage: <nativePath> <appName> <jdkPath> <CPP/FPGA> <NO_LINES>");
         }
 
+        sparkJni = new SparkJniSingletonBuilder()
+                .appName(appName)
+                .jdkPath(jdkPath)
+                .nativePath(nativePath)
+                .build();
+
         if(modeString.equals("FPGA")) {
-            SparkJni.setUserIncludeDirs("/tools/ppc_64/libcxl");
-            SparkJni.setUserLibraryDirs("/tools/ppc_64/libcxl");
-            SparkJni.setUserStaticLibraries("/tools/ppc_64/libcxl/libcxl.a");
-            SparkJni.setUserDefines("FPGA_GO");
+            sparkJni.setUserIncludeDirs("/tools/ppc_64/libcxl")
+                    .setUserLibraryDirs("/tools/ppc_64/libcxl")
+                    .setUserStaticLibraries("/tools/ppc_64/libcxl/libcxl.a")
+                    .setUserDefines("FPGA_GO");
             nativeFuncName = "calculateHardware";
         } else {
-            SparkJni.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
-            SparkJni.setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
+            sparkJni.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl")
+                    .setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
         }
 
-        SparkJni.setJdkPath(jdkPath);
-        SparkJni.setNativePath(nativePath);
-        SparkJni.setDoGenerateMakefile(true);
-        SparkJni.setDoBuild(true);
+        sparkJni.setDoGenerateMakefile(true)
+                .setDoBuild(true);
 
-        SparkJni.registerJniFunction(PairHmmJniFunction.class);
-        SparkJni.registerJniFunction(LoadSizesJniFunction.class);
-        SparkJni.registerJniFunction(DataLoaderJniFunction.class);
-        SparkJni.registerContainer(WorkloadPairHmmBean.class);
-        SparkJni.registerContainer(PairHmmBean.class);
-        SparkJni.registerContainer(SizesBean.class);
-        SparkJni.registerContainer(ByteArrBean.class);
-        SparkJni.deploy(appName, null);
+        sparkJni.registerJniFunction(PairHmmJniFunction.class)
+                .registerJniFunction(LoadSizesJniFunction.class)
+                .registerJniFunction(DataLoaderJniFunction.class)
+                .registerContainer(WorkloadPairHmmBean.class)
+                .registerContainer(PairHmmBean.class)
+                .registerContainer(SizesBean.class)
+                .registerContainer(ByteArrBean.class)
+                .deploy();
     }
 
     public static void main(String[] args) throws Exception {
         initSparkJNI(args);
         createFile();
         String libPath = nativePath + "/pairhmm.so";
-        appendToFile(String.valueOf(SparkJni.getGenTime()/1000.0f)+",");
-        appendToFile(String.valueOf(SparkJni.getJavahTime()/1000.0f)+",");
-        appendToFile(String.valueOf(SparkJni.getBuildTime()/1000.0f)+",");
-        appendToFile(String.valueOf(SparkJni.getLibLoadTime()/1000.0f)+",");
+        appendToFile(String.valueOf(sparkJni.getGenTime()/1000.0f)+",");
+        appendToFile(String.valueOf(sparkJni.getJavahTime()/1000.0f)+",");
+        appendToFile(String.valueOf(sparkJni.getBuildTime()/1000.0f)+",");
+        appendToFile(String.valueOf(sparkJni.getLibLoadTime()/1000.0f)+",");
 
         ArrayList<SizesBean> dummySizesCollection = new ArrayList<>();
         dummySizesCollection.add(loadSizes(nativePath+ "/sizes.txt", noLines));

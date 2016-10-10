@@ -1,9 +1,11 @@
 package org.heterojni.sparkjni.utils;
 
-import org.heterojni.sparkjni.annotations.JNI_field;
-import org.heterojni.sparkjni.annotations.JNI_method;
-import org.heterojni.sparkjni.annotations.JNI_param;
-import org.heterojni.sparkjni.fields.CppField;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_field;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_method;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_param;
+import org.heterojni.sparkjni.dataLink.CppBean;
+import org.heterojni.sparkjni.dataLink.JavaBean;
+import org.heterojni.sparkjni.utils.cpp.fields.CppField;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +32,7 @@ public class CppBeanTest {
 
     @Before
     public void init(){
-        classUT = new CppBean(BeanClass.class);
+        classUT = new CppBean(BeanClass.class, "some");
     }
 
     @Test

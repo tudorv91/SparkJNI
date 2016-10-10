@@ -1,5 +1,5 @@
 package org.heterojni.examples.pairHMM;
-import org.heterojni.sparkjni.jniFunctions.JniMapFunction;
+import org.heterojni.sparkjni.jniLink.jniFunctions.JniMapFunction;
 
 /**
  * Created by root on 8/17/16.

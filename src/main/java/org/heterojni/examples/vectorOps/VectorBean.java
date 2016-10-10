@@ -1,10 +1,10 @@
 package org.heterojni.examples.vectorOps;
 
-import org.heterojni.sparkjni.annotations.JNI_field;
-import org.heterojni.sparkjni.annotations.JNI_method;
-import org.heterojni.sparkjni.annotations.JNI_param;
-import org.heterojni.sparkjni.annotations.JNI_class;
-import org.heterojni.sparkjni.utils.JavaBean;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_class;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_field;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_method;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_param;
+import org.heterojni.sparkjni.dataLink.JavaBean;
 
 import java.util.Arrays;
 
