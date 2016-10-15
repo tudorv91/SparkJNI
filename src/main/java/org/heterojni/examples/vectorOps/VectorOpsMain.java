@@ -3,6 +3,7 @@ package org.heterojni.examples.vectorOps;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.heterojni.sparkjni.utils.CppSyntax;
 import org.heterojni.sparkjni.utils.SparkJni;
 import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
 
@@ -67,7 +68,7 @@ public class VectorOpsMain {
 
     public static void main(String[] args){
         initSparkJNI(args);
-        String libPath = String.format("%s/%s.so", nativePath, appName);
+        String libPath = String.format(CppSyntax.NATIVE_LIB_PATH, nativePath, appName);
         JavaRDD<VectorBean> vectorsRdd = getSparkContext().parallelize(generateVectors(2, 4));
         JavaRDD<VectorBean> mulResults = vectorsRdd.map(new VectorMulJni(libPath, "mapVectorMul"));
         VectorBean results = mulResults.reduce(new VectorAddJni(libPath, "reduceVectorAdd"));

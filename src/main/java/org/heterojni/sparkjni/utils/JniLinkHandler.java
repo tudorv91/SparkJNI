@@ -45,10 +45,11 @@ public class JniLinkHandler {
         registeredJavaContainers.add(beanClass);
     }
 
-    public void deployLink(){
+    public void deployLink(boolean doWriteClasses){
         if (!generateCppBeanClasses())
             throw new RuntimeException(Messages.ERR_CPP_FILE_GENERATION_FAILED);
-        writeCppHeaderPairs();
+        if(doWriteClasses)
+            writeCppHeaderPairs();
     }
 
     public boolean generateCppBeanClasses() {
