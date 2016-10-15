@@ -23,7 +23,7 @@ import org.heterojni.sparkjni.dataLink.CppBean;
 @ParametersAreNonnullByDefault
 @Generated({"Immutables.generator", "TypeMapper"})
 @Immutable
-public final class ImmutableTypeMapper implements TypeMapper {
+public final class ImmutableTypeMapper extends TypeMapper {
   private final Class javaType;
   private final CppBean cppType;
   private final String jniType;
@@ -92,23 +92,6 @@ public final class ImmutableTypeMapper implements TypeMapper {
     if (this.jniType.equals(value)) return this;
     String newValue = Preconditions.checkNotNull(value, "jniType");
     return new ImmutableTypeMapper(this.javaType, this.cppType, newValue);
-  }
-
-  /**
-   * This instance is equal to all instances of {@code ImmutableTypeMapper} that have equal attribute values.
-   * @return {@code true} if {@code this} is equal to {@code another} instance
-   */
-  @Override
-  public boolean equals(@Nullable Object another) {
-    if (this == another) return true;
-    return another instanceof ImmutableTypeMapper
-        && equalTo((ImmutableTypeMapper) another);
-  }
-
-  private boolean equalTo(ImmutableTypeMapper another) {
-    return javaType.equals(another.javaType)
-        && cppType.equals(another.cppType)
-        && jniType.equals(another.jniType);
   }
 
   /**

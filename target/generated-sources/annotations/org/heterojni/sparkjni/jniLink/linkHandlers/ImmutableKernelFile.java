@@ -2,15 +2,16 @@ package org.heterojni.sparkjni.jniLink.linkHandlers;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.List;
+
 import javax.annotation.Generated;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import java.util.List;
 
 /**
  * Immutable implementation of {@link KernelFile}.
@@ -24,22 +25,17 @@ import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
 @Generated({"Immutables.generator", "KernelFile"})
 @Immutable
 public final class ImmutableKernelFile extends KernelFile {
-  private final JniRootContainer jniRootContainer;
   private final String kernelWrapperFileName;
+  private final ImmutableList<UserNativeFunction> userNativeFunctions;
+  private final String nativePath;
 
   private ImmutableKernelFile(
-      JniRootContainer jniRootContainer,
-      String kernelWrapperFileName) {
-    this.jniRootContainer = jniRootContainer;
+      String kernelWrapperFileName,
+      ImmutableList<UserNativeFunction> userNativeFunctions,
+      String nativePath) {
     this.kernelWrapperFileName = kernelWrapperFileName;
-  }
-
-  /**
-   * @return The value of the {@code jniRootContainer} attribute
-   */
-  @Override
-  public JniRootContainer jniRootContainer() {
-    return jniRootContainer;
+    this.userNativeFunctions = userNativeFunctions;
+    this.nativePath = nativePath;
   }
 
   /**
@@ -51,15 +47,19 @@ public final class ImmutableKernelFile extends KernelFile {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link KernelFile#jniRootContainer() jniRootContainer} attribute.
-   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for jniRootContainer
-   * @return A modified copy of the {@code this} object
+   * @return The value of the {@code userNativeFunctions} attribute
    */
-  public final ImmutableKernelFile withJniRootContainer(JniRootContainer value) {
-    if (this.jniRootContainer == value) return this;
-    JniRootContainer newValue = Preconditions.checkNotNull(value, "jniRootContainer");
-    return new ImmutableKernelFile(newValue, this.kernelWrapperFileName);
+  @Override
+  public ImmutableList<UserNativeFunction> userNativeFunctions() {
+    return userNativeFunctions;
+  }
+
+  /**
+   * @return The value of the {@code nativePath} attribute
+   */
+  @Override
+  public String nativePath() {
+    return nativePath;
   }
 
   /**
@@ -71,7 +71,41 @@ public final class ImmutableKernelFile extends KernelFile {
   public final ImmutableKernelFile withKernelWrapperFileName(String value) {
     if (this.kernelWrapperFileName.equals(value)) return this;
     String newValue = Preconditions.checkNotNull(value, "kernelWrapperFileName");
-    return new ImmutableKernelFile(this.jniRootContainer, newValue);
+    return new ImmutableKernelFile(newValue, this.userNativeFunctions, this.nativePath);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link KernelFile#userNativeFunctions() userNativeFunctions}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ImmutableKernelFile withUserNativeFunctions(UserNativeFunction... elements) {
+    ImmutableList<UserNativeFunction> newValue = ImmutableList.copyOf(elements);
+    return new ImmutableKernelFile(this.kernelWrapperFileName, newValue, this.nativePath);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link KernelFile#userNativeFunctions() userNativeFunctions}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of userNativeFunctions elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ImmutableKernelFile withUserNativeFunctions(Iterable<? extends UserNativeFunction> elements) {
+    if (this.userNativeFunctions == elements) return this;
+    ImmutableList<UserNativeFunction> newValue = ImmutableList.copyOf(elements);
+    return new ImmutableKernelFile(this.kernelWrapperFileName, newValue, this.nativePath);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link KernelFile#nativePath() nativePath} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for nativePath
+   * @return A modified copy of the {@code this} object
+   */
+  public final ImmutableKernelFile withNativePath(String value) {
+    if (this.nativePath.equals(value)) return this;
+    String newValue = Preconditions.checkNotNull(value, "nativePath");
+    return new ImmutableKernelFile(this.kernelWrapperFileName, this.userNativeFunctions, newValue);
   }
 
   /**
@@ -86,19 +120,21 @@ public final class ImmutableKernelFile extends KernelFile {
   }
 
   private boolean equalTo(ImmutableKernelFile another) {
-    return jniRootContainer.equals(another.jniRootContainer)
-        && kernelWrapperFileName.equals(another.kernelWrapperFileName);
+    return kernelWrapperFileName.equals(another.kernelWrapperFileName)
+        && userNativeFunctions.equals(another.userNativeFunctions)
+        && nativePath.equals(another.nativePath);
   }
 
   /**
-   * Computes a hash code from attributes: {@code jniRootContainer}, {@code kernelWrapperFileName}.
+   * Computes a hash code from attributes: {@code kernelWrapperFileName}, {@code userNativeFunctions}, {@code nativePath}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 31;
-    h = h * 17 + jniRootContainer.hashCode();
     h = h * 17 + kernelWrapperFileName.hashCode();
+    h = h * 17 + userNativeFunctions.hashCode();
+    h = h * 17 + nativePath.hashCode();
     return h;
   }
 
@@ -110,8 +146,9 @@ public final class ImmutableKernelFile extends KernelFile {
   public String toString() {
     return MoreObjects.toStringHelper("KernelFile")
         .omitNullValues()
-        .add("jniRootContainer", jniRootContainer)
         .add("kernelWrapperFileName", kernelWrapperFileName)
+        .add("userNativeFunctions", userNativeFunctions)
+        .add("nativePath", nativePath)
         .toString();
   }
 
@@ -148,12 +185,13 @@ public final class ImmutableKernelFile extends KernelFile {
    */
   @NotThreadSafe
   public static final class Builder {
-    private static final long INIT_BIT_JNI_ROOT_CONTAINER = 0x1L;
-    private static final long INIT_BIT_KERNEL_WRAPPER_FILE_NAME = 0x2L;
+    private static final long INIT_BIT_KERNEL_WRAPPER_FILE_NAME = 0x1L;
+    private static final long INIT_BIT_NATIVE_PATH = 0x2L;
     private long initBits = 0x3L;
 
-    private @Nullable JniRootContainer jniRootContainer;
     private @Nullable String kernelWrapperFileName;
+    private ImmutableList.Builder<UserNativeFunction> userNativeFunctions = ImmutableList.builder();
+    private @Nullable String nativePath;
 
     private Builder() {
     }
@@ -162,24 +200,15 @@ public final class ImmutableKernelFile extends KernelFile {
      * Fill a builder with attribute values from the provided {@code KernelFile} instance.
      * Regular attribute values will be replaced with those from the given instance.
      * Absent optional values will not replace present values.
+     * Collection elements and entries will be added, not replaced.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     public final Builder from(KernelFile instance) {
       Preconditions.checkNotNull(instance, "instance");
-      jniRootContainer(instance.jniRootContainer());
       kernelWrapperFileName(instance.kernelWrapperFileName());
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link KernelFile#jniRootContainer() jniRootContainer} attribute.
-     * @param jniRootContainer The value for jniRootContainer 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    public final Builder jniRootContainer(JniRootContainer jniRootContainer) {
-      this.jniRootContainer = Preconditions.checkNotNull(jniRootContainer, "jniRootContainer");
-      initBits &= ~INIT_BIT_JNI_ROOT_CONTAINER;
+      addAllUserNativeFunctions(instance.userNativeFunctions());
+      nativePath(instance.nativePath());
       return this;
     }
 
@@ -195,6 +224,57 @@ public final class ImmutableKernelFile extends KernelFile {
     }
 
     /**
+     * Adds one element to {@link KernelFile#userNativeFunctions() userNativeFunctions} list.
+     * @param element A userNativeFunctions element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    public final Builder addUserNativeFunctions(UserNativeFunction element) {
+      this.userNativeFunctions.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link KernelFile#userNativeFunctions() userNativeFunctions} list.
+     * @param elements An array of userNativeFunctions elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    public final Builder addUserNativeFunctions(UserNativeFunction... elements) {
+      this.userNativeFunctions.add(elements);
+      return this;
+    }
+
+    /**
+     * Sets or replaces all elements for {@link KernelFile#userNativeFunctions() userNativeFunctions} list.
+     * @param elements An iterable of userNativeFunctions elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    public final Builder userNativeFunctions(Iterable<? extends UserNativeFunction> elements) {
+      this.userNativeFunctions = ImmutableList.builder();
+      return addAllUserNativeFunctions(elements);
+    }
+
+    /**
+     * Adds elements to {@link KernelFile#userNativeFunctions() userNativeFunctions} list.
+     * @param elements An iterable of userNativeFunctions elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    public final Builder addAllUserNativeFunctions(Iterable<? extends UserNativeFunction> elements) {
+      this.userNativeFunctions.addAll(elements);
+      return this;
+    }
+
+    /**
+     * Initializes the value for the {@link KernelFile#nativePath() nativePath} attribute.
+     * @param nativePath The value for nativePath 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    public final Builder nativePath(String nativePath) {
+      this.nativePath = Preconditions.checkNotNull(nativePath, "nativePath");
+      initBits &= ~INIT_BIT_NATIVE_PATH;
+      return this;
+    }
+
+    /**
      * Builds a new {@link ImmutableKernelFile ImmutableKernelFile}.
      * @return An immutable instance of KernelFile
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -203,13 +283,13 @@ public final class ImmutableKernelFile extends KernelFile {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new ImmutableKernelFile(jniRootContainer, kernelWrapperFileName);
+      return new ImmutableKernelFile(kernelWrapperFileName, userNativeFunctions.build(), nativePath);
     }
 
     private String formatRequiredAttributesMessage() {
       List<String> attributes = Lists.newArrayList();
-      if ((initBits & INIT_BIT_JNI_ROOT_CONTAINER) != 0) attributes.add("jniRootContainer");
       if ((initBits & INIT_BIT_KERNEL_WRAPPER_FILE_NAME) != 0) attributes.add("kernelWrapperFileName");
+      if ((initBits & INIT_BIT_NATIVE_PATH) != 0) attributes.add("nativePath");
       return "Cannot build KernelFile, some of required attributes are not set " + attributes;
     }
   }

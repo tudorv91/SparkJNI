@@ -15,29 +15,35 @@
  */
 package org.heterojni.sparkjni.utils;
 
+import com.google.common.base.Optional;
 import com.google.common.reflect.ClassPath;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.heterojni.sparkjni.jniLink.linkHandlers.*;
-import org.heterojni.sparkjni.utils.jniAnnotations.JNI_class;
-import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.jniLink.linkHandlers.ImmutableJniRootContainerProvider;
+import org.heterojni.sparkjni.jniLink.linkHandlers.KernelFile;
+import org.heterojni.sparkjni.jniLink.linkHandlers.KernelFileWrapperHeader;
+import org.heterojni.sparkjni.jniLink.linkHandlers.UserNativeFunction;
 import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
 import org.heterojni.sparkjni.utils.exceptions.Messages;
 import org.heterojni.sparkjni.utils.exceptions.SoftSparkJniException;
-import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_class;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
 import org.immutables.builder.Builder;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Top level class with static functionality that handles the SparkJNI execution.
  */
 public class SparkJni {
+    private boolean doForceOverwriteKernelFiles = true;
     private boolean doClean = true;
     private boolean doBuild = true;
     private boolean doGenerateMakefile = true;
-    private boolean doForceOverwriteKernelFiles = true;
 
     private static JniLinkHandler jniLinkHandler;
     private static MetadataHandler metadataHandler;
@@ -52,6 +58,15 @@ public class SparkJni {
     private long libLoadTime = 0L;
     private long javahTime = 0L;
     private static SparkJni sparkJniSingleton = null;
+
+    private HashMap<String, String> functionCodeInjectorMap;
+
+    public SparkJni doWriteLinkClasses(boolean writeLinkClasses) {
+        this.writeLinkClasses = writeLinkClasses;
+        return this;
+    }
+
+    private boolean writeLinkClasses = true;
 
     private SparkJni(){}
 
@@ -82,6 +97,11 @@ public class SparkJni {
         loadNativeLib();
     }
 
+    public void deployWithCodeInjections(HashMap<String, String> functionCodeInjectorMap){
+        this.functionCodeInjectorMap = functionCodeInjectorMap;
+        deploy();
+    }
+
     private void loadNativeLib(){
         String libraryFullPath = JniUtils.generateDefaultLibPath(metadataHandler.getAppName(), metadataHandler.getNativePath());
         if (javaSparkContext != null)
@@ -98,8 +118,9 @@ public class SparkJni {
         } catch (SoftSparkJniException ex){
             ex.printStackTrace();
         }
+
         if(jniLinkHandler != null)
-            jniLinkHandler.deployLink();
+            jniLinkHandler.deployLink(writeLinkClasses);
         else
             throw new RuntimeException("NOT SET");
 
@@ -133,12 +154,26 @@ public class SparkJni {
         }
     }
 
-    void generateKernelFiles(){
-        String defaultKernelWrapperFileName = JniUtils
-                .generateDefaultHeaderWrapperFileName(metadataHandler.getAppName(), metadataHandler.getNativePath());
-        if (!getKernelFileWrapperHeader().writeKernelWrapperFile())
+    public void generateKernelFiles(){
+        KernelFileWrapperHeader kernelFileWrapperHeader = getKernelFileWrapperHeader();
+        if (kernelFileWrapperHeader == null || !kernelFileWrapperHeader.writeKernelWrapperFile())
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
-        getKernelFileForHeader(defaultKernelWrapperFileName).writeKernelFile();
+        if(doForceOverwriteKernelFiles) {
+            KernelFile kernelFile = kernelFileWrapperHeader.getKernelFile();
+            if(functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty())
+                injectFunctionCodeBody(kernelFile.userNativeFunctions());
+            kernelFile.writeKernelFile();
+        }
+    }
+
+    private void injectFunctionCodeBody(List<UserNativeFunction> userNativeFunctions) {
+        for(UserNativeFunction userNativeFunction: userNativeFunctions){
+            String functionName = userNativeFunction.functionSignatureMapper().functionNameMapper().cppName();
+            String codeBody = functionCodeInjectorMap.get(functionName);
+            if(codeBody == null)
+                continue;
+            userNativeFunction.setFunctionBodyCodeInsertion(Optional.of(codeBody));
+        }
     }
 
     void generateAndCheckMakefile(){
@@ -345,9 +380,7 @@ public class SparkJni {
                     System.err.println("Error");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -418,13 +451,6 @@ public class SparkJni {
 
     public KernelFileWrapperHeader getKernelFileWrapperHeader() {
         return new KernelFileWrapperHeader(jniLinkHandler.getContainerHeaderFiles(), jniRootContainer);
-    }
-
-    public KernelFile getKernelFileForHeader(String kernelFileName){
-        return ImmutableKernelFile.builder()
-                .jniRootContainer(jniRootContainer)
-                .kernelWrapperFileName(kernelFileName)
-                .build();
     }
 
     public JniRootContainer getJniRootContainer() {

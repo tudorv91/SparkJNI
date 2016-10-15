@@ -2,17 +2,16 @@ package org.heterojni.sparkjni.jniLink;
 
 import org.heterojni.TestUtils;
 import org.heterojni.examples.vectorOps.VectorBean;
-import org.heterojni.sparkjni.jniLink.linkHandlers.FunctionSignatureMapperProvider;
-import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
 import org.heterojni.sparkjni.jniLink.jniFunctions.JniMapFunction;
 import org.heterojni.sparkjni.jniLink.jniFunctions.JniReduceFunction;
 import org.heterojni.sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
 import org.heterojni.sparkjni.jniLink.linkContainers.JniHeader;
 import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.jniLink.linkHandlers.FunctionSignatureMapperProvider;
 import org.heterojni.sparkjni.jniLink.linkHandlers.ImmutableJniRootContainerProvider;
-import org.heterojni.sparkjni.utils.JniLinkHandler;
 import org.heterojni.sparkjni.utils.JniUtils;
 import org.heterojni.sparkjni.utils.SparkJni;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,7 +65,7 @@ public class FunctionSignatureMapperProviderTest {
         sparkJni.getJniHandler().javah(JniUtils.getClasspath());
         jniRootContainer = ImmutableJniRootContainerProvider.builder().build()
                 .buildJniRootContainer(testUtils.defaultTestFolder, testUtils.appName);
-        sparkJni.getJniHandler().deployLink();
+        sparkJni.getJniHandler().deployLink(true);
     }
 
     @After

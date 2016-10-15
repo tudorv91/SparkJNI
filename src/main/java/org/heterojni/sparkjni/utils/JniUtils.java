@@ -16,6 +16,7 @@
 
 package org.heterojni.sparkjni.utils;//package org.apache.spark.examples;
 
+import org.heterojni.sparkjni.dataLink.CppBean;
 import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
 import org.heterojni.sparkjni.utils.exceptions.Messages;
 
@@ -28,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 
 /**
  * Created by Tudor on 7/6/2016.
@@ -255,15 +257,15 @@ public class JniUtils {
     }
 
     public static String generateDefaultHeaderWrapperFileName(String appName, String nativePath){
-        return String.format("%s/%s.h", nativePath, appName);
+        return String.format(CppSyntax.KERNEL_WRAPPER_HEADER_PATH, nativePath, appName);
     }
 
     public static String generateDefaultKernelFileName(String appName, String nativePath){
-        return String.format("%s/%s.cpp", nativePath, appName);
+        return String.format(CppSyntax.KERNEL_PATH_STR, nativePath, appName);
     }
 
     public static String generateDefaultLibPath(String appName, String nativePath) {
-        return String.format("%s/%s.so", nativePath, appName);
+        return String.format(CppSyntax.NATIVE_LIB_PATH, nativePath, appName);
     }
 
     public static void runProcess(String proc) {
@@ -294,5 +296,39 @@ public class JniUtils {
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
+    }
+
+    /**
+     *
+     * @param cppBean The Cpp Bean container.
+     * @param prefix of the variable name to be added before the CppBean name. Leave null if not desired.
+     * @param idx for uniquely identifying objects of the same type.
+     * @return
+     */
+    public static String generateCppVariableName(CppBean cppBean, String prefix, int idx) {
+        String idStr = String.format("%s%d", cppBean.getCppClassName().toLowerCase(), idx);
+        prefix = prefix == null ? "" : prefix;
+        return prefix.isEmpty() ? idStr : prefix + firstLetterCaps(idStr);
+    }
+
+    public static String generateJniPathForClass(Class clazz) {
+        return clazz.getCanonicalName().replaceAll(".", "/");
+    }
+
+    public static String generateClassNameVariableName(CppBean cppBean, HashSet<String> jClassObjectsSet) {
+        String candidateClassObjectName = getClassDefObjectVariableName(cppBean);
+        if(jClassObjectsSet != null) {
+            if (jClassObjectsSet.contains(candidateClassObjectName))
+                return "";
+            else {
+                jClassObjectsSet.add(candidateClassObjectName);
+            }
+        }
+
+        return candidateClassObjectName;
+    }
+
+    public static String getClassDefObjectVariableName(CppBean cppBean) {
+        return String.format(CppSyntax.JNI_CLASSNAME_STR, cppBean.getCppClassName().toLowerCase());
     }
 }
