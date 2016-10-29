@@ -1,20 +1,20 @@
 package org.heterojni.sparkjni.utils;
 
-public class BuildMode {
+public class DeployMode {
     protected boolean doJavah;
     protected boolean doClean = true;
     protected boolean doBuild = true;
     protected boolean doGenerateMakefile = true;
     protected boolean doForceOverwriteKernelFiles = true;
 
-    public enum BuildModes {
+    public enum DeployModes {
             FULL_GENERATE_AND_BUILD,
             JAVAH_MAKEFILE_AND_BUILD,
             JUST_BUILD,
             ASSUME_EVERYTHING_IS_THERE
     }
 
-    public BuildMode(BuildModes buildMode) {
+    public DeployMode(DeployModes buildMode) {
         switch (buildMode) {
             case FULL_GENERATE_AND_BUILD:
                 doBuild = true;
