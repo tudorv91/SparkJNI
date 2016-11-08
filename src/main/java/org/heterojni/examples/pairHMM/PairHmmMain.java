@@ -4,6 +4,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import org.heterojni.sparkjni.utils.DeployTimesLogger;
 import org.heterojni.sparkjni.utils.SparkJni;
 import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
 import scala.Tuple2;
@@ -63,9 +64,6 @@ public class PairHmmMain {
                     .setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
         }
 
-        sparkJni.setDoGenerateMakefile(true)
-                .setDoBuild(true);
-
         sparkJni.registerJniFunction(PairHmmJniFunction.class)
                 .registerJniFunction(LoadSizesJniFunction.class)
                 .registerJniFunction(DataLoaderJniFunction.class)
@@ -80,10 +78,11 @@ public class PairHmmMain {
         initSparkJNI(args);
         createFile();
         String libPath = nativePath + "/pairhmm.so";
-        appendToFile(String.valueOf(sparkJni.getGenTime()/1000.0f)+",");
-        appendToFile(String.valueOf(sparkJni.getJavahTime()/1000.0f)+",");
-        appendToFile(String.valueOf(sparkJni.getBuildTime()/1000.0f)+",");
-        appendToFile(String.valueOf(sparkJni.getLibLoadTime()/1000.0f)+",");
+        DeployTimesLogger deployTimesLogger = sparkJni.getDeployTimesLogger();
+        appendToFile(String.valueOf(deployTimesLogger.getGenTime()/1000.0f)+",");
+        appendToFile(String.valueOf(deployTimesLogger.getJavahTime()/1000.0f)+",");
+        appendToFile(String.valueOf(deployTimesLogger.getBuildTime()/1000.0f)+",");
+        appendToFile(String.valueOf(deployTimesLogger.getLibLoadTime()/1000.0f)+",");
 
         ArrayList<SizesBean> dummySizesCollection = new ArrayList<>();
         dummySizesCollection.add(loadSizes(nativePath+ "/sizes.txt", noLines));
