@@ -35,9 +35,7 @@ public class VectorOpsMainTest {
     }
 
     public static void initSparkJNI(){
-        sparkJni = testUtils.getSparkJni()
-                .setDoGenerateMakefile(true)
-                .setDoBuild(true);
+        sparkJni = testUtils.getSparkJni();
         sparkJni.registerContainer(VectorBean.class);
         sparkJni.registerJniFunction(VectorMulJni.class)
                 .registerJniFunction(VectorAddJni.class)

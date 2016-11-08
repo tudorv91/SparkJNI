@@ -40,9 +40,6 @@ public class VectorOpsMain {
                 .appName(appName)
                 .build();
 
-        sparkJni.setDoGenerateMakefile(true)
-                .setDoBuild(true);
-
         sparkJni.registerContainer(VectorBean.class)
                 .registerJniFunction(VectorMulJni.class)
                 .registerJniFunction(VectorAddJni.class);
