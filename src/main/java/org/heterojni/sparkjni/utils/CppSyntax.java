@@ -1,8 +1,20 @@
+/**
+ * Copyright 2016 Tudor Alexandru Voicu and Zaid Al-Ars, TUDelft
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.heterojni.sparkjni.utils;
 
-/**
- * Created by root on 9/24/16.
- */
 public class CppSyntax {
     public static final String DESTRUCTOR_STR = "%s::~%s() {\n%s}\n";
     public static final String DESTRUCTOR_PROTOTYPE_STR = "\t~%s();\n";
@@ -31,7 +43,7 @@ public class CppSyntax {
     public static final String BEAN_CPP_FILE_STR = "%s\n" + // includes
             "%s\n" +                                        // fields
             "%s\n";                                         // functions
-    public static final String FUNCTION_PROTOTYPE_STR = "\t\t%s %s(%s);\n";
+    public static final String FUNCTION_PROTOTYPE_STR = "\t%s%s %s(%s);\n";
     public static final String FUNCTION_IMPL_STR = "\t%s CPP%s::%s(%s){\n%s}\n";
     public static final String GETTER_FUNCTION_BODY_STR = "\t\treturn %s;\n\t";
     public static final String FIELD_DECLARATION_STR = "\t%s %s;\n";
@@ -70,6 +82,10 @@ public class CppSyntax {
     public static final String KERNEL_PATH_STR = "%s/%s.cpp";
     public static final int PROTOTYPE_WORD_NO_IN_LINE = 3;
     public static final String JNI_REF_ASSIGN_NULL = "\tjniJavaClassRef = NULL;\n";
+    public static final String NO_ADDITIONAL_INDENTATION = "";
+    public static final String JNI_CLASSNAME_STR = "%s_jClass";
+    public static final String NATIVE_METHOD_IMPL_STR = "JNIEXPORT %s JNICALL %s(%s){\n%s}";
+    public static final String JNI_OBJECT_NAME_STR = "%s_jObject%d";
     static final String EXEC_MAKE_CLEAN = "make clean -C %s";
     static final String EXEC_MAKE = "make -C %s";
     // Constants
@@ -106,4 +122,7 @@ public class CppSyntax {
             "\t@- $(RM) $(program_C_OBJS)\n" +
             "\n" +
             "distclean: clean";
+    public static final String KERNEL_WRAPPER_HEADER_PATH = "%s/%s.h";
+    public static final String NATIVE_LIB_PATH = "%s/%s.so";
+    public static final String JNIENV_PTR = "JNIEnv*";
 }

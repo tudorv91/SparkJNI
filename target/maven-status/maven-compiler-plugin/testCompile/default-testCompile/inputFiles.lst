@@ -1,0 +1,8 @@
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/TestUtils.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/sparkjni/utils/cpp/fields/CppFieldTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/examples/vectorOps/VectorOpsIntegrationTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/sparkjni/jniLink/linkContainers/FunctionSignatureMapperTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/sparkjni/jniLink/FunctionSignatureMapperProviderTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/sparkjni/jniLink/linkHandlers/NativeFunctionWrapperTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/sparkjni/utils/CppBeanTest.java
+/home/tudor/Desktop/SparkJNI/SparkJNI/src/test/java/org/heterojni/sparkjni/utils/JniUtilsTest.java

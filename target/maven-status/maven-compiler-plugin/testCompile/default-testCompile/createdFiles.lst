@@ -1,0 +1,12 @@
+org/heterojni/sparkjni/jniLink/TestMapperJniFunc.class
+org/heterojni/sparkjni/utils/BeanClass.class
+org/heterojni/sparkjni/utils/CppBeanTest.class
+org/heterojni/sparkjni/utils/JniUtilsTest.class
+org/heterojni/TestUtils.class
+org/heterojni/sparkjni/jniLink/FunctionSignatureMapperProviderTest.class
+org/heterojni/examples/vectorOps/VectorOpsIntegrationTest.class
+org/heterojni/sparkjni/utils/cpp/fields/CppFieldTest.class
+org/heterojni/sparkjni/jniLink/linkHandlers/NativeFunctionWrapperTest.class
+org/heterojni/sparkjni/utils/cpp/fields/IntFieldClass.class
+org/heterojni/sparkjni/jniLink/linkContainers/FunctionSignatureMapperTest.class
+org/heterojni/sparkjni/jniLink/TestReduceJniFunc.class

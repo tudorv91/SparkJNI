@@ -16,20 +16,16 @@
 package org.heterojni.sparkjni.jniLink.jniFunctions;
 
 import org.apache.spark.api.java.function.Function;
+import org.heterojni.sparkjni.dataLink.JavaBean;
 import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
 import org.heterojni.sparkjni.utils.exceptions.Messages;
-import org.heterojni.sparkjni.dataLink.JavaBean;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by root on 9/9/16.
- */
 public class JniMapFunction<T1, R> extends JniFunction implements Function<T1, R> {
     private Method nativeMethod = null;
 
-    public JniMapFunction() {
-    }
+    public JniMapFunction() {}
 
     public JniMapFunction(String nativeLibPath, String nativeFunctionName) {
         super(nativeLibPath, nativeFunctionName);
@@ -66,7 +62,8 @@ public class JniMapFunction<T1, R> extends JniFunction implements Function<T1, R
         try {
             R retObj = (R) nativeMethod.invoke(this, o);
             if(retObj == null)
-                throw new HardSparkJniException(String.format("Object returned from native method %s is NULL", nativeFunctionName));
+                throw new HardSparkJniException(String.format("Object returned from native method %s is NULL\n" +
+                        "You must return a non-null Java object", nativeFunctionName));
             return retObj;
         } catch(Exception ex){
             ex.printStackTrace();

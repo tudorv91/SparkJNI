@@ -15,19 +15,25 @@
  */
 package org.heterojni.sparkjni.utils;
 
+import com.google.common.base.Optional;
 import com.google.common.reflect.ClassPath;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.heterojni.sparkjni.jniLink.linkHandlers.*;
-import org.heterojni.sparkjni.utils.jniAnnotations.JNI_class;
-import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
+import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.jniLink.linkHandlers.ImmutableJniRootContainerProvider;
+import org.heterojni.sparkjni.jniLink.linkHandlers.KernelFile;
+import org.heterojni.sparkjni.jniLink.linkHandlers.KernelFileWrapperHeader;
+import org.heterojni.sparkjni.jniLink.linkHandlers.UserNativeFunction;
 import org.heterojni.sparkjni.utils.exceptions.HardSparkJniException;
 import org.heterojni.sparkjni.utils.exceptions.Messages;
 import org.heterojni.sparkjni.utils.exceptions.SoftSparkJniException;
-import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_class;
+import org.heterojni.sparkjni.utils.jniAnnotations.JNI_functionClass;
 import org.immutables.builder.Builder;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -131,7 +137,12 @@ public class SparkJni {
                 .generateDefaultHeaderWrapperFileName(metadataHandler.getAppName(), metadataHandler.getNativePath());
         if (!getKernelFileWrapperHeader().writeKernelWrapperFile())
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
-        getKernelFileForHeader(defaultKernelWrapperFileName).writeKernelFile();
+        if(doForceOverwriteKernelFiles) {
+            KernelFile kernelFile = kernelFileWrapperHeader.getKernelFile();
+            if(functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty())
+                injectFunctionCodeBody(kernelFile.userNativeFunctions());
+            kernelFile.writeKernelFile();
+        }
     }
 
     private void generateAndCheckMakefile() {
@@ -310,9 +321,7 @@ public class SparkJni {
                     System.err.println("Error");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

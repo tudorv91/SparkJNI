@@ -224,12 +224,12 @@ public class CppBean {
         StringBuilder stringBuilder = new StringBuilder();
         for(CppBeanGetterMethod nativeMethod : fieldsGettersMap.values()){
             String prototype = String.format(CppSyntax.FUNCTION_PROTOTYPE_STR,
-                    nativeMethod.getReturnType(), nativeMethod.getMethodName(), "");
+                    "\t",nativeMethod.getReturnType(), nativeMethod.getMethodName(), "");
             stringBuilder.append(prototype);
         }
 
         stringBuilder.append(String.format(CppSyntax.FUNCTION_PROTOTYPE_STR,
-                "jobject", "getJavaObject", ""));
+                "\t", "jobject", "getJavaObject", ""));
 
         return stringBuilder.toString();
     }
