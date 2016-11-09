@@ -19,27 +19,25 @@ package org.heterojni.sparkjni.jniLink.linkHandlers;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.heterojni.sparkjni.dataLink.CppBean;
 import org.heterojni.sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
 import org.heterojni.sparkjni.jniLink.linkContainers.JniHeader;
 import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
-import org.heterojni.sparkjni.jniLink.linkContainers.TypeMapper;
-import org.heterojni.sparkjni.utils.*;
+import org.heterojni.sparkjni.utils.CppSyntax;
+import org.heterojni.sparkjni.utils.JniUtils;
+import org.heterojni.sparkjni.utils.MetadataHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class KernelFileWrapperHeader {
-    public static final String NATIVE_METHOD_IMPL_STR = "JNIEXPORT %s JNICALL %s(%s){\n%s}";
-    public static final String JNI_CLASSNAME_STR = "%s_jClass";
-    public static final String JNI_OBJECT_NAME_STR = "%s_jObject%d";
-
     private ArrayList<String> containerHeaderFiles;
-    private HashSet<String> jClassObjectsSet = new HashSet<>();
     private JniRootContainer jniRootContainer;
+    private String headerWrapperFileName;
 
+    private List<UserNativeFunction> userNativeFunctions;
+
+    private List<NativeFunctionWrapper> nativeFunctionWrappers;
     public KernelFileWrapperHeader(ArrayList<String> containerHeaderFiles, JniRootContainer jniRootContainer) {
         this.containerHeaderFiles = containerHeaderFiles;
         this.jniRootContainer = jniRootContainer;
@@ -47,20 +45,46 @@ public class KernelFileWrapperHeader {
 
     public boolean writeKernelWrapperFile() {
         StringBuilder sb = new StringBuilder();
-        ArrayList<String> headers = new ArrayList<>();
+        populateDependencies();
 
-        headers.addAll(getJniHeadersPaths());
-        headers.addAll(containerHeaderFiles);
-
-        sb.append(JniUtils.generateIncludeStatements(false, headers.toArray(new String[]{})));
+        sb.append(JniUtils.generateIncludeStatements(false, generateHeaders()));
         sb.append("\n");
-        sb.append(generateImplementationBody());
+        sb.append(generateUserFunctionsPrototypes());
+        sb.append(generateWrappersImplementationBody());
 
-        String headerWrapperFileName = JniUtils
-                .generateDefaultHeaderWrapperFileName(jniRootContainer.appName(), MetadataHandler.getHandler().getNativePath());
+        headerWrapperFileName = JniUtils.generateDefaultHeaderWrapperFileName(jniRootContainer.appName(),
+                MetadataHandler.getHandler().getNativePath());
 
         JniUtils.writeFile(wrapInHeader(sb.toString()), headerWrapperFileName);
         return true;
+    }
+
+    public String[] generateHeaders(){
+        ArrayList<String> headers = new ArrayList<>();
+        headers.addAll(getJniHeadersPaths());
+        headers.addAll(containerHeaderFiles);
+        return headers.toArray(new String[]{});
+    }
+
+    private void populateDependencies() {
+        userNativeFunctions = new ArrayList<>();
+        nativeFunctionWrappers = new ArrayList<>();
+        for(JniHeader jniHeader: jniRootContainer.jniHeaders())
+            for(FunctionSignatureMapper functionSignatureMapper: jniHeader.jniFunctions()){
+                userNativeFunctions.add(
+                        ImmutableUserNativeFunction.builder().functionSignatureMapper(functionSignatureMapper).build()
+                );
+                nativeFunctionWrappers.add(
+                        ImmutableNativeFunctionWrapper.builder().functionSignatureMapper(functionSignatureMapper).build()
+                );
+            }
+    }
+
+    private String generateUserFunctionsPrototypes() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(UserNativeFunction userNativeFunction: userNativeFunctions)
+            stringBuilder.append(userNativeFunction.generateUserFunctionPrototype());
+        return stringBuilder.toString();
     }
 
     private String wrapInHeader(String s) {
@@ -68,110 +92,12 @@ public class KernelFileWrapperHeader {
         return String.format(CppSyntax.SIMPLE_HEADER_FILE_STR, macroName, macroName, s);
     }
 
-    private String generateImplementationBody() {
+    private String generateWrappersImplementationBody() {
         StringBuilder sb = new StringBuilder();
-        for (JniHeader jniHeader : jniRootContainer.jniHeaders()) {
-            String jniHeaderImplementation = String.format("%s\n\n", generateJniHeaderImplementationBody(jniHeader));
-            sb.append(jniHeaderImplementation);
+        for (NativeFunctionWrapper nativeFunctionWrapper : nativeFunctionWrappers) {
+            sb.append(nativeFunctionWrapper.generateNativeMethodImplementation());
         }
         return sb.toString();
-    }
-
-    private String generateJniHeaderImplementationBody(JniHeader jniHeader) {
-        StringBuilder sb = new StringBuilder();
-        for (FunctionSignatureMapper functionSignatureMapper : jniHeader.jniFunctions()) {
-            sb.append(generateNativeMethodImplementation(functionSignatureMapper));
-        }
-        return sb.toString();
-    }
-
-    private String generateNativeMethodImplementation(FunctionSignatureMapper functionSignatureMapper) {
-        jClassObjectsSet.clear();
-        StringBuilder sb = new StringBuilder();
-
-        String secondArg = functionSignatureMapper.staticMethod() ? "jclass callerStaticClass, " : "jobject callerObject";
-        sb.append(String.format("JNIEnv *jniEnv, %s, ", secondArg));
-        String argumentString = generateJNIArgumentPrototypeDecl(functionSignatureMapper.parameterList());
-
-        String aux = sb.append(argumentString).toString();
-        String argumentSection = aux.substring(0, aux.length() - 2);
-        return String.format(NATIVE_METHOD_IMPL_STR, "jobject", functionSignatureMapper.functionNameMapper().jniName(),
-                argumentSection, generateNativeMethodBody(functionSignatureMapper));
-    }
-
-    private String generateNativeMethodBody(FunctionSignatureMapper functionSignatureMapper) {
-        StringBuilder sb = new StringBuilder();
-        for (int idx = 0; idx < functionSignatureMapper.parameterList().size(); idx++) {
-            sb.append(generateClassObjectInitializationFor(functionSignatureMapper, idx));
-            sb.append(generateInitializationStatementForJniPrototype(functionSignatureMapper, idx));
-        }
-        sb.append(generateReturnStatement(functionSignatureMapper));
-        return sb.toString();
-    }
-
-    private String generateClassObjectInitializationFor(FunctionSignatureMapper functionSignatureMapper, int idx) {
-        CppBean cppBean = functionSignatureMapper.parameterList().get(idx).cppType();
-        String candidateClassObjectName = generateClassNameVariableName(cppBean);
-        String instanceOfThyClassName = generateJniObjectName(cppBean, idx);
-        if (jClassObjectsSet.contains(candidateClassObjectName))
-            return "";
-        else {
-            jClassObjectsSet.add(candidateClassObjectName);
-            return String.format("\tjclass %s = jniEnv->GetObjectClass(%s);\n", candidateClassObjectName, instanceOfThyClassName);
-        }
-    }
-
-    private String generateReturnStatement(FunctionSignatureMapper functionSignatureMapper) {
-        CppBean returnedBean = functionSignatureMapper.returnTypeMapper().cppType();
-        String returnedObjectName = generateCppVariableName(returnedBean, "returned", 0);
-        String varInit = generateInitializationStatement(returnedBean.getCppClassName(), returnedObjectName,
-                generateNativeConstructorCallerArgsSection(returnedBean));
-        return varInit + String.format("\treturn %s.getJavaObject();\n", returnedObjectName);
-    }
-
-    private String generateNativeConstructorCallerArgsSection(CppBean returnedBean) {
-        return "";
-    }
-
-    private String generateInitializationStatementForJniPrototype(FunctionSignatureMapper functionSignatureMapper, int variableIndex) {
-        CppBean cppBean = functionSignatureMapper.parameterList().get(variableIndex).cppType();
-        String cppVariableName = generateCppVariableName(cppBean, "", variableIndex);
-        String arguments = generateConstructorCallerArgsSection(cppBean, variableIndex);
-        return generateInitializationStatement(cppBean.getCppClassName(), cppVariableName, arguments);
-    }
-
-    private String generateCppVariableName(CppBean cppBean, String prefix, int idx) {
-        String idStr = String.format("%s%d", cppBean.getCppClassName().toLowerCase(), idx);
-        prefix = prefix == null ? "" : prefix;
-        return prefix.isEmpty() ? idStr : prefix + JniUtils.firstLetterCaps(idStr);
-    }
-
-    private String generateInitializationStatement(String type, String varName, String argsSection) {
-        if (argsSection == null || argsSection.isEmpty())
-            return String.format("\t%s %s;\n", type, varName);
-        else
-            return String.format("\t%s %s(%s);\n", type, varName, argsSection);
-    }
-
-    private String generateConstructorCallerArgsSection(CppBean cppBean, int variableIndex) {
-        return String.format("%s, %s, jniEnv", generateClassNameVariableName(cppBean), generateJniObjectName(cppBean, variableIndex));
-    }
-
-    private String generateJNIArgumentPrototypeDecl(List<TypeMapper> parameterList) {
-        StringBuilder sb = new StringBuilder();
-        for (int idx = 0; idx < parameterList.size(); idx++) {
-            CppBean cppBean = parameterList.get(idx).cppType();
-            sb.append(String.format("%s %s, ", "jobject", generateJniObjectName(cppBean, idx)));
-        }
-        return sb.toString();
-    }
-
-    private String generateClassNameVariableName(CppBean cppBean) {
-        return String.format(JNI_CLASSNAME_STR, cppBean.getCppClassName().toLowerCase());
-    }
-
-    private String generateJniObjectName(CppBean cppBean, int variableIndex) {
-        return String.format(JNI_OBJECT_NAME_STR, cppBean.getCppClassName().toLowerCase(), variableIndex);
     }
 
     private List<String> getJniHeadersPaths() {
@@ -183,5 +109,13 @@ public class KernelFileWrapperHeader {
             }
         });
         return Lists.newArrayList(jniHeaderPaths);
+    }
+
+    public KernelFile getKernelFile(){
+        return ImmutableKernelFile.builder()
+                .kernelWrapperFileName(headerWrapperFileName)
+                .userNativeFunctions(userNativeFunctions)
+                .nativePath(MetadataHandler.getHandler().getNativePath())
+                .build();
     }
 }

@@ -10,8 +10,6 @@ import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.fail;
-
 /**
  * Created by root on 9/21/16.
  */

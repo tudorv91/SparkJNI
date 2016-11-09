@@ -36,6 +36,8 @@ public abstract class CppField {
     int accessModifier;
     boolean validNativeMapper = false;
 
+    String defaultInitialization;
+
     CppField(){}
 
     /**
@@ -97,13 +99,13 @@ public abstract class CppField {
     public String getFieldDeclarationCppStmt(String className){
         return String.format(fieldDeclaration, className+"::", className+"::");
     }
+
     public boolean isPrimitive(){
         if(javaField == null)
             return true;
         else
             return javaField.getType().isPrimitive();
     }
-
     public boolean isArray(){
         if(javaField == null)
             return false;
@@ -115,5 +117,16 @@ public abstract class CppField {
         if(javaField == null)
             return "I";
         else return JniUtils.getSignatureForType(javaField.getType());
+    }
+
+    public String getDefaultInitialization() {
+        switch (type){
+            case "int*":
+                return "new int[3]{1,2,3}";
+            case "int":
+                return "3";
+            default:
+                return "ohhNOOO_ERROR";
+        }
     }
 }
