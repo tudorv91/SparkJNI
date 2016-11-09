@@ -1,19 +1,21 @@
 package org.heterojni.examples.vectorOps;
 
-import com.google.common.base.Optional;
 import org.apache.spark.api.java.JavaRDD;
 import org.heterojni.TestUtils;
 import org.heterojni.sparkjni.jniLink.linkContainers.JniHeader;
 import org.heterojni.sparkjni.jniLink.linkContainers.JniRootContainer;
 import org.heterojni.sparkjni.utils.JniUtils;
-import org.heterojni.sparkjni.utils.SparkJniSingletonBuilder;
-import org.junit.*;
 import org.heterojni.sparkjni.utils.SparkJni;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by root on 9/21/16.
@@ -65,17 +67,19 @@ public class VectorOpsMainTest {
     }
 
     @Test
-    public void jniRootContainerTest(){
+    public void jniRootContainerTest() {
+        sparkJni.deploy();
         JniRootContainer jniRootContainer = sparkJni.getJniRootContainer();
         assertEquals(testUtils.appName, jniRootContainer.appName());
 
         List<JniHeader> jniHeaders = jniRootContainer.jniHeaders();
         assertEquals(2, jniHeaders.size());
 
-        for(JniHeader jniHeader: jniHeaders){
+        for (JniHeader jniHeader : jniHeaders) {
             assertTrue(jniHeader.jniHeaderFile().exists());
         }
     }
+
 
     @Test
     public void vectorOpsTest(){
