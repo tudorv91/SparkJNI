@@ -33,6 +33,7 @@ public class VectorOpsMain {
             jdkPath = args[2];
         } else {
             System.out.println("Usage: <nativePath> <appName> <jdkPath>");
+            System.exit(0);
         }
 
         sparkJni = new SparkJniSingletonBuilder()

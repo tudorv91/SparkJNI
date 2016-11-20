@@ -49,7 +49,6 @@ public class CppConstructor extends NativeMethod {
     private String generateArgsForNativeConstructor() {
         StringBuilder argStringBuilder = new StringBuilder();
         for (CppField cppField : ownerClass.getCppFields()) {
-            String paramType;
             if(cppField instanceof CppRawTypeField)
             argStringBuilder.append(String.format("%s %s, ",
                     JniUtils.getCppFieldType(cppField.getReadableType()), cppField.getName() + "arg"));

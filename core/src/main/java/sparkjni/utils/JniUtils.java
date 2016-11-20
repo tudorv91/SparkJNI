@@ -58,6 +58,8 @@ public class JniUtils {
     public static final int DEFAULT_MEMORY_ALIGNMENT = 64;
     public static final String NO_CRITICAL = "NO_CRITICAL";
     public static final String CRITICAL = "CRITICAL";
+    public static final boolean PASS_BY_VALUE = false;
+    public static final boolean PASS_BY_REFERENCE = true;
 
     public static String getArrayElementType(Field field) {
         if (!field.getType().isArray())
@@ -328,5 +330,13 @@ public class JniUtils {
 
     public static String getClassDefObjectVariableName(CppBean cppBean) {
         return String.format(CppSyntax.JNI_CLASSNAME_STR, cppBean.getCppClassName().toLowerCase());
+    }
+
+    public static String wrapInSharedPtr(String expression, boolean passByReference){
+        return passByReference ? String.format("std::shared_ptr<%s>&", expression) : String.format("std::shared_ptr<%s>", expression);
+    }
+
+    public static String makeShared(String cppClassName, String argsList) {
+        return String.format("std::make_shared<%s>(%s)", cppClassName, argsList);
     }
 }

@@ -10,6 +10,8 @@ import sparkjni.utils.JniUtils;
 import java.util.HashSet;
 import java.util.List;
 
+import static sparkjni.utils.JniUtils.PASS_BY_VALUE;
+
 @Value.Immutable
 public abstract class NativeFunctionWrapper {
     private HashSet<String> jClassObjectsSet = new HashSet<>();
@@ -34,7 +36,8 @@ public abstract class NativeFunctionWrapper {
         String cppVariableName = JniUtils.generateCppVariableName(cppBean, "", variableIndex);
         String arguments = generateConstructorCallerArgsSection(cppBean, variableIndex);
         String args = (arguments == null || arguments.isEmpty()) ? "" : arguments;
-        return String.format("\t%s *%s = new %s(%s);\n", cppBean.getCppClassName(), cppVariableName, cppBean.getCppClassName(), args);
+        String retType = JniUtils.wrapInSharedPtr(cppBean.getCppClassName(), PASS_BY_VALUE);
+        return String.format("\t%s %s = std::make_shared<%s>(%s);\n", retType, cppVariableName, cppBean.getCppClassName(), args);
     }
 
     private String generateJNIArgumentPrototypeDecl(List<TypeMapper> parameterList) {
@@ -53,12 +56,12 @@ public abstract class NativeFunctionWrapper {
             sb.append(generateInitializationStatementForJniPrototype(functionSignatureMapper, idx));
         }
         sb.append(generateMethodCall(functionSignatureMapper));
-        sb.append(generatePtrDeleteStatements(functionSignatureMapper));
+//        sb.append(generatePtrDeleteStatements(functionSignatureMapper));
         sb.append(generateReturnStatement(functionSignatureMapper));
         return sb.toString();
     }
 
-    protected String generateReturnStatement(FunctionSignatureMapper functionSignatureMapper){
+    private String generateReturnStatement(FunctionSignatureMapper functionSignatureMapper){
         return "\treturn " + generateReturnObjectName(functionSignatureMapper.returnTypeMapper().cppType()) + ";\n";
     }
 
@@ -107,7 +110,8 @@ public abstract class NativeFunctionWrapper {
 
         CppBean cppbean = functionSignatureMapper.returnTypeMapper().cppType();
         String retObjectName = generateFunctionReturnObjectName(cppbean);
-        String retObjFuncCallStmt = String.format("\t%s *%s = %s(%s);\n", cppbean.getCppClassName(), retObjectName,
+        String retType = JniUtils.wrapInSharedPtr(cppbean.getCppClassName(), PASS_BY_VALUE);
+        String retObjFuncCallStmt = String.format("\t%s %s = %s(%s);\n", retType, retObjectName,
                 functionSignatureMapper.functionNameMapper().cppName(), callerArgs.toString());
         String result = String.format("\t%s %s = %s->getJavaObject();\n", "jobject", generateReturnObjectName(cppbean), retObjectName);
         return retObjFuncCallStmt + result;

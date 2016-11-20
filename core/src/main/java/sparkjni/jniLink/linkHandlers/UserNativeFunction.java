@@ -14,8 +14,12 @@ import sparkjni.utils.cpp.fields.CppField;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static sparkjni.utils.JniUtils.PASS_BY_REFERENCE;
+import static sparkjni.utils.JniUtils.PASS_BY_VALUE;
+
 @Value.Immutable
 public abstract class UserNativeFunction {
+
     public abstract FunctionSignatureMapper functionSignatureMapper();
 
     private Optional<String> functionBodyCodeInsertion = Optional.absent();
@@ -23,8 +27,9 @@ public abstract class UserNativeFunction {
     String generateUserFunctionPrototype() {
         FunctionSignatureMapper functionSignatureMapper = functionSignatureMapper();
         String prototypeArgumentList = generatePrototypeArgumentListDefinition(functionSignatureMapper);
+        String returnType = JniUtils.wrapInSharedPtr(functionSignatureMapper.returnTypeMapper().cppType().getCppClassName(), PASS_BY_VALUE);
         return String.format(CppSyntax.FUNCTION_PROTOTYPE_STR.substring(1),
-                CppSyntax.NO_ADDITIONAL_INDENTATION, functionSignatureMapper.returnTypeMapper().cppType().getCppClassName() + "*",
+                CppSyntax.NO_ADDITIONAL_INDENTATION, returnType,
                 functionSignatureMapper.functionNameMapper().javaName(), prototypeArgumentList);
     }
 
@@ -33,8 +38,8 @@ public abstract class UserNativeFunction {
         List<TypeMapper> typeMapperList = functionSignatureMapper.parameterList();
         int ctr = 0;
         for (TypeMapper typeMapper : typeMapperList) {
-            stringBuilder.append(String.format("%s *%s, ",
-                    typeMapper.cppType().getCppClassName(),
+            stringBuilder.append(String.format("%s %s, ",
+                    JniUtils.wrapInSharedPtr(typeMapper.cppType().getCppClassName(), PASS_BY_REFERENCE),
                     JniUtils.generateCppVariableName(typeMapper.cppType(), null, ctr++)
             ));
         }
@@ -77,9 +82,10 @@ public abstract class UserNativeFunction {
             }
             argsListBuilder.append(JniUtils.generateClassNameVariableName(returnCppBean, null));
             argsListBuilder.append(", jniEnv");
-            String initialization = String.format("\t%s *%s = new %s(%s);\n",
-                    returnCppBean.getCppClassName(), returnTypeVariableName,
-                    returnCppBean.getCppClassName(), argsListBuilder.toString());
+            String retType = JniUtils.wrapInSharedPtr(returnCppBean.getCppClassName(), PASS_BY_VALUE);
+            String initializationExpression = JniUtils.makeShared(returnCppBean.getCppClassName(), argsListBuilder.toString());
+            String initialization = String.format("\t%s %s = %s;\n",
+                    retType, returnTypeVariableName, initializationExpression);
             String returnStatement = String.format("\treturn %s;\n", returnTypeVariableName);
             return initialization + returnStatement;
         }
