@@ -125,8 +125,10 @@ public abstract class CppField {
                 return "new int[3]{1,2,3}";
             case "int":
                 return "3";
+            case "double*":
+                return "new double[3]{1.0,2.0,3.0}";
             default:
-                return "ohhNOOO_ERROR";
+                return "ERROR: Unimplemented default initialization type";
         }
     }
 }

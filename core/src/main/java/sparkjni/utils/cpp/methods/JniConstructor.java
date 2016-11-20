@@ -82,10 +82,11 @@ public class JniConstructor extends NativeMethod {
                         generateMemoryAlignedFieldInitStatement(cppRawTypeField, jniArrFieldName);
                     } else {
                         String typeCast = String.format("(%s)", field.getNativeType());
-                        sb.append(String.format(
-                                cppRawTypeField.isCriticalArray() ? CppSyntax.GET_ARRAY_CRITICAL_ELEMENTS : CppSyntax.GET_ARRAY_ELEMENTS_STR,
-                                cppRawTypeField.getName(), typeCast, cppRawTypeField.getTypeOfArrayElement(), jniArrFieldName
-                        ));
+                        String getArrayStatement = cppRawTypeField.isCriticalArray() ?
+                                String.format(CppSyntax.GET_ARRAY_CRITICAL_ELEMENTS, cppRawTypeField.getName(), typeCast, jniArrFieldName) :
+                                String.format(CppSyntax.GET_ARRAY_ELEMENTS_STR,
+                                        cppRawTypeField.getName(), typeCast, cppRawTypeField.getTypeOfArrayElement(), jniArrFieldName);
+                        sb.append(getArrayStatement);
                     }
                 }
             }

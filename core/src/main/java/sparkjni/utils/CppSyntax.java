@@ -27,11 +27,6 @@ public class CppSyntax {
     public static final String CONSTRUCTOR_STMT_STR = "\t%s = %s;\n";
     public static final String RELEASE_ARRAY_STATEMENT_STR = "env->Release%sArrayElements(%s, %s, %s);";
     // headers, user-defined prototypes, JNI function calls and user-defined functions
-    public static final String CPP_OUT_FILE_STR = "%s\n%s\n%s\n%s";
-    public static final String JNI_CONSTRUCTOR_IMPL_STR = "%s (JNIEnv* env, jobject thisObj, jobject bean){\n%s}";
-    public static final String JNI_FUNCTION_BODY_STR = "%s\n\treturn bean;\n";
-    public static final String JNI_FUNCTION_BODY_STMT_STR = "\tjclass beanClass%d = env->GetObjectClass(bean);\n" +
-            "\t%s cppBean(beanClass%d, bean, env);\n";
     public static final String BEAN_HEADER_FILE_STR = "#ifndef %s\n#define %s\n" +
             "%s\nclass %s {\n" + // include statements and class name
             "private:\n%s\n" +
@@ -40,9 +35,6 @@ public class CppSyntax {
     public static final String SIMPLE_HEADER_FILE_STR = "#ifndef %s\n#define %s\n" +
             "%s\n" +
             "#endif";
-    public static final String BEAN_CPP_FILE_STR = "%s\n" + // includes
-            "%s\n" +                                        // fields
-            "%s\n";                                         // functions
     public static final String FUNCTION_PROTOTYPE_STR = "\t%s%s %s(%s);\n";
     public static final String FUNCTION_IMPL_STR = "\t%s CPP%s::%s(%s){\n%s}\n";
     public static final String GETTER_FUNCTION_BODY_STR = "\t\treturn %s;\n\t";
@@ -52,13 +44,15 @@ public class CppSyntax {
             "\t\treturn;\n" +
             "\t}\n";
     public static final String JAVACLASSJNI_OBJECT_NAME = "jniJavaClassRef";
-    public static final String DEFAULT_INCLUDE_STATEMENTS = "#include <stdio.h>\n" +
+    public static final String DEFAULT_INCLUDE_STATEMENTS =
+            "#include <stdio.h>\n" +
             "#include <stdlib.h>\n" +
             "#include <string.h>\n" +
-            "#include <iostream>\n" +
-            "#include <stdint.h>\n" +
             "#include <jni.h>\n" +
-            "#include <mutex>\n\n";
+            "#include <stdint.h>\n" +
+            "#include <iostream>\n" +
+            "#include <mutex>\n" +
+            "#include <memory>\n";
     public static final String JNI_ENV_OBJ_NAME = "env";
     public static final String JNI_ENV_CONSTRUCTOR_ARG = "jniEnv";
     public static final String DEFINITION_STMT_ENV_GET_STR = "\t%s %s = %s->%s(%s);\n";
@@ -82,7 +76,6 @@ public class CppSyntax {
     public static final String CONSTRUCTOR_PARAM_DEFAULT_NAME_MAPPING = "javaParamName";
     public static final String JAVAH_SECTION = "javah -classpath %s -d %s %s";
     public static final String KERNEL_PATH_STR = "%s/%s.cpp";
-    public static final int PROTOTYPE_WORD_NO_IN_LINE = 3;
     public static final String JNI_REF_ASSIGN_NULL = "\tjniJavaClassRef = NULL;\n";
     public static final String NO_ADDITIONAL_INDENTATION = "";
     public static final String JNI_CLASSNAME_STR = "%s_jClass";

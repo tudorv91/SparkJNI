@@ -85,7 +85,8 @@ public class SparkJni {
     }
 
     public void deployWithCodeInjections(HashMap<String, String> functionCodeInjectorMap){
-        this.functionCodeInjectorMap = functionCodeInjectorMap;
+        if(!functionCodeInjectorMap.isEmpty())
+            this.functionCodeInjectorMap = functionCodeInjectorMap;
         deploy();
     }
 

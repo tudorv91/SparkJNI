@@ -68,6 +68,10 @@ public class TestUtils {
         return sparkJni;
     }
 
+    public String getLibPath(){
+        return JniUtils.generateDefaultLibPath(appName, fullPath);
+    }
+
     public SparkJni getSparkJni(){
         return getSparkJni(JniUtils.getClasspath());
     }
