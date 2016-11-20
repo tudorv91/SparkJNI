@@ -1,11 +1,11 @@
 package sparkjni.jniLink.linkHandlers;
 
+import org.immutables.value.Value;
 import sparkjni.dataLink.CppBean;
 import sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
 import sparkjni.jniLink.linkContainers.TypeMapper;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.JniUtils;
-import org.immutables.value.Value;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.List;
 @Value.Immutable
 public abstract class NativeFunctionWrapper {
     private HashSet<String> jClassObjectsSet = new HashSet<>();
+
     public abstract FunctionSignatureMapper functionSignatureMapper();
 
     public String generateNativeMethodImplementation() {
@@ -28,19 +29,12 @@ public abstract class NativeFunctionWrapper {
                 argumentSection, generateNativeMethodBody(functionSignatureMapper));
     }
 
-    private String generateConstructorCallerArgsSection(CppBean cppBean, int variableIndex) {
-        return String.format("%s, %s, jniEnv", JniUtils.getClassDefObjectVariableName(cppBean), generateJniObjectName(cppBean, variableIndex));
-    }
-
-    private String generateJniObjectName(CppBean cppBean, int variableIndex) {
-        return String.format(CppSyntax.JNI_OBJECT_NAME_STR, cppBean.getCppClassName().toLowerCase(), variableIndex);
-    }
-
     private String generateInitializationStatementForJniPrototype(FunctionSignatureMapper functionSignatureMapper, int variableIndex) {
         CppBean cppBean = functionSignatureMapper.parameterList().get(variableIndex).cppType();
         String cppVariableName = JniUtils.generateCppVariableName(cppBean, "", variableIndex);
         String arguments = generateConstructorCallerArgsSection(cppBean, variableIndex);
-        return generateInitializationStatement(cppBean.getCppClassName(), cppVariableName, arguments);
+        String args = (arguments == null || arguments.isEmpty()) ? "" : arguments;
+        return String.format("\t%s *%s = new %s(%s);\n", cppBean.getCppClassName(), cppVariableName, cppBean.getCppClassName(), args);
     }
 
     private String generateJNIArgumentPrototypeDecl(List<TypeMapper> parameterList) {
@@ -58,21 +52,41 @@ public abstract class NativeFunctionWrapper {
             sb.append(generateClassObjectInitializationFor(functionSignatureMapper, idx));
             sb.append(generateInitializationStatementForJniPrototype(functionSignatureMapper, idx));
         }
-        sb.append(generateMethodCallReturnStatement(functionSignatureMapper));
+        sb.append(generateMethodCall(functionSignatureMapper));
+        sb.append(generatePtrDeleteStatements(functionSignatureMapper));
+        sb.append(generateReturnStatement(functionSignatureMapper));
         return sb.toString();
     }
 
-    private String generateInitializationStatement(String type, String varName, String argsSection) {
-        if (argsSection == null || argsSection.isEmpty())
-            return String.format("\t%s %s;\n", type, varName);
-        else
-            return String.format("\t%s %s(%s);\n", type, varName, argsSection);
+    protected String generateReturnStatement(FunctionSignatureMapper functionSignatureMapper){
+        return "\treturn " + generateReturnObjectName(functionSignatureMapper.returnTypeMapper().cppType()) + ";\n";
+    }
+
+    private String generatePtrDeleteStatements(FunctionSignatureMapper functionSignatureMapper) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int idx = 0; idx < functionSignatureMapper.parameterList().size(); idx++) {
+            CppBean cppBean = functionSignatureMapper.parameterList().get(idx).cppType();
+            String cppVariableName = JniUtils.generateCppVariableName(cppBean, "", idx);
+            stringBuilder.append(String.format("\tdelete %s;\n", cppVariableName));
+            stringBuilder.append(String.format("\t%s = NULL;\n", cppVariableName));
+        }
+        String funcRetObjName = generateFunctionReturnObjectName(functionSignatureMapper.returnTypeMapper().cppType());
+//        stringBuilder.append(String.format("\tif(%s != NULL)\n\t\tdelete %s;\n", funcRetObjName, funcRetObjName));
+        return stringBuilder.toString();
+    }
+
+    private String generateFunctionReturnObjectName(CppBean cppBean){
+        return String.format("%s_ret", cppBean.getCppClassName());
+    }
+
+    private String generateReturnObjectName(CppBean cppBean){
+        return String.format("%s_retJavaObj", cppBean.getCppClassName());
     }
 
     private String generateClassObjectInitializationFor(FunctionSignatureMapper functionSignatureMapper, int idx) {
         CppBean cppBean = functionSignatureMapper.parameterList().get(idx).cppType();
         String candidateClassObjectName = JniUtils.generateClassNameVariableName(cppBean, jClassObjectsSet);
-        if(candidateClassObjectName.isEmpty())
+        if (candidateClassObjectName.isEmpty())
             return "";
         else {
             String instanceOfThyClassName = generateJniObjectName(cppBean, idx);
@@ -80,22 +94,9 @@ public abstract class NativeFunctionWrapper {
         }
     }
 
-    @Deprecated
-    private String generateReturnStatement(FunctionSignatureMapper functionSignatureMapper) {
+    private String generateMethodCall(FunctionSignatureMapper functionSignatureMapper){
         TypeMapper returnTypeMapper = functionSignatureMapper.returnTypeMapper();
         CppBean returnedBean = returnTypeMapper.cppType();
-        String returnedObjectName = JniUtils.generateCppVariableName(returnedBean, "returned", 0);
-        String varInit = generateInitializationStatement(returnedBean.getCppClassName(), returnedObjectName,
-                generateNativeConstructorCallerArgsSection(returnedBean));
-
-        return generateIfNecessaryFindClassStatementFor(returnTypeMapper)
-                + varInit + String.format("\treturn %s.getJavaObject();\n", returnedObjectName);
-    }
-
-    private String generateMethodCallReturnStatement(FunctionSignatureMapper functionSignatureMapper){
-        TypeMapper returnTypeMapper = functionSignatureMapper.returnTypeMapper();
-        CppBean returnedBean = returnTypeMapper.cppType();
-//        String returnedObjectName = JniUtils.generateCppVariableName(returnedBean, "returned", 0);
         StringBuilder callerArgs = new StringBuilder();
         for (int idx = 0; idx < functionSignatureMapper.parameterList().size(); idx++) {
             CppBean cppBean = functionSignatureMapper.parameterList().get(idx).cppType();
@@ -104,26 +105,19 @@ public abstract class NativeFunctionWrapper {
         callerArgs.append(JniUtils.getClassDefObjectVariableName(returnedBean));
         callerArgs.append(", jniEnv");
 
-//        String returnedObjectCreation = String.format("\t%s %s = %s(%s);\n",
-//                returnedBean.getCppClassName(), returnedObjectName,
-//                functionSignatureMapper.functionNameMapper().cppName(),
-//                callerArgs.toString());
-        String functionCall = String.format("%s(%s)", functionSignatureMapper.functionNameMapper().cppName(),
-                callerArgs.toString());
-        return String.format("\treturn %s.getJavaObject();\n", functionCall);
+        CppBean cppbean = functionSignatureMapper.returnTypeMapper().cppType();
+        String retObjectName = generateFunctionReturnObjectName(cppbean);
+        String retObjFuncCallStmt = String.format("\t%s *%s = %s(%s);\n", cppbean.getCppClassName(), retObjectName,
+                functionSignatureMapper.functionNameMapper().cppName(), callerArgs.toString());
+        String result = String.format("\t%s %s = %s->getJavaObject();\n", "jobject", generateReturnObjectName(cppbean), retObjectName);
+        return retObjFuncCallStmt + result;
     }
 
-    public String generateIfNecessaryFindClassStatementFor(TypeMapper typeMapper){
-        String classVariableName = JniUtils.generateClassNameVariableName(typeMapper.cppType(), jClassObjectsSet);
-        if(classVariableName.isEmpty())
-            return "";
-        else {
-            String jniClassPath = JniUtils.generateJniPathForClass(typeMapper.javaType());
-            return String.format("\tjclass %s = jniEnv->FindClass(\"%s\");\n", classVariableName, jniClassPath);
-        }
+    private String generateConstructorCallerArgsSection(CppBean cppBean, int variableIndex) {
+        return String.format("%s, %s, jniEnv", JniUtils.getClassDefObjectVariableName(cppBean), generateJniObjectName(cppBean, variableIndex));
     }
 
-    private String generateNativeConstructorCallerArgsSection(CppBean returnedBean) {
-        return "";
+    private String generateJniObjectName(CppBean cppBean, int variableIndex) {
+        return String.format(CppSyntax.JNI_OBJECT_NAME_STR, cppBean.getCppClassName().toLowerCase(), variableIndex);
     }
 }

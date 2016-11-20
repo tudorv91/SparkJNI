@@ -1,23 +1,25 @@
-package vectorOps;
+package sparkjni.jniLink.linkContainers;
 
-import org.junit.*;
-import sparkjni.jniLink.linkContainers.JniHeader;
-import sparkjni.jniLink.linkContainers.JniRootContainer;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import sparkjni.utils.SparkJni;
 import testutils.TestUtils;
+import unitTestUtils.VectorAddJni;
+import unitTestUtils.VectorBean;
+import unitTestUtils.VectorMulJni;
 
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JniRootContainerTest {
-    private static int noVectors = 64;
-    private static int vectorSize = 64;
-    private static ArrayList<VectorBean> vectorOfBeans;
     private static TestUtils testUtils;
     private static SparkJni sparkJni;
 
     @Before
-    public void init(){
+    public void init() {
         testUtils = new TestUtils(JniRootContainerTest.class);
         testUtils.initTestDir();
         Assert.assertNotNull(testUtils.jdkPath);
@@ -25,26 +27,30 @@ public class JniRootContainerTest {
         generateVectors();
     }
 
-    public static void initSparkJNI(){
-        sparkJni = testUtils.getSparkJni();
+    public static void initSparkJNI() {
+        String sparkjniClasspath = FileSystems.getDefault().getPath("../core/target/classes").toAbsolutePath().normalize().toString();
+        String classpath = FileSystems.getDefault().getPath("../sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
+        String testClasspath = FileSystems.getDefault().getPath("target/test-classes").toAbsolutePath().normalize().toString();
+        sparkJni = testUtils.getSparkJni(sparkjniClasspath + ":" + classpath + ":" + testClasspath);
         sparkJni.registerContainer(VectorBean.class);
         sparkJni.registerJniFunction(VectorMulJni.class)
                 .registerJniFunction(VectorAddJni.class)
                 .deploy();
     }
 
-    private static void generateVectors(){
-        vectorOfBeans = new ArrayList<>();
-        for(int i = 0; i < noVectors; i++){
+    private static void generateVectors() {
+        ArrayList<VectorBean> vectorOfBeans = new ArrayList<>();
+        int noVectors = 64;
+        int vectorSize = 64;
+        for (int i = 0; i < noVectors; i++) {
             int[] data = new int[vectorSize];
-            for(int idx = 0; idx < vectorSize; idx++) {
+            for (int idx = 0; idx < vectorSize; idx++) {
                 data[idx] = (int) (Math.random() * 1000);
             }
             vectorOfBeans.add(new VectorBean(data));
         }
     }
 
-    @Ignore
     @Test
     public void jniRootContainerTest() {
         sparkJni.deploy();
@@ -60,7 +66,7 @@ public class JniRootContainerTest {
     }
 
     @After
-    public void clean(){
+    public void clean() {
         testUtils.cleanTestDir();
     }
 }

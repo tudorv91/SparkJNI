@@ -116,7 +116,6 @@ public class SparkJni {
         collectNativeFunctionPrototypes();
         deployTimesLogger.javahTime = System.currentTimeMillis() - startJavah;
 
-        // TO-DO: Populate kernel files.
         generateAndCheckMakefile();
         generateJniRootContainer();
         generateKernelFiles();
@@ -144,8 +143,6 @@ public class SparkJni {
         KernelFileWrapperHeader kernelFileWrapperHeader = getKernelFileWrapperHeader();
         if(!deployMode.doForceOverwriteKernelFiles)
             return;
-        String defaultKernelWrapperFileName = JniUtils
-                .generateDefaultHeaderWrapperFileName(metadataHandler.getAppName(), metadataHandler.getNativePath());
         if (!kernelFileWrapperHeader.writeKernelWrapperFile())
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
         if(deployMode.doForceOverwriteKernelFiles) {

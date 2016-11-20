@@ -25,7 +25,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -239,16 +238,6 @@ public class JniUtils {
 
     public static String firstLetterCaps(String idStr) {
         return idStr.substring(0, 1).toUpperCase() + idStr.substring(1);
-    }
-
-    private static String getFullStringContent(String targetCppKernelFileName){
-        try {
-            byte[] encoded = Files.readAllBytes(Paths.get(targetCppKernelFileName));
-            return new String(encoded, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     public static boolean writeFile(String content, String targetfileName) {
