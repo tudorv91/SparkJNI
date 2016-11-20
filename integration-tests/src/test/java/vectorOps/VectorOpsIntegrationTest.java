@@ -66,14 +66,14 @@ public class VectorOpsIntegrationTest {
     public void vectorOpsTest() {
         HashMap<String, String> codeInjections = new HashMap<>();
         codeInjections.put("reduceVectorAdd",
-                "\tint vectorLength = cppvectorbean0.getdata_length();\n" +
+                "\tint vectorLength = cppvectorbean0->getdata_length();\n" +
                         "\tfor(int idx = 0; idx < vectorLength; idx++)\n" +
-                        "\t\tcppvectorbean0.getdata()[idx] += cppvectorbean1.getdata()[idx];\n" +
+                        "\t\tcppvectorbean0->getdata()[idx] += cppvectorbean1->getdata()[idx];\n" +
                         "\treturn cppvectorbean0;\n");
         codeInjections.put("mapVectorMul",
-                "\tint vectorLength = cppvectorbean0.getdata_length();\n" +
+                "\tint vectorLength = cppvectorbean0->getdata_length();\n" +
                         "\tfor(int idx = 0; idx < vectorLength; idx++)\n" +
-                        "\t\tcppvectorbean0.getdata()[idx] *= 2;\n" +
+                        "\t\tcppvectorbean0->getdata()[idx] *= 2;\n" +
                         "\treturn cppvectorbean0;\n");
         sparkJni.deployWithCodeInjections(codeInjections);
         String libPath = JniUtils.generateDefaultLibPath(testUtils.appName, testUtils.fullPath);
@@ -88,7 +88,6 @@ public class VectorOpsIntegrationTest {
      * Here we do not inject code into the kernel functions.
      * Should return default SparkJNI initialization values for fields in the bean classes.
      */
-    @Ignore
     @Test
     public void vectorOpsDefaultTest() {
         sparkJni.deploy();
@@ -96,7 +95,6 @@ public class VectorOpsIntegrationTest {
         JavaRDD<VectorBean> vectorsRdd = testUtils.getSparkContext().parallelize(vectorOfBeans);
         JavaRDD<VectorBean> mulResults = vectorsRdd.map(new VectorMulJni(libPath, "mapVectorMul"));
         VectorBean results = mulResults.reduce(new VectorAddJni(libPath, "reduceVectorAdd"));
-        System.exit(0);
     }
 
     @After

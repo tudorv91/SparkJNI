@@ -43,14 +43,13 @@ public class Destructor extends NativeMethod {
             if (field instanceof CppRawTypeField) {
                 CppRawTypeField rawTypeField = (CppRawTypeField) field;
                 if (rawTypeField.isPrimitiveArray()) {
-                    bodySb.append(String.format(
+                    bodySb.append("\t"+ String.format(
                             rawTypeField.isCriticalArray() ? CppSyntax.RELEASE_ARRAY_CRITICAL : CppSyntax.RELEASE_ARRAY_STATEMENT_STR,
                             JniUtils.getArrayElementType(rawTypeField.getJavaField()), field.getName() + "Arr", field.getName(), "0"));
                 }
             }
         }
-        bodySb.append("\t}\n");
-
+        bodySb.append("\t\n\tjniCreated = 0;\n}\n");
         return stringFormatter.format(CppSyntax.DESTRUCTOR_STR,
                 ownerClassName, ownerClassName, bodySb.toString()).toString();
     }

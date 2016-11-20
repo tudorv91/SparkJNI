@@ -27,6 +27,7 @@ public class TestUtils {
         jdkPath = "/usr/lib/jvm/java-1.7.0-openjdk-amd64";
         appName = callerClass.getSimpleName();
         defaultTestFolder = String.format(defaultTestFolder, appName+"_TEST");
+        initTestDir();
     }
 
     public void initTestDir(){
