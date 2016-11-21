@@ -6,7 +6,7 @@ import sparkjni.utils.jniAnnotations.JNI_method;
 import sparkjni.utils.jniAnnotations.JNI_param;
 
 /**
- * Created by root on 9/5/16.
+ * Created by Tudor on 9/5/16.
  */
 public class IntFieldClass extends JavaBean {
     @JNI_field

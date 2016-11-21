@@ -4,7 +4,7 @@ import sparkjni.jniLink.jniFunctions.JniMapFunction;
 import sparkjni.utils.jniAnnotations.JNI_functionClass;
 
 /**
- * Created by root on 9/24/16.
+ * Created by Tudor on 9/24/16.
  */
 
 @JNI_functionClass

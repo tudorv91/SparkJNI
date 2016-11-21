@@ -2,7 +2,7 @@ package pairHMM;
 import sparkjni.jniLink.jniFunctions.JniMapFunction;
 
 /**
- * Created by root on 8/16/16.
+ * Created by Tudor on 8/16/16.
  */
 public class LoadSizesJniFunction extends JniMapFunction {
     public LoadSizesJniFunction(){}

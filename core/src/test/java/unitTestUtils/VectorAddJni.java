@@ -3,7 +3,7 @@ package unitTestUtils;
 import sparkjni.jniLink.jniFunctions.JniReduceFunction;
 
 /**
- * Created by root on 9/9/16.
+ * Created by Tudor on 9/9/16.
  */
 public class VectorAddJni extends JniReduceFunction {
     public VectorAddJni() {

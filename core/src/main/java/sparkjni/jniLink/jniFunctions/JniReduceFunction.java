@@ -21,7 +21,7 @@ import sparkjni.utils.exceptions.Messages;
 import sparkjni.dataLink.JavaBean;
 
 /**
- * Created by root on 9/9/16.
+ * Created by Tudor on 9/9/16.
  */
 public class JniReduceFunction<T1, T2, R> extends JniFunction implements Function2<T1, T2, R> {
     public JniReduceFunction() {

@@ -22,7 +22,7 @@ import sparkjni.utils.JniUtils;
 import java.lang.reflect.Field;
 
 /**
- * Created by root on 8/16/16.
+ * Created by Tudor on 8/16/16.
  */
 public class CppReferenceField extends CppField {
     public CppReferenceField(Field field, JniLinkHandler jniLinkHandler) {

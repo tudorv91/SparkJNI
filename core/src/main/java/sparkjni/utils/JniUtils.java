@@ -30,10 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 
-/**
- * Created by Tudor on 7/6/2016.
- * Utilitary class with static functions and fields used throughout the framework for support Cpp native implementations.
- */
 public class JniUtils {
     public static final String MEM_UNALIGNED = "";
 

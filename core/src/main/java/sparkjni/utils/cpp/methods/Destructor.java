@@ -24,7 +24,7 @@ import sparkjni.utils.JniUtils;
 import java.util.Formatter;
 
 /**
- * Created by root on 8/20/16.
+ * Created by Tudor on 8/20/16.
  */
 public class Destructor extends NativeMethod {
     public Destructor(CppBean cppBean) {

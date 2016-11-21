@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Created by root on 8/13/16.
+ * Created by Tudor on 8/13/16.
  */
 public class PairHmmMain {
     private static String appName = "pairhmm";

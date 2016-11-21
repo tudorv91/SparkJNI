@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by root on 8/6/16.
+ * Created by Tudor on 8/6/16.
  */
 public class CppConstructor extends NativeMethod {
 

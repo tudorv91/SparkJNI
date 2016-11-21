@@ -7,7 +7,7 @@ import sparkjni.utils.jniAnnotations.JNI_param;
 import sparkjni.dataLink.JavaBean;
 
 /**
- * Created by root on 8/14/16.
+ * Created by Tudor on 8/14/16.
  */
 @JNI_class
 public class PairHmmBean extends JavaBean {

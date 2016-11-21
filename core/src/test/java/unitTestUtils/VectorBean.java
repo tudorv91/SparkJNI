@@ -9,7 +9,7 @@ import sparkjni.utils.jniAnnotations.JNI_param;
 import java.util.Arrays;
 
 /**
- * Created by root on 9/8/16.
+ * Created by Tudor on 9/8/16.
  */
 @JNI_class
 public class VectorBean extends JavaBean {
