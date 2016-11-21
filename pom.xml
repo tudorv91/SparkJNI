@@ -2,14 +2,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <name>SparkJNI</name>
+    <name>sparkjni</name>
     <modules>
         <module>sparkjni-examples</module>
         <module>core</module>
         <module>integration-tests</module>
     </modules>
-    <groupId>org.tudelft.ewi.ceng.tvoicu</groupId>
-    <artifactId>jni-spark</artifactId>
+    <artifactId>sparkjni</artifactId>
+    <groupId>tudelft.ceng.tvoicu</groupId>
     <packaging>pom</packaging>
     <version>0.2</version>
 

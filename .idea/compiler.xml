@@ -37,6 +37,7 @@
       <module name="integration-tests" target="1.7" />
       <module name="ITs" target="1.7" />
       <module name="SparkJNI" target="1.7" />
+      <module name="sparkjni-core" target="1.5" />
       <module name="sparkjni-examples" target="1.7" />
       <module name="SparkJniExamples" target="1.5" />
       <module name="utils" target="1.7" />
