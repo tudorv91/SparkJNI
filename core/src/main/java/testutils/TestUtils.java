@@ -31,7 +31,7 @@ public class TestUtils {
         testDir = new File(defaultTestFolder);
         if(testDir.exists())
             cleanTestDir();
-        testDir.mkdir();
+        testDir.mkdirs();
 
         fullPath = testDir.getAbsolutePath();
     }
