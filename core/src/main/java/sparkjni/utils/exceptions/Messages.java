@@ -22,7 +22,8 @@ public class Messages {
     public static final String ERR_PROVIDED_JCLASS_NULL_STR = "Provided java class object is null..!";
     public static final String ERR_CONSTRUCTOR_OBJECT_METHOD_IS_NULL_STR = "Constructor object method is null";
     public static final String ERR_CPP_BUILD_FAILED = "Run process command failed!";
-    public static final String ERR_PLEASE_DO_SET_THE_JDK_PATH = "Please do set the JDK PATH..";
+    public static final String ERR_PLEASE_DO_SET_THE_JDK_PATH = "Please do set the JDK PATH programatically or as a system-wide environment variable" +
+            "in /etc/profile.d..";
     public static final String ERR_FIELD_WITH_TYPE_IS_NOT_AN_ARRAY = "Field %s with type %s is not an array..";
     public static final String ERR_CLASS_NOT_FOUND = "Class not found %s";
 }

@@ -24,7 +24,6 @@ public class VectorOpsIntegrationTest {
     public void init() {
         testUtils = new TestUtils(VectorOpsIntegrationTest.class);
         testUtils.initTestDir();
-        Assert.assertNotNull(testUtils.jdkPath);
         initSparkJNI();
         generateVectors();
     }

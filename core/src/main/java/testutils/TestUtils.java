@@ -15,16 +15,13 @@ import java.io.IOException;
  */
 public class TestUtils {
     public static final String CLUSTER_CONF_LOCAL_4 = "local[4]";
-    public static final String JAVA_HOME_ENV = "JAVA_HOME";
     public String defaultTestFolder = "resources/%s";
     public File testDir;
     public String fullPath;
-    public String jdkPath;
     public String appName;
     private static JavaSparkContext jscSingleton = null;
 
     public TestUtils(Class callerClass){
-        jdkPath = "/usr/lib/jvm/java-1.7.0-openjdk-amd64";
         appName = callerClass.getSimpleName();
         defaultTestFolder = String.format(defaultTestFolder, appName+"_TEST");
         initTestDir();
@@ -61,7 +58,6 @@ public class TestUtils {
         System.gc();
         SparkJni sparkJni =  new SparkJniSingletonBuilder()
                 .appName(appName)
-                .jdkPath(jdkPath)
                 .nativePath(fullPath)
                 .build();
         sparkJni.setClasspath(classpath);
