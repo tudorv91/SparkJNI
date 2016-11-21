@@ -37,10 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Top level class with static functionality that handles the SparkJNI execution.
- */
-
 public class SparkJni {
     private static JniLinkHandler jniLinkHandler;
     private static MetadataHandler metadataHandler;

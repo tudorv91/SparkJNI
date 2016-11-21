@@ -2,7 +2,12 @@
 This framework is meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links.
 
 # Build Java instructions
-If you have Maven installed, go to the root of directory and run ```sudo mvn clean install```. This creates the .jar file in the target folder. If not, just skip this step, this public repo contains the pre-built jar file.
+First set a system-wide environment variable JAVA_HOME with the location of your JDK installation (minimum JDK 7) (create a .sh file with ```export JAVA_HOME=<where-java-is-installed>``` in ```/etc/profile.d/``` and make sure it is loaded by logging in and out).
+
+If you don't have Maven install, please install it with ```sudo apt-get install maven```.
+
+Go to the root of the repository and run ```sudo mvn clean install```. By this, you will do a full build and test of the project and its modules. A build without running unit and itegration tests can be done by running ```sudo mvn clean install -DskipTests```. A full build should pass all tests.
+
 
 # Environment variables
 In order to run the example PairHMM file, you need to set up the following environment variables:
@@ -54,34 +59,28 @@ These are used in the main class (VectorOpsMain):
 ```
 public class VectorOpsMain {
 ...
-    private static void initSparkJNI(String[] args){
-        if(args.length >= 3){
-            nativePath = args[0];
-            appName = args[1];
-            jdkPath = args[2];
-        } else {
-            System.out.println("Usage: <nativePath> <appName> <jdkPath>");
-        }
-
-        JniFrameworkLoader.setJdkPath(jdkPath);
-        JniFrameworkLoader.setNativePath(nativePath);
-        JniFrameworkLoader.setDoGenerateMakefile(true);
-        JniFrameworkLoader.setDoBuild(true);
-
+    private static void initSparkJNI(){
+...
+        SparkJni sparkJni = new SparkJniSingletonBuilder()
+                .nativePath(nativePath)
+                .appName(appName)
+                .build();
+        sparkJni.setDeployMode(new DeployMode(JUST_BUILD))
+                .addToClasspath(sparkjniClasspath, examplesClasspath);
         // Register control and data transfer links (classes).
-        JniFrameworkLoader.registerContainer(VectorBean.class);
-        JniFrameworkLoader.registerJniFunction(VectorMulJni.class);
-        JniFrameworkLoader.registerJniFunction(VectorAddJni.class);
-        JniFrameworkLoader.deploy(appName, appName + ".cpp", null);
+        sparkJni.registerContainer(VectorBean.class)
+                .registerJniFunction(VectorMulJni.class)
+                .registerJniFunction(VectorAddJni.class);
+        sparkJni.deploy();
     }
 
     public static void main(String[] args){
-        initSparkJNI(args);
-        String libPath = String.format("%s/%s.so", nativePath, appName);
+        initSparkJNI();
+...
         JavaRDD<VectorBean> vectorsRdd = getSparkContext().parallelize(generateVectors(2, 4));
         JavaRDD<VectorBean> mulResults = vectorsRdd.map(new VectorMulJni(libPath, "mapVectorMul"));
         VectorBean results = mulResults.reduce(new VectorAddJni(libPath, "reduceVectorAdd"));
-        debugRes(results);
+...
     }
 ...
 }
@@ -89,23 +88,16 @@ public class VectorOpsMain {
 Last, we have to populate the native functions with desired behavior, in the ```vectorOps.cpp``` kernel file:
 ```
 ...
-JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorAddJni_reduceVectorAdd(JNIEnv *env, jobject caller, jobject v1obj, jobject v2obj){
-    jclass vectorClass = env->GetObjectClass(v1obj);
-    CPPVectorBean v1(vectorClass, v1obj, env);
-    CPPVectorBean v2(vectorClass, v2obj, env);
-    int vectorLength = v1.getdata_length();
-    for(int idx = 0; idx < vectorLength; idx++)
-        v1.getdata()[idx] += v2.getdata()[idx];
-    return v1.getJavaObject();
+std::shared_ptr<CPPVectorBean> reduceVectorAdd(std::shared_ptr<CPPVectorBean>& cppvectorbean0, std::shared_ptr<CPPVectorBean>& cppvectorbean1,  jclass cppvectorbean_jClass, JNIEnv* jniEnv) {
+	for(int idx = 0; idx < cppvectorbean0->getdata_length(); idx++)
+		cppvectorbean0->getdata()[idx] += cppvectorbean1->getdata()[idx];
+	return cppvectorbean0;
 }
 
-JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_vectorOps_VectorMulJni_mapVectorMul(JNIEnv *env, jobject caller, jobject vectObj){
-    jclass vectorClass = env->GetObjectClass(vectObj);
-    CPPVectorBean v1(vectorClass, vectObj, env);
-    int vectorLength = v1.getdata_length();
-    for(int idx = 0; idx < vectorLength; idx++)
-        v1.getdata()[idx] *= 2;
-    return v1.getJavaObject();
+std::shared_ptr<CPPVectorBean> mapVectorMul(std::shared_ptr<CPPVectorBean>& cppvectorbean0,  jclass cppvectorbean_jClass, JNIEnv* jniEnv) {
+	for(int idx = 0; idx < cppvectorbean0->getdata_length(); idx++)
+		cppvectorbean0->getdata()[idx] *= 2;
+	return cppvectorbean0;
 }
 ```
 The program can be run then, by packaging the jar and with ```./spark-submit```.
@@ -122,4 +114,3 @@ And run. The command below submits the application to Spark. The size of the inp
 
 #Inspect results
 The runtime benchmarks can be inspected in ```resultsJava.csv```. All values are in seconds.
-

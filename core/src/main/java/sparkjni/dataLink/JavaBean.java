@@ -18,7 +18,7 @@ package sparkjni.dataLink;
 import java.io.Serializable;
 
 /**
- * Created by root on 8/22/16.
+ * Created by Tudor on 8/22/16.
  * Abstract to be inherited for all user-defined containers.
  */
 public abstract class JavaBean implements Serializable {

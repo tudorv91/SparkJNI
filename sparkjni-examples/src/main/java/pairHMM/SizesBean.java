@@ -9,7 +9,7 @@ import sparkjni.dataLink.JavaBean;
 import java.io.Serializable;
 
 /**
- * Created by root on 8/16/16.
+ * Created by Tudor on 8/16/16.
  */
 @JNI_class
 public class SizesBean extends JavaBean implements Serializable {

@@ -19,7 +19,7 @@ import sparkjni.dataLink.CppBean;
 import sparkjni.utils.CppSyntax;
 
 /**
- * Created by root on 8/16/16.
+ * Created by Tudor on 8/16/16.
  */
 public class EmptyCppConstructor extends NativeMethod{
     public EmptyCppConstructor(CppBean cppBean) {

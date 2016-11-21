@@ -9,7 +9,7 @@ import sparkjni.dataLink.JavaBean;
 import java.io.Serializable;
 
 /**
- * Created by root on 8/19/16.
+ * Created by Tudor on 8/19/16.
  */
 @JNI_class
 public class ByteArrBean extends JavaBean implements Serializable {

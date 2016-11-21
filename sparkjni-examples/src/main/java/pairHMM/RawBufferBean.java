@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
- * Created by root on 8/17/16.
+ * Created by Tudor on 8/17/16.
  */
 public class RawBufferBean extends JavaBean implements Serializable {
     public int capacity = 0;

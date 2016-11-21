@@ -9,7 +9,7 @@ import unitTestUtils.BeanClass;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by root on 9/21/16.
+ * Created by Tudor on 9/21/16.
  */
 public class CppBeanTest {
     CppBean classUT;

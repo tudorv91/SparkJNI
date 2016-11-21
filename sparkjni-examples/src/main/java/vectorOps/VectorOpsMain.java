@@ -42,7 +42,7 @@ public class VectorOpsMain {
                 .appName(appName)
                 .build();
 
-        sparkJni.setDeployMode(deployMode)
+        sparkJni.setDeployMode(new DeployMode(JUST_BUILD))
                 .addToClasspath(sparkjniClasspath, examplesClasspath);
 
         sparkJni.registerContainer(VectorBean.class)

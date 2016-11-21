@@ -23,7 +23,7 @@ import sparkjni.utils.CppSyntax;
 import sparkjni.utils.JniUtils;
 
 /**
- * Created by root on 8/16/16.
+ * Created by Tudor on 8/16/16.
  */
 public class JniConstructor extends NativeMethod {
     public static final String MUTEX_CPP_FIELD_NAME = "mtx";
