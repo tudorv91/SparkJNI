@@ -22,12 +22,11 @@ public class JniRootContainerTest {
     public void init() {
         testUtils = new TestUtils(JniRootContainerTest.class);
         testUtils.initTestDir();
-        Assert.assertNotNull(testUtils.jdkPath);
         initSparkJNI();
         generateVectors();
     }
 
-    public static void initSparkJNI() {
+    private static void initSparkJNI() {
         String sparkjniClasspath = FileSystems.getDefault().getPath("../core/target/classes").toAbsolutePath().normalize().toString();
         String classpath = FileSystems.getDefault().getPath("../sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
         String testClasspath = FileSystems.getDefault().getPath("target/test-classes").toAbsolutePath().normalize().toString();

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Tudor Alexandru Voicu and Zaid Al-Ars, TUDelft
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,9 @@ public class MetadataHandler {
     private String userDefines = "";
 
     private static MetadataHandler handler = null;
-    private MetadataHandler(){}
+
+    private MetadataHandler() {
+    }
 
     public String getAppName() {
         return appName;
@@ -49,7 +51,7 @@ public class MetadataHandler {
     }
 
     public String getClasspath() {
-        if(classpath == null || classpath.isEmpty())
+        if (classpath == null || classpath.isEmpty())
             classpath = MetadataHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         return classpath;
     }
@@ -59,7 +61,9 @@ public class MetadataHandler {
     }
 
     public String getJdkPath() {
-        if(jdkPath == null || jdkPath.isEmpty())
+        if (jdkPath == null || jdkPath.isEmpty())
+            jdkPath = System.getenv().get("JAVA_HOME");
+        if (jdkPath == null || jdkPath.isEmpty())
             throw new HardSparkJniException(Messages.ERR_PLEASE_DO_SET_THE_JDK_PATH);
         return jdkPath;
     }
@@ -109,12 +113,16 @@ public class MetadataHandler {
     }
 
     public static MetadataHandler getHandler() {
-        if(handler == null)
+        if (handler == null)
             handler = new MetadataHandler();
         return handler;
     }
 
-    protected static void reset(){
+    protected static void reset() {
         handler = null;
+    }
+
+    public void addToClasspath(String cPath) {
+        classpath += ":" + cPath;
     }
 }

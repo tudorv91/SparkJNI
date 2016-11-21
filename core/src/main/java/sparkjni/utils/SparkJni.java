@@ -56,10 +56,11 @@ public class SparkJni {
     private boolean writeLinkClasses = true;
 
     @Builder.Factory
-    public static SparkJni sparkJniSingleton(String appName, String nativePath, String jdkPath) {
+    static SparkJni sparkJniSingleton(Optional<String> appName, String nativePath, Optional<String> jdkPath) {
         if (sparkJniSingleton == null) {
             sparkJniSingleton = new SparkJni();
-            sparkJniSingleton.initVars(appName, nativePath, jdkPath);
+
+            sparkJniSingleton.initVars(appName.isPresent() ? appName.get() : null, nativePath, jdkPath.isPresent() ? jdkPath.get() : null);
         }
         return sparkJniSingleton;
     }
@@ -84,8 +85,8 @@ public class SparkJni {
         loadNativeLib();
     }
 
-    public void deployWithCodeInjections(HashMap<String, String> functionCodeInjectorMap){
-        if(!functionCodeInjectorMap.isEmpty())
+    public void deployWithCodeInjections(HashMap<String, String> functionCodeInjectorMap) {
+        if (!functionCodeInjectorMap.isEmpty())
             this.functionCodeInjectorMap = functionCodeInjectorMap;
         deploy();
     }
@@ -123,6 +124,11 @@ public class SparkJni {
         build();
     }
 
+    public void addToClasspath(String... classpath){
+        for(String cPath: classpath)
+            metadataHandler.addToClasspath(cPath);
+    }
+
     private void generateJniRootContainer() {
         jniRootContainer = ImmutableJniRootContainerProvider.builder().build()
                 .buildJniRootContainer(metadataHandler.getNativePath(), metadataHandler.getAppName());
@@ -135,30 +141,31 @@ public class SparkJni {
                 try {
                     if (JniUtils.isJniNativeFunction(file.toPath()))
                         file.delete();
-                } catch (IOException ex) {}
+                } catch (IOException ex) {
+                }
             }
         }
     }
 
-    public void generateKernelFiles(){
+    public void generateKernelFiles() {
         KernelFileWrapperHeader kernelFileWrapperHeader = getKernelFileWrapperHeader();
-        if(!deployMode.doForceOverwriteKernelFiles)
+        if (!deployMode.doForceOverwriteKernelFiles)
             return;
         if (!kernelFileWrapperHeader.writeKernelWrapperFile())
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
-        if(deployMode.doForceOverwriteKernelFiles) {
+        if (deployMode.doForceOverwriteKernelFiles) {
             KernelFile kernelFile = kernelFileWrapperHeader.getKernelFile();
-            if(functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty())
+            if (functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty())
                 injectFunctionCodeBody(kernelFile.userNativeFunctions());
             kernelFile.writeKernelFile();
         }
     }
 
     private void injectFunctionCodeBody(List<UserNativeFunction> userNativeFunctions) {
-        for(UserNativeFunction userNativeFunction: userNativeFunctions){
+        for (UserNativeFunction userNativeFunction : userNativeFunctions) {
             String functionName = userNativeFunction.functionSignatureMapper().functionNameMapper().cppName();
             String codeBody = functionCodeInjectorMap.get(functionName);
-            if(codeBody == null)
+            if (codeBody == null)
                 continue;
             userNativeFunction.setFunctionBodyCodeInsertion(Optional.of(codeBody));
         }
@@ -197,6 +204,7 @@ public class SparkJni {
 
     /**
      * Set the user defines pragma for the build stage flags.
+     *
      * @param userDefines
      */
     public SparkJni setUserDefines(String userDefines) {
@@ -206,6 +214,7 @@ public class SparkJni {
 
     /**
      * Set the personalized user directories.
+     *
      * @param userLibraryDirs
      */
     public SparkJni setUserLibraryDirs(String userLibraryDirs) {
@@ -220,6 +229,7 @@ public class SparkJni {
 
     /**
      * Set the personalized user include directories.
+     *
      * @param userIncludeDirs
      */
     public SparkJni setUserIncludeDirs(String userIncludeDirs) {
@@ -249,6 +259,7 @@ public class SparkJni {
 
     /**
      * Register the user-defined jni function.
+     *
      * @param jniFunctionClass
      */
     public SparkJni registerJniFunction(Class jniFunctionClass) {
@@ -258,6 +269,7 @@ public class SparkJni {
 
     /**
      * Register the user-defined JavaBean container.
+     *
      * @param beanClass
      */
     public SparkJni registerContainer(Class beanClass) {
@@ -415,7 +427,7 @@ public class SparkJni {
         return deployMode;
     }
 
-    public void setClasspath(@Nonnull String classpath){
+    public void setClasspath(@Nonnull String classpath) {
         metadataHandler.setClasspath(classpath);
     }
 }

@@ -20,7 +20,6 @@ import static sparkjni.utils.DeployMode.DeployModes.JUST_BUILD;
 
 public class SparkJNIPi {
     public static String appName = "SparkJNIPi";
-    public static String jdkPath = "/usr/lib/jvm/java-8-oracle";
     private static int slices = 8;
     private static int sliceSize = 10000000;
     private static int noExecs = 1;
@@ -46,7 +45,6 @@ public class SparkJNIPi {
 
         SparkJni sparkJni = new SparkJniSingletonBuilder()
                 .appName(appName)
-                .jdkPath(jdkPath)
                 .nativePath(nativeDirPath)
                 .build();
 

@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
-#include <stdint.h>
 #include <jni.h>
+#include <stdint.h>
+#include <iostream>
 #include <mutex>
-
+#include <memory>
 
 class CPPVectorBean {
 private:
@@ -20,8 +20,8 @@ private:
 	static std::mutex mtx;
 
 public:
-		int getdata_length();
 		int* getdata();
+		int getdata_length();
 		jobject getJavaObject();
 	CPPVectorBean(jclass replaceMeClassName, jobject replaceMeObjectName, JNIEnv* env);
 	CPPVectorBean(int* dataarg, int data_lengtharg, jclass jClass, JNIEnv* jniEnv);
