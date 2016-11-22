@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/jni-spark.iml" filepath="$PROJECT_DIR$/jni-spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SparkJNI.iml" filepath="$PROJECT_DIR$/.idea/SparkJNI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/integration-tests/integration-tests.iml" filepath="$PROJECT_DIR$/integration-tests/integration-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sparkjni-examples/sparkjni-examples.iml" filepath="$PROJECT_DIR$/sparkjni-examples/sparkjni-examples.iml" />
     </modules>
   </component>
 </project>
