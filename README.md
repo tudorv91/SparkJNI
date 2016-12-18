@@ -1,21 +1,12 @@
 # SparkJNI
-This framework is meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links.
+This framework is a powerful platform which enables integration of native kernels (FPGA, OpenCL, C++) with Apache Spark, targeting faster execution of Big Data applications. Second, SparkJNI is  meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links.
 
 # Build Java instructions
-First set a system-wide environment variable JAVA_HOME with the location of your JDK installation (minimum JDK 7) (create a .sh file with ```export JAVA_HOME=<where-java-is-installed>``` in ```/etc/profile.d/``` and make sure it is loaded by logging in and out).
+In order to run the simplest example, first set a system-wide environment variable JAVA_HOME with the location of your JDK installation (minimum JDK 7) (create a .sh file with ```export JAVA_HOME=<where-java-is-installed>``` in ```/etc/profile.d/``` and make sure it is loaded by logging in and out).
 
 If you don't have Maven install, please install it with ```sudo apt-get install maven```.
 
 Go to the root of the repository and run ```sudo mvn clean install```. By this, you will do a full build and test of the project and its modules. A build without running unit and itegration tests can be done by running ```sudo mvn clean install -DskipTests```. A full build should pass all tests.
-
-
-# Environment variables
-In order to run the example PairHMM file, you need to set up the following environment variables:
-```
-export SPARK_HOME=<where-spark-is-installed>
-export JAVA_HOME=<where-java-is-installed>
-export SPARK_JNI=<address-of-the-sparkjni-clone>
-```
 
 # Examples
 # Vector Operations
@@ -100,17 +91,4 @@ std::shared_ptr<CPPVectorBean> mapVectorMul(std::shared_ptr<CPPVectorBean>& cppv
 	return cppvectorbean0;
 }
 ```
-The program can be run then, by packaging the jar and with ```./spark-submit```.
-# PairHMM
-First, flash the AlphaData card with the .dat file provided in the PairHMM sources folder.
-Then, move to the C/C++ source folder:
-```
-cd cppSrc/
-```
-And run. The command below submits the application to Spark. The size of the input batch should be a power of 2, up to 32768 (or bigger, but increase the Spark memory settings, if the system supports it). The path to the C/C++ sources is (in this case) in the ```cppSrc``` folder.
-```
-./run.sh <path-to-cpp-sources> pairhmm <size-of-batch-input-size>
-```
-
-#Inspect results
-The runtime benchmarks can be inspected in ```resultsJava.csv```. All values are in seconds.
+The program can be run then, either from the IDE or by packaging the jar and with ```./spark-submit```.
