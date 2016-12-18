@@ -22,6 +22,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="benchmarks" />
         <module name="core" />
         <module name="Examples" />
         <module name="examples" />
@@ -31,6 +32,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.7">
+      <module name="benchmarks" target="1.7" />
       <module name="core" target="1.7" />
       <module name="examples" target="1.7" />
       <module name="Examples" target="1.7" />
@@ -40,6 +42,7 @@
       <module name="sparkjni-core" target="1.5" />
       <module name="sparkjni-examples" target="1.7" />
       <module name="SparkJniExamples" target="1.5" />
+      <module name="test" target="1.8" />
       <module name="utils" target="1.7" />
     </bytecodeTargetLevel>
   </component>

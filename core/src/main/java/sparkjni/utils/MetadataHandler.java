@@ -61,8 +61,9 @@ public class MetadataHandler {
     }
 
     public String getJdkPath() {
-        if (jdkPath == null || jdkPath.isEmpty())
-            jdkPath = System.getenv().get("JAVA_HOME");
+        String envJdkPath = System.getenv().get("JAVA_HOME");
+        if(envJdkPath != null && !envJdkPath.isEmpty())
+            return envJdkPath;
         if (jdkPath == null || jdkPath.isEmpty())
             throw new HardSparkJniException(Messages.ERR_PLEASE_DO_SET_THE_JDK_PATH);
         return jdkPath;

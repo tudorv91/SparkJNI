@@ -39,13 +39,15 @@ public class TestUtils {
         initTestDir();
     }
 
-    public void initTestDir(){
+    public String initTestDir(){
         testDir = new File(defaultTestFolder);
         if(testDir.exists())
             cleanTestDir();
-        testDir.mkdirs();
+        if(!testDir.mkdirs())
+            throw new RuntimeException(String.format("Failed to create testdir %s", testDir.getAbsolutePath()));
 
         fullPath = testDir.getAbsolutePath();
+        return fullPath;
     }
 
     public void cleanTestDir(){

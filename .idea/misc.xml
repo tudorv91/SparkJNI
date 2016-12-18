@@ -8,12 +8,12 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/examples/pom.xml" />
-        <option value="$PROJECT_DIR$/core/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/sparkjni-core/pom.xml" />
+        <option value="$PROJECT_DIR$/test/pom.xml" />
         <option value="$PROJECT_DIR$/utils/pom.xml" />
       </set>
     </option>

@@ -49,6 +49,10 @@ public class DeployMode {
                 doForceOverwriteKernelFiles = false;
                 doJavah = true;
             case ASSUME_EVERYTHING_IS_THERE:
+                doBuild = false;
+                doGenerateMakefile = false;
+                doForceOverwriteKernelFiles = false;
+                doJavah = false;
                 break;
             default:
                 // throw smth

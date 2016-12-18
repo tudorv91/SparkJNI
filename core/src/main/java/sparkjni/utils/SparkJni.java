@@ -238,7 +238,7 @@ public class SparkJni {
         return this;
     }
 
-    private SparkJni setJdkPath(String jdkPath) {
+    public SparkJni setJdkPath(String jdkPath) {
         metadataHandler.setJdkPath(jdkPath);
         return this;
     }
@@ -274,8 +274,9 @@ public class SparkJni {
     }
 
     private boolean generateMakefile() {
+        String jdkPathStr = deployMode.doBuild ?  metadataHandler.getJdkPath() : "";
         String newMakefileContent = String.format(CppSyntax.NEW_MAKEFILE_SECTION,
-                metadataHandler.getAppName(), metadataHandler.getJdkPath(), metadataHandler.getUserIncludeDirs(),
+                metadataHandler.getAppName(), jdkPathStr, metadataHandler.getUserIncludeDirs(),
                 metadataHandler.getUserLibraryDirs(), metadataHandler.getUserLibraries(),
                 metadataHandler.getUserStaticLibraries(), metadataHandler.getUserDefines());
 
