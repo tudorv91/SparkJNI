@@ -25,6 +25,7 @@ import sparkjni.dataLink.JavaBean;
  */
 public class JniReduceFunction<T1, T2, R> extends JniFunction implements Function2<T1, T2, R> {
     public JniReduceFunction() {
+        super();
     }
 
     public JniReduceFunction(String nativeLibPath, String nativeFunctionName) {

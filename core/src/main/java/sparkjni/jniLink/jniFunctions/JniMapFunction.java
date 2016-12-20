@@ -25,7 +25,9 @@ import java.lang.reflect.Method;
 public class JniMapFunction<T1, R> extends JniFunction implements Function<T1, R> {
     private Method nativeMethod = null;
 
-    public JniMapFunction() {}
+    public JniMapFunction() {
+        super();
+    }
 
     public JniMapFunction(String nativeLibPath, String nativeFunctionName) {
         super(nativeLibPath, nativeFunctionName);

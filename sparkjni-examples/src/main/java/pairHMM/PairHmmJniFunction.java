@@ -10,6 +10,6 @@ public class PairHmmJniFunction extends JniMapFunction {
         super(nativeLibName, nativeFunctionName);
     }
 
-    public native PairHmmJniFunction calculateSoftware(PairHmmBean bean);
-    public native PairHmmJniFunction calculateHardware(PairHmmBean bean);
+    public native PairHmmBean calculateSoftware(PairHmmBean bean);
+    public native PairHmmBean calculateHardware(PairHmmBean bean);
 }

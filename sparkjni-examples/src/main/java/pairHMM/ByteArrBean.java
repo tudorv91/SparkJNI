@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @JNI_class
 public class ByteArrBean extends JavaBean implements Serializable {
-    @JNI_field
+    @JNI_field(critical = true)
     byte[] arr;
 
     public ByteArrBean(){}

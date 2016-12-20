@@ -15,8 +15,13 @@
  */
 package sparkjni.jniLink.jniFunctions;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.spark.SparkFiles;
+import sparkjni.utils.SparkJni;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -31,10 +36,24 @@ public abstract class JniFunction<T1, R> implements Serializable{
     String nativeFunctionName;
     Method nativeMethod = null;
 
-    public JniFunction(){}
+    public JniFunction(){
+        this.nativeLibPath = SparkJni.getMetadataHandler().getNativeLibPath();
+        this.nativeFunctionName = tryGetUniqueNativeMethod().transform(new Function<Method, String>() {
+            @Nullable
+            @Override
+            public String apply(@Nullable Method method) {
+                return method.getName();
+            }
+        }).orNull();
+    }
 
     public JniFunction(String nativeLibPath, String nativeFunctionName){
         this.nativeLibPath = nativeLibPath;
+        this.nativeFunctionName = nativeFunctionName;
+    }
+
+    public JniFunction(String nativeFunctionName){
+        this();
         this.nativeFunctionName = nativeFunctionName;
     }
 
@@ -43,12 +62,10 @@ public abstract class JniFunction<T1, R> implements Serializable{
         Class callerClass = this.getClass();
         for(Method method: callerClass.getDeclaredMethods()) {
             if (method.getName().equals(methodName)){
-                for(Class paramType: method.getParameterTypes())
-                    paramTypes.add(paramType);
+                 Collections.addAll(paramTypes, method.getParameterTypes());
             }
             return paramTypes;
         }
-
         return null;
     }
 
@@ -64,6 +81,17 @@ public abstract class JniFunction<T1, R> implements Serializable{
         return null;
     }
 
+    Optional<Method> tryGetUniqueNativeMethod(){
+        Class thisClass = this.getClass();
+        Method[] methods = thisClass.getMethods();
+
+        for(Method method: methods){
+            if(Modifier.isNative(method.getModifiers())){
+                return Optional.of(method);
+            }
+        }
+        return Optional.absent();
+    }
 
     void loadNativeLib(){
         if(nativeLibPath.contains("/"))

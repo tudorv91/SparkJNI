@@ -74,7 +74,6 @@ public class TestUtils {
                 .appName(appName)
                 .nativePath(fullPath)
                 .build();
-        sparkJni.setClasspath(classpath);
         return sparkJni;
     }
 

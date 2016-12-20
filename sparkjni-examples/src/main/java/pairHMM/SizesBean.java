@@ -13,9 +13,9 @@ import java.io.Serializable;
  */
 @JNI_class
 public class SizesBean extends JavaBean implements Serializable {
-    @JNI_field
+    @JNI_field(critical = true)
     int[] col1 = {0};
-    @JNI_field int[] col2 = {0};
+    @JNI_field(critical = true) int[] col2 = {0};
 
     @JNI_method
     public SizesBean(@JNI_param(target = "col1") int[] col1, @JNI_param(target = "col2") int[] col2) {

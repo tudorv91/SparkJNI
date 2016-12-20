@@ -15,15 +15,13 @@
  */
 package sparkjni.jniLink.linkHandlers;
 
-import sparkjni.jniLink.linkContainers.EntityNameMapper;
-import sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
-import sparkjni.jniLink.linkContainers.TypeMapper;
+import org.immutables.value.Value;
+import sparkjni.dataLink.CppBean;
+import sparkjni.jniLink.linkContainers.*;
 import sparkjni.utils.JniLinkHandler;
+import sparkjni.utils.JniUtils;
 import sparkjni.utils.exceptions.Messages;
 import sparkjni.utils.exceptions.SoftSparkJniException;
-import sparkjni.jniLink.linkContainers.*;
-import sparkjni.utils.JniUtils;
-import org.immutables.value.Value;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -75,8 +73,10 @@ public abstract class FunctionSignatureMapperProvider {
                 .jniName(jniFuncName)
                 .build();
 
+        CppBean returnCppType = JniLinkHandler.getJniLinkHandlerSingleton().getContainerByJavaClass(jniMethod.getReturnType());
+
         TypeMapper returnTypeMapper = ImmutableTypeMapper.builder()
-                .cppType(JniLinkHandler.getJniLinkHandlerSingleton().getContainerByJavaClass(jniMethod.getReturnType()))
+                .cppType(returnCppType)
                 .javaType(jniMethod.getReturnType())
                 .jniType(jniDefinedReturnType)
                 .build();

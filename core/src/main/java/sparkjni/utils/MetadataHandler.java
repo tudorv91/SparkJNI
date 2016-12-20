@@ -18,11 +18,14 @@ package sparkjni.utils;
 import sparkjni.utils.exceptions.HardSparkJniException;
 import sparkjni.utils.exceptions.Messages;
 
+import java.nio.file.FileSystems;
+
 public class MetadataHandler {
     private String appName;
     private String nativePath;
     private String classpath;
     private String jdkPath;
+    private String nativeLibPath;
     private String userLibraries = "";
     private String userIncludeDirs = "";
     private String userLibraryDirs = "";
@@ -51,13 +54,13 @@ public class MetadataHandler {
     }
 
     public String getClasspath() {
-        if (classpath == null || classpath.isEmpty())
-            classpath = MetadataHandler.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        return classpath;
-    }
-
-    public void setClasspath(String classpath) {
-        this.classpath = classpath;
+        String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
+        String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
+        String thisClasspath = FileSystems.getDefault().getPath("target/classes").toAbsolutePath().normalize().toString();
+        String integrationTestsClasspath = FileSystems.getDefault().getPath("integration-tests/target/classes").toAbsolutePath().normalize().toString();
+        String thisJarClasspath = FileSystems.getDefault().getPath("sparkjni-benchmarks.jar").toAbsolutePath().normalize().toString();
+        String concatenatedCP = String.format("%s:%s:%s:%s:%s", sparkjniClasspath, examplesClasspath, thisClasspath, integrationTestsClasspath, thisJarClasspath);
+        return classpath == null ? concatenatedCP : classpath + ":" + concatenatedCP;
     }
 
     public String getJdkPath() {
@@ -125,5 +128,13 @@ public class MetadataHandler {
 
     public void addToClasspath(String cPath) {
         classpath += ":" + cPath;
+    }
+
+    public String getNativeLibPath() {
+        return nativeLibPath;
+    }
+
+    public void setNativeLibPath(String nativeLibPath) {
+        this.nativeLibPath = nativeLibPath;
     }
 }

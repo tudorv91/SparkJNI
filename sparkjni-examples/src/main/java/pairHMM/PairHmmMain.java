@@ -4,10 +4,11 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import scala.Tuple2;
+import sparkjni.utils.DeployMode;
 import sparkjni.utils.DeployTimesLogger;
 import sparkjni.utils.SparkJni;
 import sparkjni.utils.SparkJniSingletonBuilder;
-import scala.Tuple2;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,10 +23,10 @@ public class PairHmmMain {
     private final static float ERROR_MARGIN_FLOAT = 0.00000001f;
     private static JavaSparkContext jscSingleton;
     private static String modeString = "CPP",
-            jdkPath = "/usr/lib/jvm/java-1.7.0-openjdk-amd64",
+            jdkPath = "/usr/lib/jvm/default-java",
             nativePath = "/home/tudor/Desktop/Thesis/projects/PairHMM_TACC",
             nativeFuncName = "calculateSoftware";
-    private static int noLines = 32768;
+    private static int noLines = 2048;
     private static SparkJni sparkJni;
     public static JavaSparkContext getSparkContext(){
         if(jscSingleton == null){
@@ -63,7 +64,7 @@ public class PairHmmMain {
             sparkJni.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl")
                     .setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
         }
-
+        sparkJni.setDeployMode(new DeployMode(DeployMode.DeployModes.FULL_GENERATE_AND_BUILD));
         sparkJni.registerJniFunction(PairHmmJniFunction.class)
                 .registerJniFunction(LoadSizesJniFunction.class)
                 .registerJniFunction(DataLoaderJniFunction.class)
@@ -104,9 +105,9 @@ public class PairHmmMain {
         List<PairHmmBean> list = new ArrayList<>();
         list.add(pairHmmBean);
         JavaRDD<PairHmmBean> temp = getSparkContext().parallelize(list);
-        PairHmmJniFunction pairHmmJniFunction = new PairHmmJniFunction(libPath, nativeFuncName);
+
         long start = System.currentTimeMillis();
-        PairHmmBean sparkResultPairHmm = ((PairHmmBean)(temp.map(pairHmmJniFunction).collect().get(0)));
+        PairHmmBean sparkResultPairHmm = ((PairHmmBean)(temp.map(new PairHmmJniFunction(libPath, nativeFuncName)).collect().get(0)));
         long totalActionTime = System.currentTimeMillis() - start;
 
         byte[] resultSpark = sparkResultPairHmm.getRawBufferBean().arr;

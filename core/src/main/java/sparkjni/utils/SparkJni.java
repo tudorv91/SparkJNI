@@ -15,12 +15,13 @@
  */
 package sparkjni.utils;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.reflect.ClassPath;
 import org.apache.spark.api.java.JavaSparkContext;
-import sparkjni.jniLink.linkHandlers.*;
 import org.immutables.builder.Builder;
 import sparkjni.jniLink.linkContainers.JniRootContainer;
+import sparkjni.jniLink.linkHandlers.ImmutableJniRootContainerProvider;
 import sparkjni.jniLink.linkHandlers.KernelFile;
 import sparkjni.jniLink.linkHandlers.KernelFileWrapperHeader;
 import sparkjni.jniLink.linkHandlers.UserNativeFunction;
@@ -30,13 +31,14 @@ import sparkjni.utils.exceptions.SoftSparkJniException;
 import sparkjni.utils.jniAnnotations.JNI_class;
 import sparkjni.utils.jniAnnotations.JNI_functionClass;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+//@Value.Immutable(singleton = true)
 public class SparkJni {
     private static JniLinkHandler jniLinkHandler;
     private static MetadataHandler metadataHandler;
@@ -52,11 +54,18 @@ public class SparkJni {
     private boolean writeLinkClasses = true;
 
     @Builder.Factory
-    static SparkJni sparkJniSingleton(Optional<String> appName, String nativePath, Optional<String> jdkPath) {
+    static SparkJni sparkJniSingleton(Optional<String> appName, String nativePath, Optional<String> jdkPath, final Optional<String> classpath) {
         if (sparkJniSingleton == null) {
             sparkJniSingleton = new SparkJni();
-
             sparkJniSingleton.initVars(appName.isPresent() ? appName.get() : null, nativePath, jdkPath.isPresent() ? jdkPath.get() : null);
+            classpath.transform(new Function<String, Void>() {
+                @Nullable
+                @Override
+                public Void apply(@Nullable String s) {
+                    sparkJniSingleton.addToClasspath(s);
+                    return null;
+                }
+            });
         }
         return sparkJniSingleton;
     }
@@ -65,6 +74,10 @@ public class SparkJni {
         // by default, follow the entire deploy process
         deployMode = new DeployMode(DeployMode.DeployModes.FULL_GENERATE_AND_BUILD);
         deployTimesLogger = new DeployTimesLogger();
+    }
+
+    public static MetadataHandler getMetadataHandler() {
+        return metadataHandler;
     }
 
     private void initVars(String appName, String nativePath, String jdkPath) {
@@ -219,7 +232,7 @@ public class SparkJni {
     }
 
     public SparkJni setSparkContext(JavaSparkContext javaSparkContext) {
-        this.javaSparkContext = javaSparkContext;
+        SparkJni.javaSparkContext = javaSparkContext;
         return this;
     }
 
@@ -422,9 +435,5 @@ public class SparkJni {
 
     public DeployMode getDeployMode() {
         return deployMode;
-    }
-
-    public void setClasspath(@Nonnull String classpath) {
-        metadataHandler.setClasspath(classpath);
     }
 }
