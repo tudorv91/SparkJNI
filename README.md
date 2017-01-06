@@ -2,7 +2,9 @@
 This framework is a powerful platform which enables integration of native kernels (FPGA, OpenCL, C++) with Apache Spark, targeting faster execution of Big Data applications. Second, SparkJNI is  meant to reduce the development effort of native-accelerated Spark applications by means of targeted JNI wrappers for the control and the data transfer links.
 
 # Build Java instructions
-In order to run the simplest example, first set a system-wide environment variable JAVA_HOME with the location of your JDK installation (minimum JDK 7) (create a .sh file with ```export JAVA_HOME=<where-java-is-installed>``` in ```/etc/profile.d/``` and make sure it is loaded by logging in and out).
+In order to run the simplest example, make sure SparkJNI can find your JDK, by satisfying one the following two:
+* Create a simlink to /usr/lib/jvm/default-java that points to your default JDK.
+* Set a system-wide environment variable JAVA_HOME with the location of your JDK installation (minimum JDK 7) (create a .sh file with ```export JAVA_HOME=<where-java-is-installed>``` in ```/etc/profile.d/``` and make sure it is loaded by logging in and out).
 
 If you don't have Maven install, please install it with ```sudo apt-get install maven```.
 
