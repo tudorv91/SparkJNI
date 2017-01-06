@@ -40,13 +40,13 @@ public class StreamMain {
 
     private static List<StreamVectors> duplicate(List<StreamVectors> input) {
         List<StreamVectors> duplicate = new ArrayList<>();
-        for(int listIdx = 0; listIdx < input.size(); listIdx++){
+        for (StreamVectors anInput : input) {
             duplicate.add(
                     new StreamVectors(
-                    Arrays.copyOf(input.get(listIdx).A, input.get(listIdx).A.length),
-                    Arrays.copyOf(input.get(listIdx).B, input.get(listIdx).B.length),
-                    Arrays.copyOf(input.get(listIdx).C, input.get(listIdx).C.length),
-                    input.get(listIdx).scaling_constant)
+                            Arrays.copyOf(anInput.A, anInput.A.length),
+                            Arrays.copyOf(anInput.B, anInput.B.length),
+                            Arrays.copyOf(anInput.C, anInput.C.length),
+                            anInput.scaling_constant)
             );
         }
         return duplicate;

@@ -12,20 +12,22 @@ extern "C" {
 #include "defines.h"
 #include "batch.h"
 #include "utils.h"
+#ifdef FPGA_GO
 #include "libcxl.h"
 #include "psl.h"
+#endif
 }
 
 #include "jni.h"
-#include "org_tudelft_ewi_ceng_examples_pairHMM_LoadSizesJniFunction.h"
-#include "org_tudelft_ewi_ceng_examples_pairHMM_DataLoaderJniFunction.h"
-#include "org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniFunction.h"
+#include "pairHMM_LoadSizesJniFunction.h"
+#include "pairHMM_DataLoaderJniFunction.h"
+#include "pairHMM_PairHmmJniFunction.h"
 
 #include "CPPPairHmmBean.h"
 #include "CPPSizesBean.h"
 #include "CPPWorkloadPairHmmBean.h"
 
-JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniFunction_calculateSoftware(
+JNIEXPORT jobject JNICALL Java_pairHMM_PairHmmJniFunction_calculateSoftware(
 		JNIEnv *env, jobject caller, jobject dataInObj) {
 	jclass pairHmmBeanClass = env->GetObjectClass(dataInObj);
 	CPPPairHmmBean pairHmmBean(pairHmmBeanClass, dataInObj, env);
@@ -98,8 +100,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniF
 	jbyte* returnarr = (jbyte*)malloc(sizeof(t_result) * workloadBean->getbatches() * PIPE_DEPTH);
 	memcpy(returnarr, result_sw, sizeof(t_result) * workloadBean->getbatches() * PIPE_DEPTH);
 
-	jclass byteArrBeanClass = env->FindClass(
-			"org/tudelft/ewi/ceng/examples/pairHMM/ByteArrBean");
+	jclass byteArrBeanClass = env->FindClass("pairHMM/ByteArrBean");
 	CPPByteArrBean* returnBean = new CPPByteArrBean((jbyte*) returnarr,
 			sizeof(t_result) * workloadBean->getbatches() * PIPE_DEPTH,
 			byteArrBeanClass, env);
@@ -109,7 +110,8 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniF
 	return returnPairBean.getJavaObject();
 }
 
-JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniFunction_calculateHardware(
+#ifdef FPGA_GO
+JNIEXPORT jobject JNICALL Java_pairHMM_PairHmmJniFunction_calculateHardware(
 		JNIEnv *env, jobject caller, jobject dataInObj) {
 	struct cxl_afu_h *afu;
 	double start = omp_get_wtime();
@@ -179,7 +181,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniF
 	}
 
 	jclass byteArrBeanClass = env->FindClass(
-			"org/tudelft/ewi/ceng/examples/pairHMM/ByteArrBean");
+			"pairHMM/ByteArrBean");
 
 	CPPByteArrBean *returnBean = new CPPByteArrBean((jbyte*) result_hw,
 			sizeof(t_result) * workloadBean->getbatches() * PIPE_DEPTH,
@@ -193,8 +195,9 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_PairHmmJniF
 	cxl_afu_free(afu);
 	return returnPairBean.getJavaObject();
 }
+#endif
 
-JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_LoadSizesJniFunction_loadSizes(
+JNIEXPORT jobject JNICALL Java_pairHMM_LoadSizesJniFunction_loadSizes(
 		JNIEnv *env, jobject caller, jobject sizes) {
 	jclass sizesBeanClass = env->GetObjectClass(sizes);
 	CPPSizesBean cppSizesBean(sizesBeanClass, sizes, env);
@@ -226,7 +229,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_LoadSizesJn
 	}
 
 	jclass workloadClass = env->FindClass(
-			"org/tudelft/ewi/ceng/examples/pairHMM/WorkloadPairHmmBean");
+			"pairHMM/WorkloadPairHmmBean");
 	if (workloadClass == NULL) {
 		printf("workloadClass is NULL..try again");
 		return NULL;
@@ -238,7 +241,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_LoadSizesJn
 	return ret.getJavaObject();
 }
 
-JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_DataLoaderJniFunction_callDataLoader(
+JNIEXPORT jobject JNICALL Java_pairHMM_DataLoaderJniFunction_callDataLoader(
 		JNIEnv *env, jobject caller, jobject workloadObj) {
 	jclass workloadClass = env->GetObjectClass(workloadObj);
 	CPPWorkloadPairHmmBean workloadBean(workloadClass, workloadObj, env);
@@ -279,7 +282,7 @@ JNIEXPORT jobject JNICALL Java_org_tudelft_ewi_ceng_examples_pairHMM_DataLoaderJ
 	}
 
 	jclass byteArrBeanClass = env->FindClass(
-			"org/tudelft/ewi/ceng/examples/pairHMM/ByteArrBean");
+			"pairHMM/ByteArrBean");
 	CPPByteArrBean byteArrayBean((jbyte*) batch, workloadBean.getbytes(),
 			byteArrBeanClass, env);
 

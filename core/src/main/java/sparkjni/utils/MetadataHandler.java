@@ -18,9 +18,11 @@ package sparkjni.utils;
 import sparkjni.utils.exceptions.HardSparkJniException;
 import sparkjni.utils.exceptions.Messages;
 
+import java.io.File;
 import java.nio.file.FileSystems;
 
 public class MetadataHandler {
+    public static final String JVM_DEFAULT_JAVA = "/usr/lib/jvm/default-java";
     private String appName;
     private String nativePath;
     private String classpath;
@@ -54,19 +56,37 @@ public class MetadataHandler {
     }
 
     public String getClasspath() {
-        String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
-        String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
-        String thisClasspath = FileSystems.getDefault().getPath("target/classes").toAbsolutePath().normalize().toString();
-        String integrationTestsClasspath = FileSystems.getDefault().getPath("integration-tests/target/classes").toAbsolutePath().normalize().toString();
+        String sparkJniRoot = resolveSparkJniRoot();
+        String coreClasspath = FileSystems.getDefault().getPath(sparkJniRoot+"core/target/classes").toAbsolutePath().normalize().toString();
+        String coreTestClasspath = FileSystems.getDefault().getPath(sparkJniRoot+"core/target/test-classes").toAbsolutePath().normalize().toString();
+        String examplesClasspath = FileSystems.getDefault().getPath(sparkJniRoot+"sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
+        String benchmarksClasspath = FileSystems.getDefault().getPath(sparkJniRoot+"benchmarks/target/classes").toAbsolutePath().normalize().toString();
+        String integrationTestsClasspath = FileSystems.getDefault().getPath(sparkJniRoot+"integration-tests/target/test-classes").toAbsolutePath().normalize().toString();
         String thisJarClasspath = FileSystems.getDefault().getPath("sparkjni-benchmarks.jar").toAbsolutePath().normalize().toString();
-        String concatenatedCP = String.format("%s:%s:%s:%s:%s", sparkjniClasspath, examplesClasspath, thisClasspath, integrationTestsClasspath, thisJarClasspath);
+        String concatenatedCP = String.format("%s:%s:%s:%s:%s:%s", coreClasspath, coreTestClasspath, examplesClasspath, integrationTestsClasspath, benchmarksClasspath, thisJarClasspath);
         return classpath == null ? concatenatedCP : classpath + ":" + concatenatedCP;
+    }
+
+    private String resolveSparkJniRoot() {
+        String currentDir = new File(".").getAbsolutePath();
+        String[] pathSections = currentDir.split("/");
+        int idx = 0;
+        for(idx = 0; idx < pathSections.length; idx++){
+            if(pathSections[idx].equals("SparkJNI"))
+                break;
+        }
+        String sparkJniRoot = "";
+        for(int j = 0; j <= idx; j++)
+            sparkJniRoot += (pathSections[j] + "/");
+        return sparkJniRoot;
     }
 
     public String getJdkPath() {
         String envJdkPath = System.getenv().get("JAVA_HOME");
         if(envJdkPath != null && !envJdkPath.isEmpty())
             return envJdkPath;
+        else if(new File(JVM_DEFAULT_JAVA).exists())
+            return JVM_DEFAULT_JAVA;
         if (jdkPath == null || jdkPath.isEmpty())
             throw new HardSparkJniException(Messages.ERR_PLEASE_DO_SET_THE_JDK_PATH);
         return jdkPath;

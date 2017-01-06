@@ -6,9 +6,6 @@ import sparkjni.utils.jniAnnotations.JNI_method;
 import sparkjni.utils.jniAnnotations.JNI_param;
 import sparkjni.dataLink.JavaBean;
 
-/**
- * Created by Tudor on 8/14/16.
- */
 @JNI_class
 public class PairHmmBean extends JavaBean {
     public WorkloadPairHmmBean getWorkload() {

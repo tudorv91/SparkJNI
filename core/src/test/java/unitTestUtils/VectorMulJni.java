@@ -2,9 +2,6 @@ package unitTestUtils;
 
 import sparkjni.jniLink.jniFunctions.JniMapFunction;
 
-/**
- * Created by Tudor on 9/8/16.
- */
 public class VectorMulJni extends JniMapFunction {
     public VectorMulJni() {
     }

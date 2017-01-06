@@ -8,9 +8,6 @@ import sparkjni.dataLink.JavaBean;
 
 import java.io.Serializable;
 
-/**
- * Created by Tudor on 8/16/16.
- */
 @JNI_class
 public class WorkloadPairHmmBean extends JavaBean implements Serializable {
     public WorkloadPairHmmBean(){}

@@ -1,9 +1,12 @@
 package pairHMM;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.SparkEnv;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.broadcast.Broadcast;
 import scala.Tuple2;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.DeployTimesLogger;
@@ -11,41 +14,48 @@ import sparkjni.utils.SparkJni;
 import sparkjni.utils.SparkJniSingletonBuilder;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
-/**
- * Created by Tudor on 8/13/16.
- */
 public class PairHmmMain {
-    private static String appName = "pairhmm";
+    public static String appName = "pairhmm";
     private final static float ERROR_MARGIN_FLOAT = 0.00000001f;
     private static JavaSparkContext jscSingleton;
-    private static String modeString = "CPP",
-            jdkPath = "/usr/lib/jvm/default-java",
-            nativePath = "/home/tudor/Desktop/Thesis/projects/PairHMM_TACC",
-            nativeFuncName = "calculateSoftware";
-    private static int noLines = 2048;
+    public static String modeString = "CPP";
+    public static String jdkPath = "/usr/lib/jvm/default-java";
+    public static String nativePath = "/home/tudor/dev/SparkJNI/sparkjni-examples/src/main/cpp/examples/pairhmm";
+    public static String nativeFuncName = "calculateSoftware";
+    private static int noLines = 65536;
     private static SparkJni sparkJni;
-    public static JavaSparkContext getSparkContext(){
-        if(jscSingleton == null){
+    private static int noSplits = 4;
+    private static String master = "spark://p8capi6:7077";
+
+    public static JavaSparkContext getSparkContext() {
+        if (jscSingleton == null) {
             SparkConf sparkConf = new SparkConf().setAppName(appName);
-            sparkConf.setMaster("local[1]");
+            if (modeString.equals("CPP"))
+                sparkConf.setMaster("local[1]");
+            else
+                sparkConf.setMaster(master);
+            sparkConf.set( "spark.serializer", "org.apache.spark.serializer.KryoSerializer" );
+            sparkConf.registerKryoClasses(new Class[]{PairHmmBean.class, SizesBean.class, WorkloadPairHmmBean.class, ByteArrBean.class});
+            sparkConf.setIfMissing("spark.kryoserializer.buffer.max", "1g");
+            sparkConf.validateSettings();
             jscSingleton = new JavaSparkContext(sparkConf);
         }
         return jscSingleton;
     }
 
-    private static void initSparkJNI(String[] args){
-        if(args.length >= 5){
+    private static void initSparkJNI(String[] args) {
+        if (args.length >= 5) {
             nativePath = args[0];
             appName = args[1];
             jdkPath = args[2];
             modeString = args[3];
             noLines = Integer.parseInt(args[4]);
+            noSplits = Integer.parseInt(args[5]);
+            master = args[6];
         } else {
-            System.out.println("Usage: <nativePath> <appName> <jdkPath> <CPP/FPGA> <NO_LINES>");
+            System.out.println("Usage: <nativePath> <appName> <jdkPath> <CPP/FPGA> <NO_LINES> <NO_OF_SPLITS> <MASTER>");
         }
 
         sparkJni = new SparkJniSingletonBuilder()
@@ -54,7 +64,7 @@ public class PairHmmMain {
                 .nativePath(nativePath)
                 .build();
 
-        if(modeString.equals("FPGA")) {
+        if (modeString.equals("FPGA")) {
             sparkJni.setUserIncludeDirs("/tools/ppc_64/libcxl")
                     .setUserLibraryDirs("/tools/ppc_64/libcxl")
                     .setUserStaticLibraries("/tools/ppc_64/libcxl/libcxl.a")
@@ -64,7 +74,9 @@ public class PairHmmMain {
             sparkJni.setUserIncludeDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl")
                     .setUserLibraryDirs("/home/tudor/capi-streaming-framework/sim/pslse/libcxl");
         }
-        sparkJni.setDeployMode(new DeployMode(DeployMode.DeployModes.FULL_GENERATE_AND_BUILD));
+
+        sparkJni.setDeployMode(new DeployMode(DeployMode.DeployModes.JUST_BUILD));
+        sparkJni.getJniHandler().setDEBUGGING_MODE(false);
         sparkJni.registerJniFunction(PairHmmJniFunction.class)
                 .registerJniFunction(LoadSizesJniFunction.class)
                 .registerJniFunction(DataLoaderJniFunction.class)
@@ -78,17 +90,17 @@ public class PairHmmMain {
     public static void main(String[] args) throws Exception {
         initSparkJNI(args);
         createFile();
-        String libPath = nativePath + "/pairhmm.so";
+        final String libPath = nativePath + "/pairhmm.so";
         DeployTimesLogger deployTimesLogger = sparkJni.getDeployTimesLogger();
-        appendToFile(String.valueOf(deployTimesLogger.getGenTime()/1000.0f)+",");
-        appendToFile(String.valueOf(deployTimesLogger.getJavahTime()/1000.0f)+",");
-        appendToFile(String.valueOf(deployTimesLogger.getBuildTime()/1000.0f)+",");
-        appendToFile(String.valueOf(deployTimesLogger.getLibLoadTime()/1000.0f)+",");
+        appendToFile(String.valueOf(deployTimesLogger.getGenTime() / 1000.0f) + ",");
+        appendToFile(String.valueOf(deployTimesLogger.getJavahTime() / 1000.0f) + ",");
+        appendToFile(String.valueOf(deployTimesLogger.getBuildTime() / 1000.0f) + ",");
+        appendToFile(String.valueOf(deployTimesLogger.getLibLoadTime() / 1000.0f) + ",");
 
         ArrayList<SizesBean> dummySizesCollection = new ArrayList<>();
-        dummySizesCollection.add(loadSizes(nativePath+ "/sizes.txt", noLines));
+        dummySizesCollection.add(loadSizes(nativePath + "/sizes.txt", noLines));
 
-        JavaRDD<SizesBean> sizesRDD = getSparkContext().parallelize(dummySizesCollection);
+        JavaRDD<SizesBean> sizesRDD = getSparkContext().parallelize(dummySizesCollection).mapPartitions(SPLIT_INPUT_FUNCTION);
         JavaRDD<WorkloadPairHmmBean> workloadRDD = sizesRDD.map(new LoadSizesJniFunction(libPath, "loadSizes"));
         JavaRDD<ByteArrBean> dataInRdd = workloadRDD.map(new DataLoaderJniFunction(libPath, "callDataLoader"));
         JavaRDD<PairHmmBean> pairHmmBeanJavaRDD = dataInRdd.zip(workloadRDD).map(new Function<Tuple2<ByteArrBean, WorkloadPairHmmBean>, PairHmmBean>() {
@@ -98,70 +110,69 @@ public class PairHmmMain {
             }
         });
         pairHmmBeanJavaRDD.cache();
-        PairHmmBean pairHmmBean = pairHmmBeanJavaRDD.collect().get(0);
+        List<PairHmmBean> pairHmmBeans = pairHmmBeanJavaRDD.collect();
 
-        byte[] localRes = runLocally(libPath, pairHmmBean);
+//        Broadcast<List<PairHmmBean>> listBroadcast = getSparkContext().broadcast(pairHmmBeans);
+//        processBroadCast(libPath, pairHmmBeans);
 
-        List<PairHmmBean> list = new ArrayList<>();
-        list.add(pairHmmBean);
-        JavaRDD<PairHmmBean> temp = getSparkContext().parallelize(list);
+        processWithRDD(libPath, pairHmmBeans);
+    }
+
+    private static void processBroadCast(final String libPath, final Broadcast<List<PairHmmBean>> listBroadcast) {
+        generateBlanksFor(noSplits).repartition(noSplits).map(new Function<Integer, PairHmmBean>() {
+            @Override
+            public PairHmmBean call(Integer integer) throws Exception {
+                String executorId = SparkEnv.get().executorId();
+                int execId = Character.getNumericValue(executorId.charAt(executorId.length() - 1));
+                List<PairHmmBean> pairHmmBeans = listBroadcast.value();
+                System.out.println(String.format("Processing element %d on executor %s", execId, executorId));
+                if(execId >= pairHmmBeans.size())
+                    return null;
+                return new PairHmmJniFunction<PairHmmBean, PairHmmBean>(libPath, nativeFuncName).call(listBroadcast.value().get(execId));
+            }
+        }).collect();
+    }
+
+    private static JavaRDD<Integer> generateBlanksFor(int noSplits) {
+        List<Integer> integers = new ArrayList<>();
+        for(int i = 0; i < noSplits; i++) {
+            integers.add(0);
+        }
+        return getSparkContext().parallelize(integers);
+    }
+
+    private static void processWithRDD(String libPath, List<PairHmmBean> pairHmmBeans) {
+        JavaRDD<PairHmmBean> temp = getSparkContext().parallelize(pairHmmBeans);
 
         long start = System.currentTimeMillis();
-        PairHmmBean sparkResultPairHmm = ((PairHmmBean)(temp.map(new PairHmmJniFunction(libPath, nativeFuncName)).collect().get(0)));
-        long totalActionTime = System.currentTimeMillis() - start;
+        List<PairHmmBean> sparkResultPairHmm = temp.map(new PairHmmJniFunction<PairHmmBean, PairHmmBean>(libPath, nativeFuncName)).collect();
+        long totalActionTime =  System.currentTimeMillis() - start;
 
-        byte[] resultSpark = sparkResultPairHmm.getRawBufferBean().arr;
-        double kernelTime = sparkResultPairHmm.memcopyTime;
-
-        appendToFile(String.valueOf(kernelTime)+",");
-//        appendToFile(String.valueOf(totalActionTime)+",");
-        appendToFile(String.valueOf(sparkResultPairHmm.getTotalTimeSeconds()));
-        appendToFile("\n");
-//        int counter = 0;
-//        for(int x = 0; x < localRes.length; x+=16)
-//        {
-//            float sparkFloatRes = ByteBuffer.wrap(new byte[]{((byte)(resultSpark[x+3] & 0xFF)),
-//                    ((byte)(resultSpark[x+2] & 0xFF)), ((byte)(resultSpark[x+1] & 0xFF)), ((byte)(resultSpark[x] & 0xFF))})
-//                    .order(ByteOrder.LITTLE_ENDIAN).getFloat();
-//
-//            float cpuFloatRes = ByteBuffer.wrap(new byte[]{((byte)(localRes[x+3] & 0xFF)),
-//                    ((byte)(localRes[x+2] & 0xFF)), ((byte)(localRes[x+1] & 0xFF)), ((byte)(localRes[x] & 0xFF))})
-//                    .order(ByteOrder.LITTLE_ENDIAN).getFloat();
-//
-//            if(sparkFloatRes != cpuFloatRes) {
-//                if(Math.abs(1-sparkFloatRes/cpuFloatRes) > ERROR_MARGIN_FLOAT) {
-//                    System.out.println(String.format("ERROR at position: %d, local vs Spark: %f vs %f", x, cpuFloatRes, sparkFloatRes));
-//                }
-//                counter++;
-//            }
-//        }
-//        appendToFile(String.valueOf(counter));
-//        appendToFile("\n");
-
+        appendToFile(String.valueOf(totalActionTime)+",");
         System.out.println(String.format("Done for sizes %d", noLines));
         System.out.println(String.format("Hardware pairhmm done in %s ms", String.valueOf(totalActionTime)));
     }
 
-    private static void createFile(){
+    public static void createFile() {
         PrintWriter logger = null;
 
-        try{
-            logger = new PrintWriter(nativePath+"/resultsJava.csv", "UTF-8");
+        try {
+            logger = new PrintWriter(nativePath + "/resultsJava.csv", "UTF-8");
             logger.write("CodeGen time, javah time, build time, libload Time, kernel time, jFunction time\n");
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(logger != null)
+            if (logger != null)
                 logger.close();
         }
     }
 
-    public static void appendToFile(String field){
+    public static void appendToFile(String field) {
         FileWriter fw = null;
         BufferedWriter bw = null;
         PrintWriter printWriter = null;
-        try{
-            fw = new FileWriter(nativePath+"/resultsJava.csv", true);
+        try {
+            fw = new FileWriter(nativePath + "/resultsJava.csv", true);
             bw = new BufferedWriter(fw);
             printWriter = new PrintWriter(bw);
             printWriter.print(field);
@@ -175,13 +186,9 @@ public class PairHmmMain {
         }
     }
 
-    private static byte[] runLocally(String libPath, PairHmmBean bean){
-        PairHmmJniFunction pairHmmJniFunction = new PairHmmJniFunction(libPath, "calculateSoftware");
-        PairHmmBean resultSw = (PairHmmBean) pairHmmJniFunction.call(bean);
-        return resultSw.getRawBufferBean().arr;
-    }
+//    private static byte[] runLocally(String libPath, List<PairHmmBean> bean) {
 
-    private static SizesBean loadSizes(String filePath, int noLines){
+    public static SizesBean loadSizes(String filePath, int noLines) {
         Scanner scanner = null;
         try {
             scanner = new Scanner(new File(filePath));
@@ -192,24 +199,47 @@ public class PairHmmMain {
         ArrayList<Integer> col2 = new ArrayList<>();
 
         int counter = 0;
-        while(scanner.hasNextLine() && counter < noLines){
+        while (scanner.hasNextLine() && counter < noLines) {
             String line = scanner.nextLine();
             String[] cols = line.split("\t");
-            try{
+            try {
                 col1.add(Integer.parseInt(cols[0]));
                 col2.add(Integer.parseInt(cols[1]));
                 counter++;
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
         int[] col1Arr = new int[col1.size()];
         int[] col2Arr = new int[col1.size()];
-        for(int i = 0; i < col1.size(); i++){
+        for (int i = 0; i < col1.size(); i++) {
             col1Arr[i] = col1.get(i);
             col2Arr[i] = col2.get(i);
         }
         return new SizesBean(col1Arr, col2Arr);
     }
+
+    public static final FlatMapFunction<Iterator<SizesBean>, SizesBean> SPLIT_INPUT_FUNCTION = new FlatMapFunction<Iterator<SizesBean>, SizesBean>() {
+        @Override
+        public Iterator<SizesBean> call(Iterator<SizesBean> sizesBeanIterator) throws Exception {
+            if (sizesBeanIterator.hasNext()) {
+                SizesBean sizesBean = sizesBeanIterator.next();
+                int[] col1 = sizesBean.col1, col2 = sizesBean.col2;
+                int splitLength = col1.length / noSplits;
+                if(col1.length != col2.length)
+                    throw new RuntimeException(String.format("Columns lengths are different %d vs %d", col1.length, col2.length));
+                List<SizesBean> sizesBeanList = new ArrayList<>();
+                for (int idx = 0; idx < noSplits; idx++) {
+                    int[] col1_aux = new int[splitLength];
+                    int[] col2_aux = new int[splitLength];
+                    System.arraycopy(col1, idx * splitLength, col1_aux, 0, splitLength);
+                    System.arraycopy(col2, idx * splitLength, col2_aux, 0, splitLength);
+                    sizesBeanList.add(new SizesBean(col1_aux, col2_aux));
+                }
+                return sizesBeanList.iterator();
+            }
+            return Collections.emptyIterator();
+        }
+    };
 }
