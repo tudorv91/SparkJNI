@@ -30,10 +30,7 @@ public class VectorOpsIntegrationTest {
 
     public static void initSparkJNI() {
         DeployMode deployMode = new DeployMode(DeployMode.DeployModes.FULL_GENERATE_AND_BUILD);
-        String sparkjniClasspath = FileSystems.getDefault().getPath("../core/target/classes").toAbsolutePath().normalize().toString();
-        String classpath = FileSystems.getDefault().getPath("../sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
-        String testClasspath = FileSystems.getDefault().getPath("target/test-classes").toAbsolutePath().normalize().toString();
-        sparkJni = testUtils.getSparkJni(sparkjniClasspath + ":" + classpath + ":" + testClasspath).setDeployMode(deployMode);
+        sparkJni = testUtils.getSparkJni("").setDeployMode(deployMode);
         sparkJni.registerContainer(VectorBean.class);
         sparkJni.registerJniFunction(VectorMulJni.class)
                 .registerJniFunction(VectorAddJni.class);

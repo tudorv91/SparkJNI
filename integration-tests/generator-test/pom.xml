@@ -8,15 +8,29 @@
     <artifactId>test-generator</artifactId>
     <version>0.2</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tudelft.ceng.tvoicu</groupId>
+            <artifactId>core</artifactId>
+            <version>0.2</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>tudelft.ceng.tvoicu</groupId>
                 <artifactId>sparkjni-generator-plugin</artifactId>
-                <version>LATEST</version>
+                <version>0.2</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>sparkjni-generator</goal>
                         </goals>
