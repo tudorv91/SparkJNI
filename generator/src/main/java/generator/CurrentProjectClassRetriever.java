@@ -17,6 +17,7 @@ class CurrentProjectClassRetriever {
     private MavenProject mavenProject;
 
     private Set<Class> classesInProject;
+    private URLClassLoader urlClassLoader;
 
     CurrentProjectClassRetriever(MavenProject mavenProject, String sourceDir) {
         this.sourceDir = sourceDir;
@@ -54,8 +55,9 @@ class CurrentProjectClassRetriever {
                 e.printStackTrace();
             }
         }
-        setClassesInProject(new URLClassLoader(runtimeUrls,
-                Thread.currentThread().getContextClassLoader()));
+        urlClassLoader = new URLClassLoader(runtimeUrls,
+                Thread.currentThread().getContextClassLoader());
+        setClassesInProject(urlClassLoader);
     }
 
     private void setClassesInProject(URLClassLoader urlClassLoader) {
@@ -77,5 +79,9 @@ class CurrentProjectClassRetriever {
 
     public Set<Class> getClassesInProject() {
         return classesInProject;
+    }
+
+    public ClassLoader getClassLoader() {
+        return urlClassLoader;
     }
 }

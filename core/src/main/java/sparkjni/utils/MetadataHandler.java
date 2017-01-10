@@ -34,6 +34,8 @@ public class MetadataHandler {
     private String userStaticLibraries = "";
     private String userDefines = "";
 
+    private ClassLoader classloader;
+
     private static MetadataHandler handler = null;
 
     private MetadataHandler() {
@@ -156,5 +158,13 @@ public class MetadataHandler {
 
     public void setNativeLibPath(String nativeLibPath) {
         this.nativeLibPath = nativeLibPath;
+    }
+
+    public ClassLoader getClassloader() {
+        return classloader;
+    }
+
+    public void setClassloader(ClassLoader classloader) {
+        this.classloader = classloader;
     }
 }

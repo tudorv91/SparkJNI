@@ -273,10 +273,13 @@ public class JniUtils {
                     inputStreamReader = new InputStreamReader(input);
             BufferedReader errorBufferedReader = new BufferedReader(errorStreamReader),
                     inputBufferedReader = new BufferedReader(inputStreamReader);
-            String line = null;
 
+            String line;
+
+            StringBuilder stringBuilder = new StringBuilder();
             while ((line = errorBufferedReader.readLine()) != null) {
-                System.out.println(line);
+                System.err.println(line);
+                stringBuilder.append(line);
             }
 
             while ((line = inputBufferedReader.readLine()) != null) {
@@ -284,8 +287,9 @@ public class JniUtils {
             }
 
             if (process.waitFor() != 0) {
+                String errorString = String.format("On command: %s \nERROR: %s", proc, stringBuilder.toString() );
                 throw new HardSparkJniException(String.format("[ERROR] %s:\n\t%s",
-                        Messages.ERR_CPP_BUILD_FAILED, proc));
+                        Messages.ERR_CPP_BUILD_FAILED, errorString));
             }
         } catch (IOException e) {
             e.printStackTrace();

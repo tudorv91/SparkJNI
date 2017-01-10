@@ -167,7 +167,7 @@ public class JniLinkHandler {
 
     public Class getJavaClassByName(String fullyQualifiedClassName){
         try {
-            return Class.forName(fullyQualifiedClassName);
+            return Class.forName(fullyQualifiedClassName, false, SparkJni.getClassloader());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -8,8 +8,13 @@
         <version>0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>integration-test</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>generator-test</module>
+        <module>coretest</module>
+    </modules>
 
     <dependencies>
         <dependency>

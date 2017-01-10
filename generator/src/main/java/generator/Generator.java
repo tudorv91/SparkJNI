@@ -50,6 +50,7 @@ public class Generator extends AbstractMojo {
         SparkJniClassifier sparkJniClassifier = new SparkJniClassifier(currentProjectClassRetriever.getClassesInProject());
         sparkJni.registerClassifier(sparkJniClassifier);
         sparkJni.addToClasspath(targetDir);
+        sparkJni.setClassloader(currentProjectClassRetriever.getClassLoader());
         sparkJni.deploy();
     }
 

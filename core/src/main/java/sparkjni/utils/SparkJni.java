@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-//@Value.Immutable(singleton = true)
 public class SparkJni {
     private static JniLinkHandler jniLinkHandler;
     private static MetadataHandler metadataHandler;
@@ -111,11 +110,6 @@ public class SparkJni {
 
     private void processCppContent() {
         checkNativePath();
-//        try {
-//            cleanHeaderFiles();
-//        } catch (SoftSparkJniException ex){
-//            ex.printStackTrace();
-//        }
         if (jniLinkHandler != null)
             jniLinkHandler.deployLink(writeLinkClasses);
         else
@@ -133,8 +127,8 @@ public class SparkJni {
         build();
     }
 
-    public void addToClasspath(String... classpath){
-        for(String cPath: classpath)
+    public void addToClasspath(String... classpath) {
+        for (String cPath : classpath)
             metadataHandler.addToClasspath(cPath);
     }
 
@@ -287,7 +281,7 @@ public class SparkJni {
     }
 
     private boolean generateMakefile() {
-        String jdkPathStr = deployMode.doBuild ?  metadataHandler.getJdkPath() : "";
+        String jdkPathStr = deployMode.doBuild ? metadataHandler.getJdkPath() : "";
         String newMakefileContent = String.format(CppSyntax.NEW_MAKEFILE_SECTION,
                 metadataHandler.getAppName(), jdkPathStr, metadataHandler.getUserIncludeDirs(),
                 metadataHandler.getUserLibraryDirs(), metadataHandler.getUserLibraries(),
@@ -350,7 +344,7 @@ public class SparkJni {
             Set<ClassPath.ClassInfo> classesInPackage = ClassPath.from(sparkJniClassloader).getTopLevelClasses();
             for (ClassPath.ClassInfo classInfo : classesInPackage) {
                 try {
-                    Class candidate = Class.forName(classInfo.getName());
+                    Class candidate = Class.forName(classInfo.getName(), false, SparkJni.getClassloader());
                     if (loadJNIContainersAnnotatedClass(candidate))
                         continue;
                     if (loadJNIfuncsAnnotatedClass(candidate))
@@ -435,5 +429,20 @@ public class SparkJni {
 
     public DeployMode getDeployMode() {
         return deployMode;
+    }
+
+    public void registerClassifier(SparkJniClassifier sparkJniClassifier) {
+        for (Class functionClass : sparkJniClassifier.getJniFunctionClasses())
+            registerJniFunction(functionClass);
+        for (Class beanClass : sparkJniClassifier.getBeanClasses())
+            registerContainer(beanClass);
+    }
+
+    static ClassLoader getClassloader() {
+        return metadataHandler.getClassloader();
+    }
+
+    public static void setClassloader(ClassLoader classloader) {
+        metadataHandler.setClassloader(classloader);
     }
 }

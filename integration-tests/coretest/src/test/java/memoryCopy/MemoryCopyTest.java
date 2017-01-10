@@ -14,12 +14,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by tudor on 11/19/16.
- */
 public class MemoryCopyTest {
     private static final int NO_SLICES_ITERATIVE = 1<<4;
-//    public static final int SLICE_COPY_SIZE_ITERATIVE = 1<<20; // use 1^20 after increasing heap size for tests
     private static final int SLICE_COPY_SIZE_ITERATIVE = 1<<16;
     private TestUtils testUtils;
     private SparkJni sparkJni;

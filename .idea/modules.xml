@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/SparkJNI.iml" filepath="$PROJECT_DIR$/.idea/SparkJNI.iml" />
       <module fileurl="file://$PROJECT_DIR$/benchmarks/benchmarks.iml" filepath="$PROJECT_DIR$/benchmarks/benchmarks.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/integration-tests/coretest/coretest.iml" filepath="$PROJECT_DIR$/integration-tests/coretest/coretest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/generator/generator.iml" filepath="$PROJECT_DIR$/generator/generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/integration-tests/generator-test/generator-test.iml" filepath="$PROJECT_DIR$/integration-tests/generator-test/generator-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/integration-tests/integration-tests.iml" filepath="$PROJECT_DIR$/integration-tests/integration-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/sparkjni-examples/sparkjni-examples.iml" filepath="$PROJECT_DIR$/sparkjni-examples/sparkjni-examples.iml" />
     </modules>

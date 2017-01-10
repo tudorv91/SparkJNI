@@ -7,7 +7,6 @@ import sparkjni.utils.JniUtils;
 import sparkjni.utils.SparkJni;
 import testutils.TestUtils;
 
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.HashMap;
 

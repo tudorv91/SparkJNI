@@ -1,41 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <resourceExtensions />
-    <wildcardResourcePatterns>
-      <entry name="!?*.java" />
-      <entry name="!?*.form" />
-      <entry name="!?*.class" />
-      <entry name="!?*.groovy" />
-      <entry name="!?*.scala" />
-      <entry name="!?*.flex" />
-      <entry name="!?*.kt" />
-      <entry name="!?*.clj" />
-      <entry name="!?*.aj" />
-    </wildcardResourcePatterns>
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="benchmarks" />
         <module name="core" />
+        <module name="coretest" />
         <module name="Examples" />
         <module name="examples" />
-        <module name="integration-tests" />
+        <module name="generator" />
+        <module name="generator-test" />
         <module name="ITs" />
         <module name="sparkjni-examples" />
+        <module name="test-generator" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.7">
       <module name="benchmarks" target="1.7" />
       <module name="core" target="1.7" />
+      <module name="coretest" target="1.7" />
       <module name="examples" target="1.7" />
       <module name="Examples" target="1.7" />
+      <module name="generator" target="1.7" />
+      <module name="generator-test" target="1.5" />
       <module name="integration-tests" target="1.7" />
       <module name="ITs" target="1.7" />
       <module name="SparkJNI" target="1.7" />
@@ -43,6 +33,8 @@
       <module name="sparkjni-examples" target="1.7" />
       <module name="SparkJniExamples" target="1.5" />
       <module name="test" target="1.8" />
+      <module name="test-generator" target="1.5" />
+      <module name="testgenerator" target="1.7" />
       <module name="utils" target="1.7" />
     </bytecodeTargetLevel>
   </component>
