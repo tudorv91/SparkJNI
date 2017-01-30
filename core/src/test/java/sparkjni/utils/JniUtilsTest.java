@@ -2,6 +2,7 @@ package sparkjni.utils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import sparkjni.jniLink.linkContainers.FunctionSignatureMapper;
 import sparkjni.jniLink.linkContainers.JniHeader;
@@ -38,6 +39,7 @@ public class JniUtilsTest{
     }
 
     @Test
+    @Ignore
     public void jniDirAccessorTest(){
         List<JniHeader> headerList = getJniHeaders();
         assertEquals(headerList.size(), 2);
@@ -52,6 +54,7 @@ public class JniUtilsTest{
     }
 
     @Test
+    @Ignore
     public void fullNativeHeaderTest(){
         StringBuilder sb = new StringBuilder();
         for(JniHeader header: getJniHeaders()) {
