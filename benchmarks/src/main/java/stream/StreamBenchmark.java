@@ -49,7 +49,7 @@ public class StreamBenchmark {
                 .nativePath(nativePath)
                 .appName(appName)
                 .build();
-        sparkJni.setJdkPath("/usr/lib/jvm/java-1.7.0-openjdk-ppc64el");
+        sparkJni.setJdkPath("/usr/lib/jvm/default-java");
         sparkJni.getJniHandler().setDEBUGGING_MODE(false);
         ExampleUtils.getSparkContext(appName);
         initSparkJNI();

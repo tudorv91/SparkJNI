@@ -2,7 +2,7 @@ program_NAME 			:= vectorOps
 program_C_SRCS			:= $(wildcard *.c)
 program_CPP_SRCS		:= $(wildcard *.cpp)
 program_C_OBJS 			:= ${program_C_SRCS:.c=.o}
-JAVA_JDK				:= /usr/lib/jvm/java-1.7.0-openjdk-amd64
+JAVA_JDK				:= /usr/lib/jvm/default-java
 program_INCLUDE_DIRS 	:= $(JAVA_JDK)/include $(JAVA_JDK)/include/linux 
 program_LIBRARY_DIRS 	:= 
 program_LIBRARIES 		:=  

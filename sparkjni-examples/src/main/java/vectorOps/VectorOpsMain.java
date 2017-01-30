@@ -12,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import static sparkjni.utils.DeployMode.DeployModes.JAVAH_MAKEFILE_AND_BUILD;
 import static sparkjni.utils.DeployMode.DeployModes.JUST_BUILD;
 
 public class VectorOpsMain {
@@ -19,7 +20,6 @@ public class VectorOpsMain {
     private static String nativePath = null;
     private static String appName = "vectorOps";
     private static final boolean debug = true;
-    private static DeployMode deployMode = new DeployMode(JUST_BUILD);
 
     private static JavaSparkContext getSparkContext(){
         if(jscSingleton == null){
@@ -42,7 +42,7 @@ public class VectorOpsMain {
                 .appName(appName)
                 .build();
 
-        sparkJni.setDeployMode(new DeployMode(JUST_BUILD))
+        sparkJni.setDeployMode(new DeployMode(JAVAH_MAKEFILE_AND_BUILD))
                 .addToClasspath(sparkjniClasspath, examplesClasspath);
 
         sparkJni.registerContainer(VectorBean.class)
