@@ -36,9 +36,10 @@ public class PairHmmMain {
                 sparkConf.setMaster("local[1]");
             else
                 sparkConf.setMaster(master);
-            sparkConf.set( "spark.serializer", "org.apache.spark.serializer.KryoSerializer" );
+            sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
             sparkConf.registerKryoClasses(new Class[]{PairHmmBean.class, SizesBean.class, WorkloadPairHmmBean.class, ByteArrBean.class});
-            sparkConf.setIfMissing("spark.kryoserializer.buffer.max", "1g");
+            sparkConf.setIfMissing("spark.kryoserializer.buffer.max", "20g");
+            sparkConf.setIfMissing("spark.kryoserializer.buffer", "2047m");
             sparkConf.validateSettings();
             jscSingleton = new JavaSparkContext(sparkConf);
         }
@@ -112,21 +113,41 @@ public class PairHmmMain {
         pairHmmBeanJavaRDD.cache();
         List<PairHmmBean> pairHmmBeans = pairHmmBeanJavaRDD.collect();
 
-//        Broadcast<List<PairHmmBean>> listBroadcast = getSparkContext().broadcast(pairHmmBeans);
-//        processBroadCast(libPath, pairHmmBeans);
-
         processWithRDD(libPath, pairHmmBeans);
     }
 
-    private static void processBroadCast(final String libPath, final Broadcast<List<PairHmmBean>> listBroadcast) {
-        generateBlanksFor(noSplits).repartition(noSplits).map(new Function<Integer, PairHmmBean>() {
+    private static void processWithRDD(final String libPath, List<PairHmmBean> pairHmmBeans) {
+        JavaRDD<PairHmmBean> temp = getSparkContext().parallelize(pairHmmBeans);
+        temp = temp.cache();
+        long start = System.currentTimeMillis();
+        List<PairHmmBean> sparkResultPairHmm = temp.map(iteratePairHmm(libPath)).collect();
+        long totalActionTime = System.currentTimeMillis() - start;
+
+        System.out.println(String.format("Done for sizes %d", noLines));
+        System.out.println(String.format("Hardware pairhmm done in %s ms", String.valueOf(totalActionTime)));
+    }
+
+    private static Function<PairHmmBean, PairHmmBean> iteratePairHmm(final String libPath) {
+        return new Function<PairHmmBean, PairHmmBean>() {
+            @Override
+            public PairHmmBean call(PairHmmBean pairHmmBean) throws Exception {
+                for(int i = 0; i < 63; i++) {
+                    new PairHmmJniFunction<PairHmmBean, PairHmmBean>(libPath, nativeFuncName).call(pairHmmBean);
+                }
+                return new PairHmmJniFunction<PairHmmBean, PairHmmBean>(libPath, nativeFuncName).call(pairHmmBean);
+            }
+        };
+    }
+
+    private static List<PairHmmBean> processBroadCast(final String libPath, final Broadcast<List<PairHmmBean>> listBroadcast) {
+        return generateBlanksFor(noSplits).map(new Function<Integer, PairHmmBean>() {
             @Override
             public PairHmmBean call(Integer integer) throws Exception {
                 String executorId = SparkEnv.get().executorId();
                 int execId = Character.getNumericValue(executorId.charAt(executorId.length() - 1));
                 List<PairHmmBean> pairHmmBeans = listBroadcast.value();
                 System.out.println(String.format("Processing element %d on executor %s", execId, executorId));
-                if(execId >= pairHmmBeans.size())
+                if (execId >= pairHmmBeans.size())
                     return null;
                 return new PairHmmJniFunction<PairHmmBean, PairHmmBean>(libPath, nativeFuncName).call(listBroadcast.value().get(execId));
             }
@@ -135,22 +156,10 @@ public class PairHmmMain {
 
     private static JavaRDD<Integer> generateBlanksFor(int noSplits) {
         List<Integer> integers = new ArrayList<>();
-        for(int i = 0; i < noSplits; i++) {
+        for (int i = 0; i < noSplits; i++) {
             integers.add(0);
         }
         return getSparkContext().parallelize(integers);
-    }
-
-    private static void processWithRDD(String libPath, List<PairHmmBean> pairHmmBeans) {
-        JavaRDD<PairHmmBean> temp = getSparkContext().parallelize(pairHmmBeans);
-
-        long start = System.currentTimeMillis();
-        List<PairHmmBean> sparkResultPairHmm = temp.map(new PairHmmJniFunction<PairHmmBean, PairHmmBean>(libPath, nativeFuncName)).collect();
-        long totalActionTime =  System.currentTimeMillis() - start;
-
-        appendToFile(String.valueOf(totalActionTime)+",");
-        System.out.println(String.format("Done for sizes %d", noLines));
-        System.out.println(String.format("Hardware pairhmm done in %s ms", String.valueOf(totalActionTime)));
     }
 
     public static void createFile() {
@@ -227,7 +236,7 @@ public class PairHmmMain {
                 SizesBean sizesBean = sizesBeanIterator.next();
                 int[] col1 = sizesBean.col1, col2 = sizesBean.col2;
                 int splitLength = col1.length / noSplits;
-                if(col1.length != col2.length)
+                if (col1.length != col2.length)
                     throw new RuntimeException(String.format("Columns lengths are different %d vs %d", col1.length, col2.length));
                 List<SizesBean> sizesBeanList = new ArrayList<>();
                 for (int idx = 0; idx < noSplits; idx++) {

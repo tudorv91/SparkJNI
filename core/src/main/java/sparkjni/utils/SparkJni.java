@@ -344,7 +344,12 @@ public class SparkJni {
             Set<ClassPath.ClassInfo> classesInPackage = ClassPath.from(sparkJniClassloader).getTopLevelClasses();
             for (ClassPath.ClassInfo classInfo : classesInPackage) {
                 try {
-                    Class candidate = Class.forName(classInfo.getName(), false, SparkJni.getClassloader());
+                    ClassLoader classLoader = SparkJni.getClassloader();
+                    Class candidate;
+                    if (classLoader == null)
+                        candidate = Class.forName(classInfo.getName());
+                    else
+                        candidate = Class.forName(classInfo.getName(), false, classLoader);
                     if (loadJNIContainersAnnotatedClass(candidate))
                         continue;
                     if (loadJNIfuncsAnnotatedClass(candidate))

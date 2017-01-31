@@ -34,7 +34,7 @@ public class MetadataHandler {
     private String userStaticLibraries = "";
     private String userDefines = "";
 
-    private ClassLoader classloader;
+    private ClassLoader classloader = null;
 
     private static MetadataHandler handler = null;
 
@@ -161,6 +161,8 @@ public class MetadataHandler {
     }
 
     public ClassLoader getClassloader() {
+//        if(classloader == null)
+//            classloader = ClassLoader.getSystemClassLoader();
         return classloader;
     }
 
