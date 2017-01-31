@@ -31,9 +31,7 @@ public class VectorOpsMain {
     }
 
     private static void initSparkJNI(){
-        nativePath = Paths.get("sparkjni-examples/src/main/cpp/examples/vectorOps").normalize().toAbsolutePath().toString();
         appName = "vectorOps";
-
         String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
         String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
 
@@ -68,12 +66,19 @@ public class VectorOpsMain {
     }
 
     public static void main(String[] args){
+        parseArgs(args);
         initSparkJNI();
         String libPath = String.format(CppSyntax.NATIVE_LIB_PATH, nativePath, appName);
         JavaRDD<VectorBean> vectorsRdd = getSparkContext().parallelize(generateVectors(2, 4));
         JavaRDD<VectorBean> mulResults = vectorsRdd.map(new VectorMulJni(libPath, "mapVectorMul"));
         VectorBean results = mulResults.reduce(new VectorAddJni(libPath, "reduceVectorAdd"));
         debugRes(results);
+    }
+
+    private static void parseArgs(String[] args) {
+        if(args.length >= 1) {
+            nativePath = args[0];
+        }
     }
 
     private static void debugRes(VectorBean vector){
