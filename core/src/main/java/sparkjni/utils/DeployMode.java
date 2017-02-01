@@ -15,6 +15,8 @@
  */
 package sparkjni.utils;
 
+import java.util.HashMap;
+
 public class DeployMode {
     protected boolean doJavah;
     protected boolean doClean = true;
@@ -27,6 +29,16 @@ public class DeployMode {
             JAVAH_MAKEFILE_AND_BUILD,
             JUST_BUILD,
             ASSUME_EVERYTHING_IS_THERE
+    }
+
+    public static final HashMap<String, DeployModes> STRING_DEPLOY_MODES_HASH_MAP = new HashMap<>();
+    public static final String DEFAULT_BUILD_MODE = "FULL_GENERATE_AND_BUILD";
+
+    static {
+        STRING_DEPLOY_MODES_HASH_MAP.put("FULL_GENERATE_AND_BUILD", DeployModes.FULL_GENERATE_AND_BUILD);
+        STRING_DEPLOY_MODES_HASH_MAP.put("JAVAH_MAKEFILE_AND_BUILD", DeployModes.JAVAH_MAKEFILE_AND_BUILD);
+        STRING_DEPLOY_MODES_HASH_MAP.put("JUST_BUILD", DeployModes.JUST_BUILD);
+        STRING_DEPLOY_MODES_HASH_MAP.put("ASSUME_EVERYTHING_IS_THERE", DeployModes.ASSUME_EVERYTHING_IS_THERE);
     }
 
     public DeployMode(DeployModes buildMode) {
