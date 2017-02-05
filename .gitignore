@@ -15,8 +15,8 @@
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
-resources/
 target/
+integration-tests/coretest/resources
 # Gradle:
 .idea/gradle.xml
 .idea/libraries

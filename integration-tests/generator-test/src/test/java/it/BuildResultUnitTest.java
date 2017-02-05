@@ -34,11 +34,11 @@ public class BuildResultUnitTest {
         if (process.waitFor() != 0) {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = bufferedReader.readLine()) != null)
-                System.err.println(line);
+                System.out.println(line);
 
             BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = error.readLine()) != null)
-                System.err.println(line);
+                System.out.println(line);
             Assert.fail();
         }
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
