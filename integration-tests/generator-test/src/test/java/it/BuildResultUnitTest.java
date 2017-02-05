@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class BuildResultUnitTest {
-
     @Before
     public void setup() throws Exception {
         cleanTarget();

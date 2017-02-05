@@ -1,10 +1,12 @@
 package generator;
 
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.exceptions.HardSparkJniException;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +28,7 @@ public class PropertiesHandler {
         this.defaultPropertiesFileCreator = defaultPropertiesFileCreator;
     }
 
+    @Nonnull
     public Properties loadPropertiesOrCreateDefault(){
         File propertiesFile = new File(propertiesFilePath);
         if(!propertiesFile.exists()) {
@@ -40,23 +43,31 @@ public class PropertiesHandler {
         return properties;
     }
 
-    public String getJdkPath() {
+    @Nonnull
+    public Optional<String> getJdkPath() {
         if(properties != null) {
-            return properties.getProperty(DefaultPropertiesFileCreator.JDK_PATH);
+            return Optional.fromNullable(properties.getProperty(DefaultPropertiesFileCreator.JDK_PATH));
         } else
             throw new HardSparkJniException("Properties field is null");
     }
 
-    public DeployMode getBuildMode() {
+    @Nonnull
+    public Optional<DeployMode> getBuildMode() {
         if(properties != null) {
-            return new DeployMode(DEPLOY_MODES_MAP.get(properties.getProperty(DefaultPropertiesFileCreator.JDK_PATH)));
+            String buildMode = properties.getProperty(DefaultPropertiesFileCreator.BUILD_MODE);
+            if(buildMode == null) {
+                return Optional.absent();
+            } else {
+                return Optional.of(new DeployMode(DEPLOY_MODES_MAP.get(buildMode)));
+            }
         } else
             throw new HardSparkJniException("Properties field is null");
     }
 
-    public String getNativePath() {
+    @Nonnull
+    public Optional<String> getNativePath() {
         if(properties != null) {
-            return properties.getProperty(DefaultPropertiesFileCreator.NATIVE_SOURCE_PATH);
+            return Optional.fromNullable(properties.getProperty(DefaultPropertiesFileCreator.NATIVE_SOURCE_PATH));
         } else
             throw new HardSparkJniException("Properties field is null");
     }
