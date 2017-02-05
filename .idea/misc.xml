@@ -6,11 +6,13 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/examples/pom.xml" />
         <option value="$PROJECT_DIR$/generator/testgenerator/pom.xml" />
+        <option value="$PROJECT_DIR$/generator/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
-        <option value="$PROJECT_DIR$/generator/pom.xml" />
+        <option value="$PROJECT_DIR$/generatortest/pom.xml" />
+        <option value="$PROJECT_DIR$/integration-tests/generator-test/pom.xml" />
         <option value="$PROJECT_DIR$/integration-tests/pom.xml" />
         <option value="$PROJECT_DIR$/sparkjni-core/pom.xml" />
         <option value="$PROJECT_DIR$/test/pom.xml" />

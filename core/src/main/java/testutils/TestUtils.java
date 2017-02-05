@@ -73,6 +73,7 @@ public class TestUtils {
         SparkJni sparkJni =  new SparkJniSingletonBuilder()
                 .appName(appName)
                 .nativePath(fullPath)
+                .classpath(classpath)
                 .build();
         return sparkJni;
     }

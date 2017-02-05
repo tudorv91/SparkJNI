@@ -2,10 +2,7 @@ package memoryCopy;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import sparkjni.utils.SparkJni;
 import testutils.TestUtils;
 

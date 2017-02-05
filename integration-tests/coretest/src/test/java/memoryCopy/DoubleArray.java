@@ -8,9 +8,6 @@ import sparkjni.utils.jniAnnotations.JNI_param;
 
 import java.util.Arrays;
 
-/**
- * Created by tudor on 11/19/16.
- */
 @JNI_class
 public class DoubleArray extends JavaBean{
     @JNI_field(critical = true) double[] dblArr;

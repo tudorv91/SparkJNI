@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>generator-test</module>
         <module>coretest</module>
     </modules>
 

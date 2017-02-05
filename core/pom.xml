@@ -9,9 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>tudelft.ceng.tvoicu</groupId>
     <artifactId>core</artifactId>
-    <version>0.2</version>
 
     <dependencies>
         <dependency>
@@ -43,7 +41,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>17.0</version>
         </dependency>
         <dependency>
             <groupId>org.immutables</groupId>

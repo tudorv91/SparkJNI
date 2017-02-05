@@ -57,12 +57,12 @@ public class SparkJni {
         if (sparkJniSingleton == null) {
             sparkJniSingleton = new SparkJni();
             sparkJniSingleton.initVars(appName.isPresent() ? appName.get() : null, nativePath, jdkPath.isPresent() ? jdkPath.get() : null);
-            classpath.transform(new Function<String, Void>() {
+            classpath.transform(new Function<String, Object>() {
                 @Nullable
                 @Override
-                public Void apply(@Nullable String s) {
+                public Object apply(@Nullable String s) {
                     sparkJniSingleton.addToClasspath(s);
-                    return null;
+                    return new Object();
                 }
             });
         }

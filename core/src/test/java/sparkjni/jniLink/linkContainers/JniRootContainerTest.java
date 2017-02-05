@@ -1,9 +1,6 @@
 package sparkjni.jniLink.linkContainers;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import sparkjni.utils.SparkJni;
 import testutils.TestUtils;
 import unitTestUtils.VectorAddJni;
@@ -50,6 +47,7 @@ public class JniRootContainerTest {
         }
     }
 
+    @Ignore
     @Test
     public void jniRootContainerTest() {
         sparkJni.deploy();
