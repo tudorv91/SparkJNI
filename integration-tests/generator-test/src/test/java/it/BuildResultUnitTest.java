@@ -2,7 +2,6 @@ package it;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -10,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-@Ignore
 public class BuildResultUnitTest {
 
     @Before

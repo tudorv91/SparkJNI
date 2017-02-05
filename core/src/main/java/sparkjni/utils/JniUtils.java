@@ -339,4 +339,10 @@ public class JniUtils {
     public static String makeShared(String cppClassName, String argsList) {
         return String.format("std::make_shared<%s>(%s)", cppClassName, argsList);
     }
+
+    public static void jniExceptionCheck(StringBuilder constructorBodyBuilder) {
+        constructorBodyBuilder.append("\tif (env->ExceptionCheck()) {\n" +
+                "\t\treturn;\n" +
+                "\t}\n");
+    }
 }

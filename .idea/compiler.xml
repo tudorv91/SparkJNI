@@ -12,6 +12,7 @@
         <module name="Examples" />
         <module name="examples" />
         <module name="generator" />
+        <module name="generator-test" />
         <module name="ITs" />
         <module name="sparkjni-examples" />
         <module name="test-generator" />

@@ -123,6 +123,7 @@ public class CppConstructor extends NativeMethod {
         constructorBodyBuilder.append(String.format(CppSyntax.DEFINITION_STMT_ENV_GET_STR,
                 CppSyntax.JMETHOD_ID, CppSyntax.CONSTRUCTOR_OBJ_NAME, CppSyntax.JNI_ENV_OBJ_NAME,
                 CppSyntax.JNI_GET_METHOD_ID, "jClass, " + CppSyntax.JNI_CONSTRUCTOR_NAME + constructorSig));
+        JniUtils.jniExceptionCheck(constructorBodyBuilder);
         constructorBodyBuilder.append(String.format(CppSyntax.NULL_PTR_CHECK_STR,
                 CppSyntax.CONSTRUCTOR_OBJ_NAME, Messages.ERR_CONSTRUCTOR_OBJECT_METHOD_IS_NULL_STR));
 
@@ -144,6 +145,7 @@ public class CppConstructor extends NativeMethod {
                         constructorBodyBuilder.append(String.format(CppSyntax.DEFINITION_STMT_ENV_GET_STR,
                                 arrayTypeNameJNI, cppField.getName() + "Arr", CppSyntax.JNI_ENV_OBJ_NAME,
                                 newTypeArray, cppField.getName() + "_lengtharg"));
+                        JniUtils.jniExceptionCheck(constructorBodyBuilder);
                         constructorBodyBuilder.append(String.format(CppSyntax.CALL_METHOD_4ARGS_STR,
                                 CppSyntax.JNI_ENV_OBJ_NAME, setArrRegionMethodName, cppField.getName() + "Arr", 0,
                                 cppField.getName() + "_lengtharg", cppField.getName()));
@@ -162,6 +164,7 @@ public class CppConstructor extends NativeMethod {
         constructorBodyBuilder.append(String.format("\t%s = %s->NewObject(jClass, constructor, %s);\n",
                 CppSyntax.JAVACLASSJNI_OBJECT_NAME, CppSyntax.JNI_ENV_OBJ_NAME, newObjArgs));
 
+        JniUtils.jniExceptionCheck(constructorBodyBuilder);
         return String.format(CppSyntax.CONSTRUCTOR_WITH_NATIVE_ARGS_IMPL_STR,
                 ownerClassName, ownerClassName, argsList, constructorBodyBuilder.toString());
     }

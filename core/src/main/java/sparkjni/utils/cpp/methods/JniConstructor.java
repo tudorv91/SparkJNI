@@ -77,6 +77,7 @@ public class JniConstructor extends NativeMethod {
                             jniArrFieldName, JniUtils.getArrayTypeDecl(field.getReadableType()), field.getName()));
                     sb.append(String.format(CppSyntax.ENV_GET_ARRAY_LENGTH_STR,
                             field.getName() + "_length", field.getName() + "Arr"));
+                    JniUtils.jniExceptionCheck(sb);
 
                     if (cppRawTypeField.isMemoryAligned()) {
                         generateMemoryAlignedFieldInitStatement(cppRawTypeField, jniArrFieldName);
@@ -87,6 +88,7 @@ public class JniConstructor extends NativeMethod {
                                 String.format(CppSyntax.GET_ARRAY_ELEMENTS_STR,
                                         cppRawTypeField.getName(), typeCast, cppRawTypeField.getTypeOfArrayElement(), jniArrFieldName);
                         sb.append(getArrayStatement);
+                        JniUtils.jniExceptionCheck(sb);
                     }
                 }
             }
@@ -125,29 +127,40 @@ public class JniConstructor extends NativeMethod {
                     sb.append(String.format(CppSyntax.GET_FIELD_ID_STMT_STR,
                             cppRawTypeField.getName(), "replaceMeClassName", cppRawTypeField.getName(),
                             cppRawTypeField.getTypeSignature()));
+                    JniUtils.jniExceptionCheck(sb);
 
                     String formatString = (cppRawTypeField.isArray()) ? "jobject %s_obj" : "%s";
                     sb.append(String.format(formatString, cppRawTypeField.getName()));
                     sb.append(String.format(CppSyntax.GET_FIELD_STMT_STR,
                             "env", cppRawTypeField.getJniTypePlaceholderName(),
                             "replaceMeObjectName", cppRawTypeField.getName()));
+                    JniUtils.jniExceptionCheck(sb);
                 }
             } else {
                 CppReferenceField cppReferenceField = (CppReferenceField) field;
                 sb.append(String.format(CppSyntax.GET_FIELD_ID_STMT_STR,
                         cppReferenceField.getName(), "replaceMeClassName", cppReferenceField.getName(),
                         cppReferenceField.getTypeSignature()));
+                JniUtils.jniExceptionCheck(sb);
+
                 sb.append(String.format(CppSyntax.NULL_PTR_CHECK_STR,
                         "j_" + cppReferenceField.getName(), String.format("FieldID object j_%s is null..",
                                 cppReferenceField.getName())));
+                JniUtils.jniExceptionCheck(sb);
+
                 sb.append(String.format("jobject %s_obj = %s->Get%sField(%s, j_%s);\n",
                         cppReferenceField.getName(), "env", "Object",
                         "replaceMeObjectName", cppReferenceField.getName()));
+                JniUtils.jniExceptionCheck(sb);
+
                 sb.append(String.format("\tjclass %sClass = env->GetObjectClass(%s_obj);\n",
                         cppReferenceField.getName(), cppReferenceField.getName()));
+                JniUtils.jniExceptionCheck(sb);
+
                 sb.append(String.format("\t%s = new %s(%sClass, %s_obj, %s);\n",
                         cppReferenceField.getName(), cppReferenceField.getReadableType(),
                         cppReferenceField.getName(), cppReferenceField.getName(), "env"));
+                JniUtils.jniExceptionCheck(sb);
             }
         }
         return sb.toString();

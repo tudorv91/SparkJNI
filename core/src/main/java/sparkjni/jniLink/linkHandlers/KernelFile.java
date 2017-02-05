@@ -15,10 +15,11 @@
  */
 package sparkjni.jniLink.linkHandlers;
 
+import org.immutables.value.Value;
 import sparkjni.utils.JniUtils;
 import sparkjni.utils.MetadataHandler;
-import org.immutables.value.Value;
 
+import java.io.File;
 import java.util.List;
 
 @Value.Immutable
@@ -37,7 +38,8 @@ public abstract class KernelFile {
 
     private void generate(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(JniUtils.generateIncludeStatements(false, new String[]{kernelWrapperFileName()}));
+        String strippedFileName = new File(kernelWrapperFileName()).toPath().getFileName().toString();
+        stringBuilder.append(JniUtils.generateIncludeStatements(false, new String[]{strippedFileName}));
 
         for(UserNativeFunction userNativeFunction: userNativeFunctions()){
             stringBuilder.append(userNativeFunction.generateUserFunctionImplementation());

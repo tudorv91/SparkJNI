@@ -19,7 +19,11 @@ public class Generator extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        deploy();
+        try {
+            deploy();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
     }
 
     private void deploy() {
