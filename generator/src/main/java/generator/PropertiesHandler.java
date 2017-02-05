@@ -71,4 +71,11 @@ public class PropertiesHandler {
         } else
             throw new HardSparkJniException("Properties field is null");
     }
+
+    public boolean getOverwriteKernelFile() {
+        if(properties != null) {
+            return Boolean.parseBoolean(properties.getProperty(DefaultPropertiesFileCreator.OVERWRITE_KERNEL));
+        } else
+            throw new HardSparkJniException("Properties field is null");
+    }
 }

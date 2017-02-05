@@ -1,7 +1,7 @@
 package sparkjni.utils;
 
-import sparkjni.utils.jniAnnotations.JNI_class;
-import sparkjni.utils.jniAnnotations.JNI_functionClass;
+import sparkjni.utils.annotations.JNI_class;
+import sparkjni.utils.annotations.JniFunction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class SparkJniClassifier {
     }
 
     private void checkAndStoreJniFunction(Class classInProject) {
-        if(classInProject.getAnnotation(JNI_functionClass.class) != null)
+        if(classInProject.getAnnotation(JniFunction.class) != null)
             jniFunctionClasses.add(classInProject);
     }
 }

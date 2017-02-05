@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sparkjni.utils.jniAnnotations;
+package sparkjni.utils.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,7 +21,5 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.CONSTRUCTOR)
-public @interface JNI_method {
-    public String target() default "default";
-}
+@Target(value = ElementType.TYPE)
+public @interface JNI_class {}

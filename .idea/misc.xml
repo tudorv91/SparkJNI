@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/examples/pom.xml" />
         <option value="$PROJECT_DIR$/generator/testgenerator/pom.xml" />
         <option value="$PROJECT_DIR$/generator/pom.xml" />
+        <option value="$PROJECT_DIR$/integration-tests/generator-test/src/test/resources/vectorOps/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

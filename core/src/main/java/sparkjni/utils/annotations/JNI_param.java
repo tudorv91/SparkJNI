@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sparkjni.utils.jniAnnotations;
+package sparkjni.utils.annotations;
 
 import sparkjni.utils.CppSyntax;
-import sparkjni.utils.JniUtils;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,10 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.FIELD)
-public @interface JNI_field {
-    String alignment() default JniUtils.MEM_UNALIGNED;
-    String nativeTypeTarget() default CppSyntax.NATIVE_TARGET_TYPE_JAVA_DEFINED;
-    boolean critical() default false;
-    boolean safe() default true;
+@Target(value = ElementType.PARAMETER)
+public @interface JNI_param {
+    String target() default CppSyntax.CONSTRUCTOR_PARAM_DEFAULT_NAME_MAPPING;
 }

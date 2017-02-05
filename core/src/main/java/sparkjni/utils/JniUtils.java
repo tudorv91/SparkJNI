@@ -211,7 +211,7 @@ public class JniUtils {
 
     public static void checkNativePath(@Nonnull File nativeDir) {
         if (!nativeDir.exists() || !nativeDir.isDirectory())
-            throw new RuntimeException(Messages.NATIVE_PATH_ERROR);
+            throw new RuntimeException(Messages.NATIVE_PATH_ERROR + " " + nativeDir.getAbsolutePath());
     }
 
     public static String getClasspath(){
@@ -238,16 +238,14 @@ public class JniUtils {
         return idStr.substring(0, 1).toUpperCase() + idStr.substring(1);
     }
 
-    public static boolean writeFile(String content, String targetfileName) {
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(targetfileName);
-            writer.write(content);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return false;
-        } finally {
-            writer.close();
+    public static boolean writeFile(String content, String targetfileName, boolean overWriteKernelFile) {
+        if(!Files.exists(new File(targetfileName).toPath()) || overWriteKernelFile) {
+            try (PrintWriter writer = new PrintWriter(targetfileName)) {
+                writer.write(content);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return false;
+            }
         }
         return true;
     }

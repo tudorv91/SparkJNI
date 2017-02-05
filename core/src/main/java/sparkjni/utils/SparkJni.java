@@ -28,8 +28,8 @@ import sparkjni.jniLink.linkHandlers.UserNativeFunction;
 import sparkjni.utils.exceptions.HardSparkJniException;
 import sparkjni.utils.exceptions.Messages;
 import sparkjni.utils.exceptions.SoftSparkJniException;
-import sparkjni.utils.jniAnnotations.JNI_class;
-import sparkjni.utils.jniAnnotations.JNI_functionClass;
+import sparkjni.utils.annotations.JNI_class;
+import sparkjni.utils.annotations.JniFunction;
 
 import javax.annotation.Nullable;
 import java.io.*;
@@ -51,6 +51,7 @@ public class SparkJni {
     private DeployMode deployMode;
 
     private boolean writeLinkClasses = true;
+    private boolean overWriteKernelFile = false;
 
     @Builder.Factory
     static SparkJni sparkJniSingleton(Optional<String> appName, String nativePath, Optional<String> jdkPath, final Optional<String> classpath) {
@@ -152,15 +153,15 @@ public class SparkJni {
 
     public void generateKernelFiles() {
         KernelFileWrapperHeader kernelFileWrapperHeader = getKernelFileWrapperHeader();
-        if (!deployMode.doForceOverwriteKernelFiles)
+        if (!deployMode.doForceOverwriteKernelWrappers)
             return;
         if (!kernelFileWrapperHeader.writeKernelWrapperFile())
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
-        if (deployMode.doForceOverwriteKernelFiles) {
+        if (deployMode.doForceOverwriteKernelWrappers) {
             KernelFile kernelFile = kernelFileWrapperHeader.getKernelFile();
             if (functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty())
                 injectFunctionCodeBody(kernelFile.userNativeFunctions());
-            kernelFile.writeKernelFile();
+            kernelFile.writeKernelFile(overWriteKernelFile);
         }
     }
 
@@ -200,7 +201,7 @@ public class SparkJni {
         }
         File nativePathDir = new File(metadataHandler.getNativePath());
         if (!nativePathDir.exists() || !nativePathDir.isDirectory()) {
-            System.err.println(Messages.NATIVE_PATH_ERROR);
+            System.err.println(Messages.NATIVE_PATH_ERROR + ":" + nativePathDir.getAbsolutePath());
             System.exit(2);
         }
     }
@@ -364,7 +365,7 @@ public class SparkJni {
     }
 
     private boolean loadJNIfuncsAnnotatedClass(Class candidate) throws Error {
-        Annotation annotation = candidate.getAnnotation(JNI_functionClass.class);
+        Annotation annotation = candidate.getAnnotation(JniFunction.class);
         if (annotation != null) {
             registerJniFunction(candidate);
             System.out.println(String.format("Registered JNI function class %s", candidate.getName()));
@@ -449,5 +450,9 @@ public class SparkJni {
 
     public static void setClassloader(ClassLoader classloader) {
         metadataHandler.setClassloader(classloader);
+    }
+
+    public void setOverwriteKernelFile(boolean overwriteKernelFile) {
+        this.overWriteKernelFile = overwriteKernelFile;
     }
 }

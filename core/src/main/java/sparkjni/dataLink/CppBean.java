@@ -18,7 +18,7 @@ package sparkjni.dataLink;
 
 import sparkjni.utils.JniLinkHandler;
 import sparkjni.utils.cpp.methods.*;
-import sparkjni.utils.jniAnnotations.JNI_field;
+import sparkjni.utils.annotations.JNI_field;
 import sparkjni.utils.cpp.fields.CppField;
 import sparkjni.utils.cpp.fields.CppRawTypeField;
 import sparkjni.utils.cpp.fields.CppReferenceField;

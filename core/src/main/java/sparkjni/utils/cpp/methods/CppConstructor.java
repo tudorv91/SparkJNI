@@ -16,8 +16,8 @@
 package sparkjni.utils.cpp.methods;
 
 import sparkjni.utils.MetadataHandler;
-import sparkjni.utils.jniAnnotations.JNI_method;
-import sparkjni.utils.jniAnnotations.JNI_param;
+import sparkjni.utils.annotations.JNI_method;
+import sparkjni.utils.annotations.JNI_param;
 import sparkjni.utils.exceptions.Messages;
 import sparkjni.utils.cpp.fields.CppField;
 import sparkjni.utils.cpp.fields.CppRawTypeField;

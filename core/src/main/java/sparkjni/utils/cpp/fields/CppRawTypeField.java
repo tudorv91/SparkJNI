@@ -15,7 +15,7 @@
  */
 package sparkjni.utils.cpp.fields;//package org.apache.spark.examples;
 
-import sparkjni.utils.jniAnnotations.JNI_field;
+import sparkjni.utils.annotations.JNI_field;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.JniUtils;
 

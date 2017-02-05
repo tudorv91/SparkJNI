@@ -1,13 +1,13 @@
 package unitTestUtils;
 
 import sparkjni.jniLink.jniFunctions.JniMapFunction;
-import sparkjni.utils.jniAnnotations.JNI_functionClass;
+import sparkjni.utils.annotations.JniFunction;
 
 /**
  * Created by Tudor on 9/24/16.
  */
 
-@JNI_functionClass
+@JniFunction
 public class TestMapperJniFunc extends JniMapFunction {
     public TestMapperJniFunc() {
     }

@@ -16,6 +16,7 @@
         <module name="ITs" />
         <module name="sparkjni-examples" />
         <module name="test-generator" />
+        <module name="vectorOps" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.7">
@@ -37,6 +38,7 @@
       <module name="test-generator" target="1.5" />
       <module name="testgenerator" target="1.7" />
       <module name="utils" target="1.7" />
+      <module name="vectorOps" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

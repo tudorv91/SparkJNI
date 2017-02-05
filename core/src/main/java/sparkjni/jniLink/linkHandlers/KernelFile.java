@@ -48,8 +48,8 @@ public abstract class KernelFile {
         fileContent = stringBuilder.toString();
     }
 
-    public void writeKernelFile(){
+    public void writeKernelFile(boolean overWriteKernelFile){
         handleDependencies();
-        JniUtils.writeFile(fileContent, targetKernelFilename);
+        JniUtils.writeFile(fileContent, targetKernelFilename, overWriteKernelFile);
     }
 }

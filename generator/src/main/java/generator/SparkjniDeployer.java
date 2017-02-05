@@ -51,5 +51,6 @@ public class SparkjniDeployer {
                 return new Object();
             }
         });
+        sparkJni.setOverwriteKernelFile(propertiesHandler.getOverwriteKernelFile());
     }
 }

@@ -1,6 +1,0 @@
-#ifndef GENERATORTEST_KERNELWRAPPER
-#define GENERATORTEST_KERNELWRAPPER
-#include "CPPDoubleArray.h"
-
-
-#endif

@@ -55,7 +55,7 @@ public class KernelFileWrapperHeader {
         headerWrapperFileName = JniUtils.generateDefaultHeaderWrapperFileName(jniRootContainer.appName(),
                 MetadataHandler.getHandler().getNativePath());
 
-        JniUtils.writeFile(wrapInHeader(sb.toString()), headerWrapperFileName);
+        JniUtils.writeFile(wrapInHeader(sb.toString()), headerWrapperFileName, true);
         return true;
     }
 

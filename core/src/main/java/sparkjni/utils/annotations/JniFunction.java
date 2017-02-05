@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sparkjni.utils.jniAnnotations;
-
-import sparkjni.utils.CppSyntax;
+package sparkjni.utils.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,7 +21,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.PARAMETER)
-public @interface JNI_param {
-    String target() default CppSyntax.CONSTRUCTOR_PARAM_DEFAULT_NAME_MAPPING;
+@Target(value = ElementType.TYPE)
+public @interface JniFunction {
 }

@@ -19,16 +19,6 @@ public class VectorOpsMain {
     private static String nativePath = null;
     private static String appName = "vectorOps";
     private static final boolean debug = true;
-    private static DeployMode deployMode = new DeployMode(JUST_BUILD);
-
-    private static JavaSparkContext getSparkContext(){
-        if(jscSingleton == null){
-            SparkConf sparkConf = new SparkConf().setAppName(appName);
-            sparkConf.setMaster("local[4]");
-            jscSingleton = new JavaSparkContext(sparkConf);
-        }
-        return jscSingleton;
-    }
 
     private static void initSparkJNI(){
         nativePath = Paths.get("sparkjni-examples/src/main/cpp/examples/vectorOps").normalize().toAbsolutePath().toString();
@@ -49,6 +39,15 @@ public class VectorOpsMain {
                 .registerJniFunction(VectorMulJni.class)
                 .registerJniFunction(VectorAddJni.class);
         sparkJni.deploy();
+    }
+
+    private static JavaSparkContext getSparkContext(){
+        if(jscSingleton == null){
+            SparkConf sparkConf = new SparkConf().setAppName(appName);
+            sparkConf.setMaster("local[4]");
+            jscSingleton = new JavaSparkContext(sparkConf);
+        }
+        return jscSingleton;
     }
 
     private static ArrayList<VectorBean> generateVectors(int noVectors, int vectorSize){

@@ -24,7 +24,8 @@ public class DeployMode {
     protected boolean doClean = true;
     protected boolean doBuild = true;
     protected boolean doGenerateMakefile = true;
-    protected boolean doForceOverwriteKernelFiles = true;
+    protected boolean doForceOverwriteKernelWrappers = true;
+    protected boolean doForceOverwriteKernelFile = false;
     public static HashMap<String, DeployModes> DEPLOY_MODES_MAP;
     public enum DeployModes {
             FULL_GENERATE_AND_BUILD,
@@ -41,29 +42,34 @@ public class DeployMode {
         DEPLOY_MODES_MAP.put("ASSUME_EVERYTHING_IS_THERE", ASSUME_EVERYTHING_IS_THERE);
     }
 
+    public DeployMode(DeployModes deployMode, boolean doForceOverwriteKernelFile) {
+        this(deployMode);
+        this.doForceOverwriteKernelFile = doForceOverwriteKernelFile;
+    }
+
     public DeployMode(DeployModes buildMode) {
         switch (buildMode) {
             case FULL_GENERATE_AND_BUILD:
                 doBuild = true;
                 doGenerateMakefile = true;
-                doForceOverwriteKernelFiles = true;
+                doForceOverwriteKernelWrappers = true;
                 doJavah = true;
                 break;
             case JUST_BUILD:
                 doBuild = true;
                 doGenerateMakefile = false;
-                doForceOverwriteKernelFiles = false;
+                doForceOverwriteKernelWrappers = false;
                 doJavah = false;
                 break;
             case JAVAH_MAKEFILE_AND_BUILD:
                 doBuild = true;
                 doGenerateMakefile = true;
-                doForceOverwriteKernelFiles = false;
+                doForceOverwriteKernelWrappers = false;
                 doJavah = true;
             case ASSUME_EVERYTHING_IS_THERE:
                 doBuild = false;
                 doGenerateMakefile = false;
-                doForceOverwriteKernelFiles = false;
+                doForceOverwriteKernelWrappers = false;
                 doJavah = false;
                 break;
             default:

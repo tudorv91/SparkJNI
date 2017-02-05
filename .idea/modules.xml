@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/integration-tests/generator-test/generator-test.iml" filepath="$PROJECT_DIR$/integration-tests/generator-test/generator-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/integration-tests/integration-tests.iml" filepath="$PROJECT_DIR$/integration-tests/integration-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/sparkjni-examples/sparkjni-examples.iml" filepath="$PROJECT_DIR$/sparkjni-examples/sparkjni-examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/integration-tests/generator-test/src/test/resources/vectorOps/vectorOps.iml" filepath="$PROJECT_DIR$/integration-tests/generator-test/src/test/resources/vectorOps/vectorOps.iml" />
     </modules>
   </component>
 </project>

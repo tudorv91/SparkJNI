@@ -60,7 +60,7 @@ public class JniLinkHandler {
     public void deployLink(boolean doWriteClasses){
         if (!generateCppBeanClasses())
             throw new RuntimeException(Messages.ERR_CPP_FILE_GENERATION_FAILED);
-        if(SparkJni.getSparkJniSingleton().getDeployMode().doForceOverwriteKernelFiles )
+        if(SparkJni.getSparkJniSingleton().getDeployMode().doForceOverwriteKernelWrappers)
             writeCppHeaderPairs();
     }
 
