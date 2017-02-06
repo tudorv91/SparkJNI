@@ -1,10 +1,10 @@
-program_NAME 			:= pairhmm.PairHmmBenchmark
+program_NAME 			:= vectorOps
 program_C_SRCS			:= $(wildcard *.c)
 program_CPP_SRCS		:= $(wildcard *.cpp)
 program_C_OBJS 			:= ${program_C_SRCS:.c=.o}
-JAVA_JDK				:= /usr/lib/jvm/default-java
-program_INCLUDE_DIRS 	:= $(JAVA_JDK)/include $(JAVA_JDK)/include/linux /home/tudor/capi-streaming-framework/sim/pslse/libcxl
-program_LIBRARY_DIRS 	:= /home/tudor/capi-streaming-framework/sim/pslse/libcxl
+JAVA_JDK				:= /usr/lib/jvm/java-8-openjdk-amd64
+program_INCLUDE_DIRS 	:= $(JAVA_JDK)/include $(JAVA_JDK)/include/linux 
+program_LIBRARY_DIRS 	:= 
 program_LIBRARIES 		:=  
 program_STATIC_LIBS		:= 
 DEFINES 				:= 
