@@ -26,20 +26,20 @@ jobject dblArr_obj = env->GetObjectField(replaceMeObjectName, j_dblArr);
 	this->env = env;
 	jniCreated = 1;
 }
-	int CPPDoubleArray::getdblArr_length(){
-		return dblArr_length;
-	}
-
 	double* CPPDoubleArray::getdblArr(){
 		return dblArr;
+	}
+
+	int CPPDoubleArray::getdblArr_length(){
+		return dblArr_length;
 	}
 
 	jobject CPPDoubleArray::getJavaObject(){
 		return jniJavaClassRef;
 	}
 CPPDoubleArray::CPPDoubleArray(double* dblArrarg, int dblArr_lengtharg, jclass jClass, JNIEnv* jniEnv){
-	dblArr_length = dblArr_lengtharg;
 	dblArr = dblArrarg;
+	dblArr_length = dblArr_lengtharg;
 	env = jniEnv;
 	if(jClass == NULL){
 		printf("Provided java class object is null..!");
