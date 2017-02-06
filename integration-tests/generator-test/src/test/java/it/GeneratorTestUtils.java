@@ -37,9 +37,6 @@ public class GeneratorTestUtils {
                 System.out.println(line);
             Assert.fail();
         }
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        while ((line = bufferedReader.readLine()) != null)
-            System.out.println(line);
     }
 
     static void mvnCleanInstallProject(String mavenProjectName) {
