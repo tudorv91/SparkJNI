@@ -26,20 +26,20 @@ jobject data_obj = env->GetObjectField(replaceMeObjectName, j_data);
 	this->env = env;
 	jniCreated = 1;
 }
-	int* CPPVectorBean::getdata(){
-		return data;
-	}
-
 	int CPPVectorBean::getdata_length(){
 		return data_length;
+	}
+
+	int* CPPVectorBean::getdata(){
+		return data;
 	}
 
 	jobject CPPVectorBean::getJavaObject(){
 		return jniJavaClassRef;
 	}
 CPPVectorBean::CPPVectorBean(int* dataarg, int data_lengtharg, jclass jClass, JNIEnv* jniEnv){
-	data = dataarg;
 	data_length = data_lengtharg;
+	data = dataarg;
 	env = jniEnv;
 	if(jClass == NULL){
 		printf("Provided java class object is null..!");

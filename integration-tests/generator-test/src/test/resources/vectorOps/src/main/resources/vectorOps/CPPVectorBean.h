@@ -20,8 +20,8 @@ private:
 	static std::mutex mtx;
 
 public:
-		int* getdata();
 		int getdata_length();
+		int* getdata();
 		jobject getJavaObject();
 	CPPVectorBean(jclass replaceMeClassName, jobject replaceMeObjectName, JNIEnv* env);
 	CPPVectorBean(int* dataarg, int data_lengtharg, jclass jClass, JNIEnv* jniEnv);

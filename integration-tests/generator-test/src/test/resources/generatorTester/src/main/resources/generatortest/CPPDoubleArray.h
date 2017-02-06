@@ -20,8 +20,8 @@ private:
 	static std::mutex mtx;
 
 public:
-		double* getdblArr();
 		int getdblArr_length();
+		double* getdblArr();
 		jobject getJavaObject();
 	CPPDoubleArray(jclass replaceMeClassName, jobject replaceMeObjectName, JNIEnv* env);
 	CPPDoubleArray(double* dblArrarg, int dblArr_lengtharg, jclass jClass, JNIEnv* jniEnv);
