@@ -3,9 +3,6 @@ package unitTestUtils;
 import sparkjni.jniLink.jniFunctions.JniReduceFunction;
 import sparkjni.utils.annotations.JniFunction;
 
-/**
- * Created by tudor on 11/19/16.
- */
 @JniFunction
 public class TestReduceJniFunc extends JniReduceFunction {
     public TestReduceJniFunc() {

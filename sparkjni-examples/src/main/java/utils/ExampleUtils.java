@@ -4,7 +4,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 import vectorOps.VectorAddJni;
 import vectorOps.VectorBean;
 import vectorOps.VectorMulJni;
@@ -47,7 +47,7 @@ public class ExampleUtils {
         String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
         String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
 
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
+        SparkJni sparkJni = new SparkJniBuilder()
                 .nativePath(nativePath)
                 .appName(appName)
                 .build();

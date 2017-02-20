@@ -44,9 +44,8 @@ public abstract class JniHeaderProvider {
                     .jniFunctions(registerJniFunctions())
                     .build();
         } catch(Exception exception){
-            exception.printStackTrace();
+            throw new RuntimeException(exception);
         }
-        return null;
     }
 
     private void generateFullyQualifiedJavaClassName(){

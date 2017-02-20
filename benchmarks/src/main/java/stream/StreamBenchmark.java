@@ -1,13 +1,13 @@
 package stream;
 
-import org.apache.log4j.*;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 import testutils.TestUtils;
 import utils.ExampleUtils;
 
@@ -45,7 +45,7 @@ public class StreamBenchmark {
         appName = testUtils.appName;
         String nativePath = testUtils.initTestDir();
         libPath = String.format(CppSyntax.NATIVE_LIB_PATH, nativePath, appName);
-        sparkJni = new SparkJniSingletonBuilder()
+        sparkJni = new SparkJniBuilder()
                 .nativePath(nativePath)
                 .appName(appName)
                 .build();

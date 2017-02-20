@@ -19,25 +19,32 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.spark.SparkFiles;
-import sparkjni.utils.SparkJni;
+import sparkjni.utils.MetadataHandler;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+
+import static sparkjni.utils.AppInjector.injectMembers;
 
 /**
  * Created by Tudor on 7/20/16.
  * Abstract class to be inherited for all JNI function user implementation classes.
  */
 public abstract class JniFunction<T1, R> implements Serializable{
+    @Inject
+    private MetadataHandler metadataHandler;
+
     String nativeLibPath;
     String nativeFunctionName;
     Method nativeMethod = null;
 
     public JniFunction(){
-        this.nativeLibPath = SparkJni.getMetadataHandler().getNativeLibPath();
+        injectMembers(this);
+        this.nativeLibPath = metadataHandler.getNativeLibPath();
         this.nativeFunctionName = tryGetUniqueNativeMethod().transform(new Function<Method, String>() {
             @Nullable
             @Override

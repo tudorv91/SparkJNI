@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class VectorOpsIntegrationTest {
     private static int noVectors = 64;
     private static int vectorSize = 64;

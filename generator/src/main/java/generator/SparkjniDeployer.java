@@ -3,8 +3,8 @@ package generator;
 import com.google.common.base.Function;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
+import sparkjni.utils.SparkJniBuilder;
 import sparkjni.utils.SparkJniClassifier;
-import sparkjni.utils.SparkJniSingletonBuilder;
 
 import javax.annotation.Nullable;
 
@@ -19,14 +19,14 @@ public class SparkjniDeployer {
 
     public void deploySparkJni() {
         PropertiesHandler propertiesHandler = metadataProvider.loadProperties();
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
+        SparkJni sparkJni = new SparkJniBuilder()
                 .appName(metadataProvider.getProjectName())
                 .nativePath(metadataProvider.getNativeAppDir())
                 .build();
         SparkJniClassifier sparkJniClassifier = new SparkJniClassifier(currentProjectClassRetriever.getClassesInProject());
         sparkJni.registerClassifier(sparkJniClassifier);
         sparkJni.addToClasspath(metadataProvider.getTargetDir());
-        SparkJni.setClassloader(currentProjectClassRetriever.getClassLoader());
+        sparkJni.setClassloader(currentProjectClassRetriever.getClassLoader());
 
         setUserDefinedProperties(propertiesHandler, sparkJni);
         sparkJni.deploy();

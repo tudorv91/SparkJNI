@@ -112,7 +112,6 @@ public class MemoryCopyTest {
 
     @After
     public void cleanup(){
-        SparkJni.reset();
         testUtils.cleanTestDir();
     }
 

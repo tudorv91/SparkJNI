@@ -52,17 +52,17 @@ public class VectorOpsMain {
 ...
     private static void initSparkJNI(){
 ...
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
+        SparkJni sparkJniProvider = new SparkJniSingletonBuilder()
                 .nativePath(nativePath)
                 .appName(appName)
                 .build();
-        sparkJni.setDeployMode(new DeployMode(JUST_BUILD))
+        sparkJniProvider.setDeployMode(new DeployMode(JUST_BUILD))
                 .addToClasspath(sparkjniClasspath, examplesClasspath);
         // Register control and data transfer links (classes).
-        sparkJni.registerContainer(VectorBean.class)
+        sparkJniProvider.registerContainer(VectorBean.class)
                 .registerJniFunction(VectorMulJni.class)
                 .registerJniFunction(VectorAddJni.class);
-        sparkJni.deploy();
+        sparkJniProvider.deploy();
     }
 
     public static void main(String[] args){

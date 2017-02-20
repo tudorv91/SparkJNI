@@ -17,7 +17,6 @@ package sparkjni.utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.reflect.ClassPath;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.immutables.builder.Builder;
 import sparkjni.jniLink.linkContainers.JniRootContainer;
@@ -27,65 +26,62 @@ import sparkjni.jniLink.linkHandlers.KernelFileWrapperHeader;
 import sparkjni.jniLink.linkHandlers.UserNativeFunction;
 import sparkjni.utils.exceptions.HardSparkJniException;
 import sparkjni.utils.exceptions.Messages;
-import sparkjni.utils.exceptions.SoftSparkJniException;
-import sparkjni.utils.annotations.JNI_class;
-import sparkjni.utils.annotations.JniFunction;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
-import java.lang.annotation.Annotation;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+
+import static sparkjni.utils.AppInjector.injectSparkJni;
 
 public class SparkJni {
-    private static JniLinkHandler jniLinkHandler;
-    private static MetadataHandler metadataHandler;
+    private final MetadataHandler metadataHandler;
+    private final DeployTimesLogger deployTimesLogger;
+    private final JniLinkHandler jniLinkHandler;
+    private final MakefileGenerator makefileGenerator;
+    private final NativeFunctionPrototypesCollector nativeFunctionPrototypesCollector;
+
     private static JniRootContainer jniRootContainer;
     private static JavaSparkContext javaSparkContext;
-    private static SparkJni sparkJniSingleton = null;
-    private static DeployTimesLogger deployTimesLogger;
-
     private HashMap<String, String> functionCodeInjectorMap;
 
     private DeployMode deployMode;
-
-    private boolean writeLinkClasses = true;
     private boolean overWriteKernelFile = false;
 
+    @Inject
+    private SparkJni(@Nonnull MetadataHandler metadataHandler, @Nonnull DeployTimesLogger deployTimesLogger, @Nonnull Provider<JniLinkHandler> jniLinkHandlerProvider,
+                     @Nonnull MakefileGenerator makefileGenerator, @Nonnull NativeFunctionPrototypesCollector nativeFunctionPrototypesCollector) {
+        this.metadataHandler = metadataHandler;
+        this.deployTimesLogger = deployTimesLogger;
+        this.jniLinkHandler = jniLinkHandlerProvider.get();
+        this.makefileGenerator = makefileGenerator;
+        this.nativeFunctionPrototypesCollector = nativeFunctionPrototypesCollector;
+        // by default, follow the entire deploy process
+        deployMode = new DeployMode(DeployMode.DeployModes.FULL_GENERATE_AND_BUILD);
+    }
+
     @Builder.Factory
-    static SparkJni sparkJniSingleton(Optional<String> appName, String nativePath, Optional<String> jdkPath, final Optional<String> classpath) {
-        if (sparkJniSingleton == null) {
-            sparkJniSingleton = new SparkJni();
-            sparkJniSingleton.initVars(appName.isPresent() ? appName.get() : null, nativePath, jdkPath.isPresent() ? jdkPath.get() : null);
-            classpath.transform(new Function<String, Object>() {
-                @Nullable
-                @Override
-                public Object apply(@Nullable String s) {
-                    sparkJniSingleton.addToClasspath(s);
-                    return new Object();
-                }
-            });
-        }
+    static SparkJni sparkJni(@Nonnull Optional<String> appName, @Nonnull String nativePath, @Nonnull Optional<String> jdkPath, @Nonnull Optional<String> classpath) {
+        final SparkJni sparkJniSingleton = injectSparkJni();
+        sparkJniSingleton.initVars(appName.isPresent() ? appName.get() : null, nativePath, jdkPath.isPresent() ? jdkPath.get() : null);
+        classpath.transform(new Function<String, Object>() {
+            @Nullable
+            @Override
+            public Object apply(@Nullable String s) {
+                sparkJniSingleton.addToClasspath(s);
+                return new Object();
+            }
+        });
         return sparkJniSingleton;
     }
 
-    private SparkJni() {
-        // by default, follow the entire deploy process
-        deployMode = new DeployMode(DeployMode.DeployModes.FULL_GENERATE_AND_BUILD);
-        deployTimesLogger = new DeployTimesLogger();
-    }
-
-    public static MetadataHandler getMetadataHandler() {
-        return metadataHandler;
-    }
-
     private void initVars(String appName, String nativePath, String jdkPath) {
-        metadataHandler = MetadataHandler.getHandler();
         setAppName(appName);
         setNativePath(nativePath);
         setJdkPath(jdkPath);
-        jniLinkHandler = JniLinkHandler.getJniLinkHandlerSingleton();
     }
 
     public void deploy() {
@@ -95,42 +91,46 @@ public class SparkJni {
     }
 
     public void deployWithCodeInjections(HashMap<String, String> functionCodeInjectorMap) {
-        if (!functionCodeInjectorMap.isEmpty())
+        if (!functionCodeInjectorMap.isEmpty()) {
             this.functionCodeInjectorMap = functionCodeInjectorMap;
+        }
         deploy();
     }
 
     private void loadNativeLib() {
         String libraryFullPath = JniUtils.generateDefaultLibPath(metadataHandler.getAppName(), metadataHandler.getNativePath());
-        if (javaSparkContext != null)
+        if (javaSparkContext != null) {
             javaSparkContext.addFile(libraryFullPath);
-        else
+        }
+        else {
             System.load(libraryFullPath);
+        }
         deployTimesLogger.libLoadTime = System.currentTimeMillis() - deployTimesLogger.start;
     }
 
     private void processCppContent() {
         checkNativePath();
-        if (jniLinkHandler != null)
-            jniLinkHandler.deployLink(writeLinkClasses);
-        else
-            throw new RuntimeException("NOT SET");
-
-        long startJavah = System.currentTimeMillis();
-        if (deployMode.doJavah)
-            jniLinkHandler.javah(metadataHandler.getClasspath());
-        collectNativeFunctionPrototypes();
-        deployTimesLogger.javahTime = System.currentTimeMillis() - startJavah;
-
+        jniLinkHandler.deployLink();
+        executeAndBenchmarkJavah();
         generateAndCheckMakefile();
         generateJniRootContainer();
         generateKernelFiles();
         build();
     }
 
+    private void executeAndBenchmarkJavah() {
+        long startJavah = System.currentTimeMillis();
+        if (deployMode.doJavah) {
+            jniLinkHandler.javah(metadataHandler.getClasspath());
+        }
+        nativeFunctionPrototypesCollector.collectNativeFunctionPrototypes();
+        deployTimesLogger.javahTime = System.currentTimeMillis() - startJavah;
+    }
+
     public void addToClasspath(String... classpath) {
-        for (String cPath : classpath)
+        for (String cPath : classpath) {
             metadataHandler.addToClasspath(cPath);
+        }
     }
 
     private void generateJniRootContainer() {
@@ -138,29 +138,19 @@ public class SparkJni {
                 .buildJniRootContainer(metadataHandler.getNativePath(), metadataHandler.getAppName());
     }
 
-    private void cleanHeaderFiles() throws SoftSparkJniException {
-        File nativeDir = new File(metadataHandler.getNativePath());
-        if (nativeDir.isDirectory()) {
-            for (File file : nativeDir.listFiles()) {
-                try {
-                    if (JniUtils.isJniNativeFunction(file.toPath()))
-                        file.delete();
-                } catch (IOException ex) {
-                }
-            }
-        }
-    }
-
-    public void generateKernelFiles() {
+    private void generateKernelFiles() {
         KernelFileWrapperHeader kernelFileWrapperHeader = getKernelFileWrapperHeader();
-        if (!deployMode.doForceOverwriteKernelWrappers)
+        if (!deployMode.doForceOverwriteKernelWrappers) {
             return;
-        if (!kernelFileWrapperHeader.writeKernelWrapperFile())
+        }
+        if (!kernelFileWrapperHeader.writeKernelWrapperFile()) {
             throw new HardSparkJniException(Messages.ERR_KERNEL_FILE_GENERATION_FAILED);
+        }
         if (deployMode.doForceOverwriteKernelWrappers) {
             KernelFile kernelFile = kernelFileWrapperHeader.getKernelFile();
-            if (functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty())
+            if (functionCodeInjectorMap != null && !functionCodeInjectorMap.isEmpty()) {
                 injectFunctionCodeBody(kernelFile.userNativeFunctions());
+            }
             kernelFile.writeKernelFile(overWriteKernelFile);
         }
     }
@@ -177,7 +167,7 @@ public class SparkJni {
 
     private void generateAndCheckMakefile() {
         if (deployMode.doGenerateMakefile)
-            if (!generateMakefile()) {
+            if (!makefileGenerator.generateMakefile(deployMode)) {
                 System.err.println(Messages.MAKEFILE_GENERATION_FAILED_ERROR);
                 System.exit(3);
             }
@@ -206,11 +196,21 @@ public class SparkJni {
         }
     }
 
+    public void registerClassifier(SparkJniClassifier sparkJniClassifier) {
+        for (Class functionClass : sparkJniClassifier.getJniFunctionClasses()) {
+            registerJniFunction(functionClass);
+        }
+        for (Class beanClass : sparkJniClassifier.getBeanClasses()) {
+            registerContainer(beanClass);
+        }
+    }
+
     /**
      * Set the user defines pragma for the build stage flags.
      *
      * @param userDefines
      */
+    @SuppressWarnings("unused")
     public SparkJni setUserDefines(String userDefines) {
         metadataHandler.setUserDefines(userDefines);
         return this;
@@ -221,6 +221,7 @@ public class SparkJni {
      *
      * @param userLibraryDirs
      */
+    @SuppressWarnings("unused")
     public SparkJni setUserLibraryDirs(String userLibraryDirs) {
         metadataHandler.setUserLibraryDirs(userLibraryDirs);
         return this;
@@ -241,6 +242,7 @@ public class SparkJni {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public SparkJni setUserLibraries(String userLibraries) {
         metadataHandler.setUserLibraries(userLibraries);
         return this;
@@ -281,133 +283,11 @@ public class SparkJni {
         return this;
     }
 
-    private boolean generateMakefile() {
-        String jdkPathStr = deployMode.doBuild ? metadataHandler.getJdkPath() : "";
-        String newMakefileContent = String.format(CppSyntax.NEW_MAKEFILE_SECTION,
-                metadataHandler.getAppName(), jdkPathStr, metadataHandler.getUserIncludeDirs(),
-                metadataHandler.getUserLibraryDirs(), metadataHandler.getUserLibraries(),
-                metadataHandler.getUserStaticLibraries(), metadataHandler.getUserDefines());
-
-        PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(metadataHandler.getNativePath() + "/Makefile");
-            writer.write(newMakefileContent);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return false;
-        } finally {
-            if (writer != null)
-                writer.close();
-        }
-
-        return true;
-    }
-
-    public boolean collectNativeFunctionPrototypes() {
-        File nativeLibDir = new File(metadataHandler.getNativePath());
-
-        if (nativeLibDir.exists() && nativeLibDir.isDirectory()) {
-            File[] headerFiles = nativeLibDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File file, String s) {
-                    return s.endsWith(".h");
-                }
-            });
-            for (File headerFile : headerFiles) {
-                jniLinkHandler.getJniHeaderFiles().add(headerFile.getName());
-                String[] splittedFileName = headerFile.getName().split("_");
-                if (splittedFileName.length == 1)
-                    continue;
-
-                try (BufferedReader br = new BufferedReader(new FileReader(headerFile))) {
-                    for (String line; (line = br.readLine()) != null; ) {
-                        if (line.startsWith("JNIEXPORT")) {
-                            String[] splitted = line.split("_");
-                            String methodName = splitted[splitted.length - 1];
-                            jniLinkHandler.registerNativePrototype(line, methodName);
-                        }
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            return true;
-        } else
-            return false;
-    }
-
-    /**
-     * @TO-DO Find faster solution and enable it.
-     */
-    public void loadAnnotatedClasses() {
-        ClassLoader sparkJniClassloader = SparkJni.class.getClassLoader();
-        try {
-            Set<ClassPath.ClassInfo> classesInPackage = ClassPath.from(sparkJniClassloader).getTopLevelClasses();
-            for (ClassPath.ClassInfo classInfo : classesInPackage) {
-                try {
-                    ClassLoader classLoader = SparkJni.getClassloader();
-                    Class candidate;
-                    if (classLoader == null)
-                        candidate = Class.forName(classInfo.getName());
-                    else
-                        candidate = Class.forName(classInfo.getName(), false, classLoader);
-                    if (loadJNIContainersAnnotatedClass(candidate))
-                        continue;
-                    if (loadJNIfuncsAnnotatedClass(candidate))
-                        continue;
-                } catch (Error err) {
-                    System.err.println("Error");
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean loadJNIfuncsAnnotatedClass(Class candidate) throws Error {
-        Annotation annotation = candidate.getAnnotation(JniFunction.class);
-        if (annotation != null) {
-            registerJniFunction(candidate);
-            System.out.println(String.format("Registered JNI function class %s", candidate.getName()));
-            return true;
-        }
-        return false;
-    }
-
-    private boolean loadJNIContainersAnnotatedClass(Class candidate) throws Error {
-        Annotation annotation = candidate.getAnnotation(JNI_class.class);
-        if (annotation != null) {
-            registerContainer(candidate);
-            System.out.println(String.format("Registered JNI container class %s", candidate.getName()));
-            return true;
-        }
-        return false;
-    }
-
-    public SparkJni setUserStaticLibraries(String userStaticLibraries) {
-        metadataHandler.setUserStaticLibraries(userStaticLibraries);
-        return this;
-    }
-
     public JniLinkHandler getJniHandler() {
         return jniLinkHandler;
     }
 
-    /**
-     * @TODO Complete implementation of the reset feature for persistent environments, where the JVM is not closed
-     * between application launches. Or transform to singleton.
-     */
-    public static void reset() {
-        sparkJniSingleton = null;
-        jniRootContainer = null;
-        javaSparkContext = null;
-        deployTimesLogger = null;
-
-        MetadataHandler.reset();
-        JniLinkHandler.reset();
-    }
-
-    KernelFileWrapperHeader getKernelFileWrapperHeader() {
+    private KernelFileWrapperHeader getKernelFileWrapperHeader() {
         return new KernelFileWrapperHeader(jniLinkHandler.getContainerHeaderFiles(), jniRootContainer);
     }
 
@@ -420,35 +300,20 @@ public class SparkJni {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public DeployTimesLogger getDeployTimesLogger() {
         return deployTimesLogger;
-    }
-
-    public static SparkJni getSparkJniSingleton() {
-        return sparkJniSingleton;
-    }
-
-    public SparkJni doWriteLinkClasses(boolean writeLinkClasses) {
-        this.writeLinkClasses = writeLinkClasses;
-        return this;
     }
 
     public DeployMode getDeployMode() {
         return deployMode;
     }
 
-    public void registerClassifier(SparkJniClassifier sparkJniClassifier) {
-        for (Class functionClass : sparkJniClassifier.getJniFunctionClasses())
-            registerJniFunction(functionClass);
-        for (Class beanClass : sparkJniClassifier.getBeanClasses())
-            registerContainer(beanClass);
-    }
-
-    static ClassLoader getClassloader() {
+    ClassLoader getClassloader() {
         return metadataHandler.getClassloader();
     }
 
-    public static void setClassloader(ClassLoader classloader) {
+    public void setClassloader(ClassLoader classloader) {
         metadataHandler.setClassloader(classloader);
     }
 

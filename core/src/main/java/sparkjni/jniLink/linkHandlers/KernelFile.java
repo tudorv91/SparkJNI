@@ -19,11 +19,17 @@ import org.immutables.value.Value;
 import sparkjni.utils.JniUtils;
 import sparkjni.utils.MetadataHandler;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.List;
 
+import static sparkjni.utils.AppInjector.injectMembers;
+
 @Value.Immutable
 public abstract class KernelFile {
+    @Inject
+    private MetadataHandler metadataHandler;
+
     public abstract String kernelWrapperFileName();
     public abstract List<UserNativeFunction> userNativeFunctions();
     public abstract String nativePath();
@@ -32,7 +38,7 @@ public abstract class KernelFile {
     private String fileContent;
 
     private void handleDependencies(){
-        targetKernelFilename = JniUtils.generateDefaultKernelFileName(MetadataHandler.getHandler().getAppName(), nativePath());
+        targetKernelFilename = JniUtils.generateDefaultKernelFileName(metadataHandler.getAppName(), nativePath());
         generate();
     }
 
@@ -49,6 +55,7 @@ public abstract class KernelFile {
     }
 
     public void writeKernelFile(boolean overWriteKernelFile){
+        injectMembers(this);
         handleDependencies();
         JniUtils.writeFile(fileContent, targetKernelFilename, overWriteKernelFile);
     }

@@ -18,17 +18,22 @@ package sparkjni.jniLink.linkHandlers;
 import org.immutables.value.Value;
 import sparkjni.dataLink.CppBean;
 import sparkjni.jniLink.linkContainers.*;
+import sparkjni.utils.AppInjector;
 import sparkjni.utils.JniLinkHandler;
 import sparkjni.utils.JniUtils;
 import sparkjni.utils.exceptions.Messages;
 import sparkjni.utils.exceptions.SoftSparkJniException;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 @Value.Immutable
 public abstract class FunctionSignatureMapperProvider {
+    @Inject
+    private JniLinkHandler jniLinkHandler;
+
     abstract String[] tokens();
     abstract String parametersLine();
     abstract String fullyQualifiedJavaClass();
@@ -39,6 +44,7 @@ public abstract class FunctionSignatureMapperProvider {
      * @throws Exception
      */
     public FunctionSignatureMapper buildFunctionSignatureMapper() throws Exception {
+        AppInjector.getInjector().injectMembers(this);
         String[] tokens = tokens();
         String parametersLine = parametersLine();
         String fullyQualifiedJavaClass = fullyQualifiedJavaClass();
@@ -54,13 +60,13 @@ public abstract class FunctionSignatureMapperProvider {
             throw new SoftSparkJniException(
                     String.format(Messages.ERR_INVALID_FORMATTING_FOR_FILE_AT_LINE, jniFuncName, parametersLine));
         }
-        Class enclosingClass = JniLinkHandler.getJniLinkHandlerSingleton().getJavaClassByName(fullyQualifiedJavaClass);
+        Class enclosingClass = jniLinkHandler.getJavaClassByName(fullyQualifiedJavaClass);
         Method jniMethod = JniUtils.getClassMethodyName(enclosingClass, definingJavaMethodName);
         for(Class parameterType: jniMethod.getParameterTypes()){
             try {
                 TypeMapper typeMapper = ImmutableTypeMapper.builder()
                         .javaType(parameterType)
-                        .cppType(JniLinkHandler.getJniLinkHandlerSingleton().getContainerByJavaClass(parameterType))
+                        .cppType(jniLinkHandler.getContainerByJavaClass(parameterType))
                         .jniType("jobject")
                         .build();
                 parameterList.add(typeMapper);
@@ -73,7 +79,7 @@ public abstract class FunctionSignatureMapperProvider {
                 .jniName(jniFuncName)
                 .build();
 
-        CppBean returnCppType = JniLinkHandler.getJniLinkHandlerSingleton().getContainerByJavaClass(jniMethod.getReturnType());
+        CppBean returnCppType = jniLinkHandler.getContainerByJavaClass(jniMethod.getReturnType());
 
         TypeMapper returnTypeMapper = ImmutableTypeMapper.builder()
                 .cppType(returnCppType)

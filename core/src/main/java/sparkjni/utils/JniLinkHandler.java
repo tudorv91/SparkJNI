@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Tudor Alexandru Voicu and Zaid Al-Ars, TUDelft
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,53 +15,58 @@
  */
 package sparkjni.utils;
 
+import sparkjni.dataLink.CppBean;
+import sparkjni.jniLink.jniFunctions.JniFunction;
 import sparkjni.utils.exceptions.HardSparkJniException;
 import sparkjni.utils.exceptions.Messages;
-import sparkjni.jniLink.jniFunctions.JniFunction;
-import sparkjni.dataLink.CppBean;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import static sparkjni.utils.CppFileWriter.writeCppHeaderPairs;
+
+@Singleton
 public class JniLinkHandler {
-    private static JniLinkHandler jniLinkHandlerSingleton;
+    private final MetadataHandler metadataHandler;
+    private final Provider<SparkJni> sparkJniProvider;
+
     private ArrayList<Class> registeredJavaContainers = new ArrayList<>();
     private ArrayList<Class> registeredJniFunctions = new ArrayList<>();
-    private ArrayList<CppBean> registeredCppContainers = new ArrayList<>();
-
     private ArrayList<String> jniHeaderFiles = new ArrayList<>();
     private ArrayList<String> containerHeaderFiles = new ArrayList<>();
+    private ArrayList<CppBean> registeredCppContainers = new ArrayList<>();
 
     private TreeMap<String, ArrayList<CppBean>> jniHeaderFunctionPrototypes = new TreeMap<>();
 
     private boolean DEBUGGING_MODE = true;
 
-    private JniLinkHandler(){}
-
-    public static JniLinkHandler getJniLinkHandlerSingleton(){
-        if(jniLinkHandlerSingleton == null)
-            jniLinkHandlerSingleton = new JniLinkHandler();
-        return jniLinkHandlerSingleton;
+    @Inject
+    private JniLinkHandler(MetadataHandler metadataHandler, Provider<SparkJni> sparkJniProvider) {
+        this.metadataHandler = metadataHandler;
+        this.sparkJniProvider = sparkJniProvider;
     }
 
-    public void registerJniFunction(Class jniFunctionClass){
-        if(!JniFunction.class.isAssignableFrom(jniFunctionClass))
+    public void registerJniFunction(Class jniFunctionClass) {
+        if (!JniFunction.class.isAssignableFrom(jniFunctionClass))
             throw new HardSparkJniException(Messages.ERR_JNI_FUNCTION_CLASS_DOES_NOT_INHERIT_JNI_FUNCTION);
         registeredJniFunctions.add(jniFunctionClass);
     }
 
-    public void registerBean(Class beanClass){
+    void registerBean(Class beanClass) {
         registeredJavaContainers.add(beanClass);
     }
 
-    public void deployLink(boolean doWriteClasses){
-        if (!generateCppBeanClasses())
+    public void deployLink() {
+        if (!generateCppBeanClasses()) {
             throw new RuntimeException(Messages.ERR_CPP_FILE_GENERATION_FAILED);
-        if(SparkJni.getSparkJniSingleton().getDeployMode().doForceOverwriteKernelWrappers)
-            writeCppHeaderPairs();
+        }
+        if (sparkJniProvider.get().getDeployMode().doForceOverwriteKernelWrappers) {
+            writeCppHeaderPairs(registeredCppContainers);
+        }
     }
 
     public boolean generateCppBeanClasses() {
@@ -69,7 +74,7 @@ public class JniLinkHandler {
         for (int iterIdx = 0; iterIdx < maxIters && registeredJavaContainers.size() > 0; iterIdx++) {
             for (int idx = 0; idx < registeredJavaContainers.size(); idx++) {
                 Class javaContainer = registeredJavaContainers.get(idx);
-                CppBean cppBean = new CppBean(javaContainer, MetadataHandler.getHandler().getNativePath());
+                CppBean cppBean = new CppBean(javaContainer, metadataHandler.getNativePath());
                 if (cppBean.isSuccessful()) {
                     registeredJavaContainers.remove(idx);
                     registeredCppContainers.add(cppBean);
@@ -84,39 +89,17 @@ public class JniLinkHandler {
         }
 
         if (!registeredJavaContainers.isEmpty()) {
-            for(Class unlinked: registeredJavaContainers)
+            for (Class unlinked : registeredJavaContainers)
                 System.out.println(String.format("Unmapped registered Java container %s", unlinked.getSimpleName()));
             return false;
-        }
-        else
+        } else
             return true;
-    }
-
-    private void writeCppHeaderPairs() {
-        for (CppBean cppBean : registeredCppContainers) {
-            PrintWriter writer = null;
-            try {
-                writer = new PrintWriter(cppBean.getCppFilePath());
-                writer.write(cppBean.getCppImplementation());
-
-                writer.close();
-
-                writer = new PrintWriter(cppBean.getHeaderFilePath());
-                writer.write(cppBean.getHeaderImplementation());
-            } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-                System.exit(5);
-            } finally {
-                if (writer != null)
-                    writer.close();
-            }
-        }
     }
 
     public void javah(String classpath) {
         for (Class jniFunctionClass : registeredJniFunctions) {
             String javahCommand = String.format(CppSyntax.JAVAH_SECTION, classpath,
-                    MetadataHandler.getHandler().getNativePath(),
+                    metadataHandler.getNativePath(),
                     jniFunctionClass.getName());
             JniUtils.runProcess(javahCommand);
         }
@@ -161,51 +144,29 @@ public class JniLinkHandler {
         return false;
     }
 
-    public void registerNativePrototype(String line, String methodName){
+    void registerNativePrototype(String line, String methodName) {
         jniHeaderFunctionPrototypes.put(line, getNativeMethodParams(methodName));
     }
 
-    public Class getJavaClassByName(String fullyQualifiedClassName){
+    public Class getJavaClassByName(String fullyQualifiedClassName) {
         try {
-            ClassLoader classLoader = SparkJni.getClassloader();
-            Class candidate;
-            if (classLoader == null)
-                candidate = Class.forName(fullyQualifiedClassName);
-            else
-                candidate = Class.forName(fullyQualifiedClassName, false, classLoader);
-            return candidate;
+            ClassLoader classLoader = sparkJniProvider.get().getClassloader();
+            if (classLoader == null) {
+                return Class.forName(fullyQualifiedClassName);
+            } else {
+                return Class.forName(fullyQualifiedClassName, false, classLoader);
+            }
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new HardSparkJniException(String.format(Messages.ERR_CLASS_NOT_FOUND, fullyQualifiedClassName));
         }
-        throw new HardSparkJniException(String.format(Messages.ERR_CLASS_NOT_FOUND, fullyQualifiedClassName));
     }
 
-    public static void reset() {
-        jniLinkHandlerSingleton = null;
-    }
-
-    public ArrayList<Class> getRegisteredJavaContainers() {
-        return registeredJavaContainers;
-    }
-
-    public ArrayList<Class> getRegisteredJniFunctions() {
-        return registeredJniFunctions;
-    }
-
-    public ArrayList<CppBean> getRegisteredCppContainers() {
-        return registeredCppContainers;
-    }
-
-    public ArrayList<String> getJniHeaderFiles() {
+    ArrayList<String> getJniHeaderFiles() {
         return jniHeaderFiles;
     }
 
-    public ArrayList<String> getContainerHeaderFiles() {
+    ArrayList<String> getContainerHeaderFiles() {
         return containerHeaderFiles;
-    }
-
-    public boolean isDEBUGGING_MODE() {
-        return DEBUGGING_MODE;
     }
 
     public void setDEBUGGING_MODE(boolean DEBUGGING_MODE) {

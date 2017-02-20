@@ -15,16 +15,15 @@
  */
 package sparkjni.utils.cpp.methods;
 
-import sparkjni.utils.MetadataHandler;
-import sparkjni.utils.annotations.JNI_method;
-import sparkjni.utils.annotations.JNI_param;
-import sparkjni.utils.exceptions.Messages;
-import sparkjni.utils.cpp.fields.CppField;
-import sparkjni.utils.cpp.fields.CppRawTypeField;
-import sparkjni.utils.cpp.fields.CppReferenceField;
 import sparkjni.dataLink.CppBean;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.JniUtils;
+import sparkjni.utils.annotations.JNI_method;
+import sparkjni.utils.annotations.JNI_param;
+import sparkjni.utils.cpp.fields.CppField;
+import sparkjni.utils.cpp.fields.CppRawTypeField;
+import sparkjni.utils.cpp.fields.CppReferenceField;
+import sparkjni.utils.exceptions.Messages;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -32,14 +31,10 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Created by Tudor on 8/6/16.
- */
 public class CppConstructor extends NativeMethod {
-
-    public static final String AUTO_PARAM_JAVA7_ERR = "Automatically retrieving parameter names is not possible in Java 7." +
+    private static final String AUTO_PARAM_JAVA7_ERR = "Automatically retrieving parameter names is not possible in Java 7." +
             "\nConsider switching to Java 8 and change implementation or define target with the field target name..";
-    public static final String ERROR_NO_VALID_CONSTRUCTOR = "No valid constructor found in Java class. " +
+    private static final String ERROR_NO_VALID_CONSTRUCTOR = "No valid constructor found in Java class. " +
             "Please annotate it with @JNI_method";
 
     public CppConstructor(CppBean cppBean) {
@@ -113,7 +108,7 @@ public class CppConstructor extends NativeMethod {
                     else if(paramTypes[idx].isPrimitive() || JniUtils.isPrimitiveArray(paramTypes[idx]))
                         fieldsParamsMap.put(paramFieldTarget, paramTypes[idx].getSimpleName());
                     else {
-                        CppBean cppBean = new CppBean(paramTypes[idx], MetadataHandler.getHandler().getNativePath());
+                        CppBean cppBean = new CppBean(paramTypes[idx], metadataHandler.getNativePath());
                         fieldsParamsMap.put(paramFieldTarget, cppBean.getCppClassName());
                     }
                 }

@@ -6,7 +6,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
@@ -27,7 +27,7 @@ public class VectorOpsMain {
         String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
         String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
 
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
+        SparkJni sparkJni = new SparkJniBuilder()
                 .nativePath(nativePath)
                 .appName(appName)
                 .build();

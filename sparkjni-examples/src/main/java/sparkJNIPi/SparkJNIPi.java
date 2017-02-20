@@ -7,7 +7,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,7 +43,7 @@ public class SparkJNIPi {
         sliceSize = args.length > 1 ? Integer.parseInt(args[1]) : 4194304;
         noExecs = args.length > 2 ? Integer.parseInt(args[2]) : 1;
 
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
+        SparkJni sparkJni = new SparkJniBuilder()
                 .appName(appName)
                 .nativePath(nativeDirPath)
                 .build();

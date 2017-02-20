@@ -16,11 +16,12 @@
 package sparkjni.utils.cpp.methods;
 
 import sparkjni.dataLink.CppBean;
+import sparkjni.utils.MetadataHandler;
 
-/**
- * Created by Tudor on 8/6/16.
- */
+import javax.inject.Inject;
+
 public abstract class NativeMethod {
+    @Inject MetadataHandler metadataHandler;
     CppBean ownerClass;
     String returnType;
     String methodBody;

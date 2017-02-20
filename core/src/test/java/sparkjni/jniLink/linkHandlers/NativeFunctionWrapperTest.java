@@ -3,20 +3,11 @@ package sparkjni.jniLink.linkHandlers;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import sparkjni.dataLink.CppBean;
 import sparkjni.jniLink.linkContainers.FunctionSignatureMapperTest;
 import sparkjni.utils.JniLinkHandler;
 
-/**
- * Created by tudor on 10/12/16.
- */
-@RunWith (PowerMockRunner.class)
-@PrepareForTest (JniLinkHandler.class)
 public class NativeFunctionWrapperTest {
     private static String METHOD_IMPLEMENTATION ="JNIEXPORT jobject JNICALL Java_org_heterojni_examples_vectorOps_VectorMulJni_mapVectorMul(JNIEnv *jniEnv, jobject callerObject, jobject cppvectorbean_jObject0){\n" +
             "\tjclass cppvectorbean_jClass = jniEnv->GetObjectClass(cppvectorbean_jObject0);\n" +
@@ -35,8 +26,7 @@ public class NativeFunctionWrapperTest {
 
     @Test
     public void nativeFunctionWrapper() {
-        MockitoAnnotations.initMocks(NativeFunctionWrapperTest.class);
-        functionSignatureMapperTest = new FunctionSignatureMapperTest(jniLinkHandlerMock, vectorCppBeanMock);
+        functionSignatureMapperTest = new FunctionSignatureMapperTest();
         functionSignatureMapperTest.setUp();
         nativeFunctionWrapper = ImmutableNativeFunctionWrapper.builder()
                 .functionSignatureMapper(functionSignatureMapperTest.functionSignatureMapper)
