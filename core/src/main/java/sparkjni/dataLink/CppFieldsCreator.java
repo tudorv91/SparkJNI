@@ -11,12 +11,12 @@ import java.util.List;
 
 import static sparkjni.utils.JniUtils.isPrimitiveArray;
 
-public class CppFieldsCreator {
+class CppFieldsCreator {
     private final Class javaClass;
-
+    private boolean successful = false;
     private List<CppField> cppFields;
-
     private List<String> referencedClasses;
+
     public CppFieldsCreator(Class javaClass) {
         this.javaClass = javaClass;
         process();
@@ -43,9 +43,14 @@ public class CppFieldsCreator {
                 if (referenceField.hadValidNativeMapper()) {
                     cppFields.add(referenceField);
                     referencedClasses.add(referenceField.getReadableType());
+                } else {
+                    // Implementation for the dependent reference class not generated.
+                    // Delay generation of current class.
+                    successful = false;
                 }
             }
         }
+        successful = true;
     }
 
     public CppField getCppFieldByName(String fieldName) {
@@ -64,5 +69,9 @@ public class CppFieldsCreator {
 
     public List<CppField> getCppFields() {
         return cppFields;
+    }
+
+    public boolean isSuccessful() {
+        return successful;
     }
 }

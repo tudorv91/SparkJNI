@@ -56,9 +56,15 @@ public class CppBean {
         destructor = new Destructor(this);
         cppFieldsCreator = new CppFieldsCreator(this.javaClass);
 
-        createFieldsGettersMapping();
-        generateClassDeclaration();
-        generateFullPath();
+        createDeclarationIfFieldsMapIsSuccessful();
+    }
+
+    private void createDeclarationIfFieldsMapIsSuccessful() {
+        if(cppFieldsCreator.isSuccessful()) {
+            createFieldsGettersMapping();
+            generateClassDeclaration();
+            generateFullPath();
+        }
     }
 
     private boolean generateFullPath() {
@@ -233,6 +239,10 @@ public class CppBean {
 
     public List<CppField> getCppFields() {
         return cppFieldsCreator.getCppFields();
+    }
+
+    public boolean isSuccessful(){
+        return cppFieldsCreator.isSuccessful();
     }
 
     public String getHeaderFilePath() {
