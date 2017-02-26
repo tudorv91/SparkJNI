@@ -13,8 +13,9 @@ import java.util.List;
 
 public class MemoryCopyTest {
     private static final int NO_SLICES_ITERATIVE = 1<<4;
-    private static final int SLICE_COPY_SIZE_ITERATIVE = 1<<16;
+    private static int SLICE_COPY_SIZE_ITERATIVE = 1<<16;
     private TestUtils testUtils;
+    private boolean constrainedTest = false;
     private SparkJni sparkJni;
     private final String ARRAY_COPY_CODE_BODY =
             "\tint arraySize = cppdoublearray0->getdblArr_length();\n" +
@@ -26,6 +27,12 @@ public class MemoryCopyTest {
 
     @Before
     public void init() {
+        String testMode = System.getProperty("testMode");
+        if(testMode != null && testMode.equals("constrained")) {
+            constrainedTest = true;
+            SLICE_COPY_SIZE_ITERATIVE = 1 << 8;
+            System.out.println("### Running tests in constrained mode: vector size=" + SLICE_COPY_SIZE_ITERATIVE+ " ###");
+        }
         String sparkjniClasspath = FileSystems.getDefault().getPath("../core/target/classes").toAbsolutePath().normalize().toString();
         String classpath = FileSystems.getDefault().getPath("../sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
         String testClasspath = FileSystems.getDefault().getPath("target/test-classes").toAbsolutePath().normalize().toString();
@@ -42,21 +49,21 @@ public class MemoryCopyTest {
 
     @Test
     public void simpleMemoryCopyTest() {
-        int copySize = 65536;
+        int copySize = SLICE_COPY_SIZE_ITERATIVE;
         int noSlices = 1;
         run(MemoryCopyUtil.generateArray(copySize, noSlices));
     }
 
     @Test
     public void multiThreadedMemoryCopyTest() {
-        int copySize = 65536;
+        int copySize = SLICE_COPY_SIZE_ITERATIVE;
         int noSlices = 256;
         run(MemoryCopyUtil.generateArray(copySize, noSlices));
     }
 
     @Test
     public void bigObjectsMemoryCopyTest() {
-        int copySize = 1<<24;
+        int copySize = SLICE_COPY_SIZE_ITERATIVE * 256;
         int noSlices = 1;
         run(MemoryCopyUtil.generateArray(copySize, noSlices));
     }
@@ -64,22 +71,28 @@ public class MemoryCopyTest {
     @Test
     public void bigNoOfSlicesMemoryCopyTest() {
         int copySize = 1;
-        int noSlices = 1<<16;
+        int noSlices = SLICE_COPY_SIZE_ITERATIVE;
         run(MemoryCopyUtil.generateArray(copySize, noSlices));
     }
 
     @Test
     public void sparkIterativeMemoryTest(){
+        if(constrainedTest){
+            System.out.println("### Not running iterative memory tests in constrained mode ###");
+            return;
+        }
         int copySize = SLICE_COPY_SIZE_ITERATIVE;
-        int noSlices = NO_SLICES_ITERATIVE;
-        runSparkIterative(MemoryCopyUtil.generateArray(copySize, noSlices));
+        runSparkIterative(MemoryCopyUtil.generateArray(copySize, NO_SLICES_ITERATIVE));
     }
 
     @Test
     public void iterativeMemoryTest(){
+        if(constrainedTest){
+            System.out.println("### Not running iterative memory tests in constrained mode ###");
+            return;
+        }
         int copySize = SLICE_COPY_SIZE_ITERATIVE;
-        int noSlices = NO_SLICES_ITERATIVE;
-        runIterative(MemoryCopyUtil.generateArray(copySize, noSlices));
+        runIterative(MemoryCopyUtil.generateArray(copySize, NO_SLICES_ITERATIVE));
     }
 
     private void runSparkIterative(List<DoubleArray> input) {
