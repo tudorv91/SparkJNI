@@ -6,7 +6,7 @@
 .idea/tasks.xml
 *.class
 *.jar
-
+ubuntu-xenial*
 # Sensitive or high-churn files:
 .idea/dataSources/
 .idea/dataSources.ids
