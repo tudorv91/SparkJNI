@@ -17,6 +17,7 @@
 .idea/uiDesigner.xml
 target/
 integration-tests/coretest/resources
+.vagrant/
 # Gradle:
 .idea/gradle.xml
 .idea/libraries
