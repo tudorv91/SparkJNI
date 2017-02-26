@@ -24,6 +24,7 @@ public class FunctionSignatureMapperProviderTest {
     static TestUtils testUtils;
     static JniRootContainer jniRootContainer;
     static SparkJni sparkJni;
+
     @BeforeClass
     public static void setUp() throws Exception {
         testUtils = new TestUtils(FunctionSignatureMapperProvider.class);
@@ -38,7 +39,7 @@ public class FunctionSignatureMapperProviderTest {
         sparkJni.getJniHandler().javah(JniUtils.getClasspath());
         jniRootContainer = ImmutableJniRootContainerProvider.builder().build()
                 .buildJniRootContainer(testUtils.defaultTestFolder, testUtils.appName);
-        sparkJni.getJniHandler().deployLink(true);
+        sparkJni.getJniHandler().deployLink();
     }
 
     @After

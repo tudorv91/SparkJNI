@@ -15,17 +15,13 @@
  */
 package sparkjni.utils.cpp.fields;
 
-import sparkjni.utils.JniLinkHandler;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.JniUtils;
 
 import java.lang.reflect.Field;
 
-/**
- * Created by Tudor on 8/16/16.
- */
 public class CppReferenceField extends CppField {
-    public CppReferenceField(Field field, JniLinkHandler jniLinkHandler) {
+    public CppReferenceField(Field field) {
         super(field);
         type = JniUtils.getCppReferenceTypeName(javaField.getType());
         if(!jniLinkHandler.isTypeRegistered(type))

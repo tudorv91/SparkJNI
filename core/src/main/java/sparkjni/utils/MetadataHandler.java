@@ -18,11 +18,13 @@ package sparkjni.utils;
 import sparkjni.utils.exceptions.HardSparkJniException;
 import sparkjni.utils.exceptions.Messages;
 
+import javax.inject.Singleton;
 import java.io.File;
 import java.nio.file.FileSystems;
 
+@Singleton
 public class MetadataHandler {
-    public static final String JVM_DEFAULT_JAVA = "/usr/lib/jvm/default-java";
+    private static final String JVM_DEFAULT_JAVA = "/usr/lib/jvm/default-java";
     private String appName;
     private String nativePath;
     private String classpath;
@@ -34,10 +36,7 @@ public class MetadataHandler {
     private String userStaticLibraries = "";
     private String userDefines = "";
 
-    private static MetadataHandler handler = null;
-
-    private MetadataHandler() {
-    }
+    private ClassLoader classloader = null;
 
     public String getAppName() {
         return appName;
@@ -136,16 +135,6 @@ public class MetadataHandler {
         this.userDefines = userDefines;
     }
 
-    public static MetadataHandler getHandler() {
-        if (handler == null)
-            handler = new MetadataHandler();
-        return handler;
-    }
-
-    protected static void reset() {
-        handler = null;
-    }
-
     public void addToClasspath(String cPath) {
         classpath += ":" + cPath;
     }
@@ -156,5 +145,15 @@ public class MetadataHandler {
 
     public void setNativeLibPath(String nativeLibPath) {
         this.nativeLibPath = nativeLibPath;
+    }
+
+    public ClassLoader getClassloader() {
+//        if(classloader == null)
+//            classloader = ClassLoader.getSystemClassLoader();
+        return classloader;
+    }
+
+    public void setClassloader(ClassLoader classloader) {
+        this.classloader = classloader;
     }
 }

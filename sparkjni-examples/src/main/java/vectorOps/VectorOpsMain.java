@@ -6,19 +6,40 @@ import org.apache.spark.api.java.JavaSparkContext;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 
 import java.nio.file.FileSystems;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static sparkjni.utils.DeployMode.DeployModes.JAVAH_MAKEFILE_AND_BUILD;
+import static sparkjni.utils.DeployMode.DeployModes.JUST_BUILD;
 
 public class VectorOpsMain {
     private static JavaSparkContext jscSingleton;
     private static String nativePath = null;
     private static String appName = "vectorOps";
     private static final boolean debug = true;
-    private static String jdkPath;
+
+    private static void initSparkJNI(){
+        nativePath = Paths.get("sparkjni-examples/src/main/cpp/examples/vectorOps").normalize().toAbsolutePath().toString();
+        appName = "vectorOps";
+
+        String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
+        String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
+
+        SparkJni sparkJni = new SparkJniBuilder()
+                .nativePath(nativePath)
+                .appName(appName)
+                .build();
+
+        sparkJni.setDeployMode(new DeployMode(JUST_BUILD))
+                .addToClasspath(sparkjniClasspath, examplesClasspath);
+
+        sparkJni.registerContainer(VectorBean.class)
+                .registerJniFunction(VectorMulJni.class)
+                .registerJniFunction(VectorAddJni.class);
+        sparkJni.deploy();
+    }
 
     private static JavaSparkContext getSparkContext(){
         if(jscSingleton == null){
@@ -27,26 +48,6 @@ public class VectorOpsMain {
             jscSingleton = new JavaSparkContext(sparkConf);
         }
         return jscSingleton;
-    }
-
-    private static void initSparkJNI(){
-        appName = "vectorOps";
-        String sparkjniClasspath = FileSystems.getDefault().getPath("core/target/classes").toAbsolutePath().normalize().toString();
-        String examplesClasspath = FileSystems.getDefault().getPath("sparkjni-examples/target/classes").toAbsolutePath().normalize().toString();
-
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
-                .nativePath(nativePath)
-                .appName(appName)
-                .jdkPath(jdkPath)
-                .build();
-
-        sparkJni.setDeployMode(new DeployMode(JAVAH_MAKEFILE_AND_BUILD))
-                .addToClasspath(sparkjniClasspath, examplesClasspath);
-
-        sparkJni.registerContainer(VectorBean.class)
-                .registerJniFunction(VectorMulJni.class)
-                .registerJniFunction(VectorAddJni.class);
-        sparkJni.deploy();
     }
 
     private static ArrayList<VectorBean> generateVectors(int noVectors, int vectorSize){
@@ -66,20 +67,12 @@ public class VectorOpsMain {
     }
 
     public static void main(String[] args){
-        parseArgs(args);
         initSparkJNI();
         String libPath = String.format(CppSyntax.NATIVE_LIB_PATH, nativePath, appName);
         JavaRDD<VectorBean> vectorsRdd = getSparkContext().parallelize(generateVectors(2, 4));
         JavaRDD<VectorBean> mulResults = vectorsRdd.map(new VectorMulJni(libPath, "mapVectorMul"));
         VectorBean results = mulResults.reduce(new VectorAddJni(libPath, "reduceVectorAdd"));
         debugRes(results);
-    }
-
-    private static void parseArgs(String[] args) {
-        if(args.length >= 1) {
-            nativePath = args[0];
-            jdkPath = args[1];
-        }
     }
 
     private static void debugRes(VectorBean vector){

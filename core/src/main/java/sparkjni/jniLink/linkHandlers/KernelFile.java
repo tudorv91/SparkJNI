@@ -15,14 +15,21 @@
  */
 package sparkjni.jniLink.linkHandlers;
 
+import org.immutables.value.Value;
 import sparkjni.utils.JniUtils;
 import sparkjni.utils.MetadataHandler;
-import org.immutables.value.Value;
 
+import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
+
+import static sparkjni.utils.AppInjector.injectMembers;
 
 @Value.Immutable
 public abstract class KernelFile {
+    @Inject
+    private MetadataHandler metadataHandler;
+
     public abstract String kernelWrapperFileName();
     public abstract List<UserNativeFunction> userNativeFunctions();
     public abstract String nativePath();
@@ -31,13 +38,14 @@ public abstract class KernelFile {
     private String fileContent;
 
     private void handleDependencies(){
-        targetKernelFilename = JniUtils.generateDefaultKernelFileName(MetadataHandler.getHandler().getAppName(), nativePath());
+        targetKernelFilename = JniUtils.generateDefaultKernelFileName(metadataHandler.getAppName(), nativePath());
         generate();
     }
 
     private void generate(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(JniUtils.generateIncludeStatements(false, new String[]{kernelWrapperFileName()}));
+        String strippedFileName = new File(kernelWrapperFileName()).toPath().getFileName().toString();
+        stringBuilder.append(JniUtils.generateIncludeStatements(false, new String[]{strippedFileName}));
 
         for(UserNativeFunction userNativeFunction: userNativeFunctions()){
             stringBuilder.append(userNativeFunction.generateUserFunctionImplementation());
@@ -46,8 +54,9 @@ public abstract class KernelFile {
         fileContent = stringBuilder.toString();
     }
 
-    public void writeKernelFile(){
+    public void writeKernelFile(boolean overWriteKernelFile){
+        injectMembers(this);
         handleDependencies();
-        JniUtils.writeFile(fileContent, targetKernelFilename);
+        JniUtils.writeFile(fileContent, targetKernelFilename, overWriteKernelFile);
     }
 }

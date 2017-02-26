@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>generator-test</artifactId>
+    <groupId>tudelft.ceng.tvoicu</groupId>
+    <version>0.2</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>tudelft.ceng.tvoicu</groupId>
+            <artifactId>sparkjni-examples</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>tudelft.ceng.tvoicu</groupId>
+            <artifactId>core</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>tudelft.ceng.tvoicu</groupId>
+                <artifactId>sparkjni-generator-plugin</artifactId>
+                <version>0.2</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>sparkjni-generator</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

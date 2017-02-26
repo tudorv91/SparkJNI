@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Tudor Alexandru Voicu and Zaid Al-Ars, TUDelft
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,40 +16,30 @@
 
 package sparkjni.dataLink;
 
-import sparkjni.utils.JniLinkHandler;
-import sparkjni.utils.cpp.methods.*;
-import sparkjni.utils.jniAnnotations.JNI_field;
-import sparkjni.utils.cpp.fields.CppField;
-import sparkjni.utils.cpp.fields.CppRawTypeField;
-import sparkjni.utils.cpp.fields.CppReferenceField;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.JniUtils;
+import sparkjni.utils.cpp.fields.CppField;
+import sparkjni.utils.cpp.methods.*;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CppBean {
     private Class javaClass;
     private String cppClassName;
 
-    private ArrayList<CppField> cppFields;
-    private ArrayList<String> referencedClasses = new ArrayList<>();
     private HashMap<CppField, CppBeanGetterMethod> fieldsGettersMap;
 
-    private String nativePath = null;
+    private String nativePath;
     private String cppImplementation;
-    private String headerImplementation;
     private String cppFilePath;
     private String headerFilePath;
-
-    private boolean successful = false;
 
     private CppConstructor cppConstructor;
     private EmptyCppConstructor emptyCppConstructor;
     private JniConstructor jniConstructor;
     private Destructor destructor;
+    private CppFieldsCreator cppFieldsCreator;
 
     public CppBean(Class javaClass, String nativePath) {
         this(javaClass, "CPP" + javaClass.getSimpleName(), nativePath);
@@ -59,21 +49,22 @@ public class CppBean {
         this.javaClass = javaClass;
         this.cppClassName = cppClassName;
         this.nativePath = nativePath;
-        cppFields = new ArrayList<>();
+
         cppConstructor = new CppConstructor(this);
         emptyCppConstructor = new EmptyCppConstructor(this);
         jniConstructor = new JniConstructor(this);
         destructor = new Destructor(this);
+        cppFieldsCreator = new CppFieldsCreator(this.javaClass);
 
-        if(!createCppFieldsArr()){
-            successful = false;
-            return;
+        createDeclarationIfFieldsMapIsSuccessful();
+    }
+
+    private void createDeclarationIfFieldsMapIsSuccessful() {
+        if(cppFieldsCreator.isSuccessful()) {
+            createFieldsGettersMapping();
+            generateClassDeclaration();
+            generateFullPath();
         }
-
-        createFieldsGettersMapping();
-
-        successful = generateClassDeclaration()
-                && generateHeaderFile() && generateFullPath();
     }
 
     private boolean generateFullPath() {
@@ -87,47 +78,20 @@ public class CppBean {
         return false;
     }
 
-    private boolean createCppFieldsArr() {
-        Field[] fields = javaClass.getDeclaredFields();
-
-        for (Field field : fields) {
-            Annotation jniAnnotation = field.getAnnotation(JNI_field.class);
-            if(jniAnnotation == null)
-                continue;
-
-            Class fieldType = field.getType();
-            if(fieldType.isPrimitive()) {
-                cppFields.add(new CppRawTypeField(field));
-            } else if(fieldType.isArray() && JniUtils.isPrimitiveArray(fieldType)){
-                CppRawTypeField cppArrField = new CppRawTypeField(field);
-                cppFields.add(cppArrField);
-                cppFields.add(cppArrField.getArrayLengthFieldCppFieldObj());
-            } else {
-                CppField referenceField = new CppReferenceField(field, JniLinkHandler.getJniLinkHandlerSingleton());
-                if(referenceField.hadValidNativeMapper()){
-                    cppFields.add(referenceField);
-                    referencedClasses.add(referenceField.getReadableType());
-                } else
-                    return false;
-            }
-        }
-        return true;
-    }
-
     private boolean generateClassDeclaration() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        String[] includedHeaders = new String[referencedClasses.size() + 1];
-        for(int idx = 0; idx < referencedClasses.size(); idx++)
-            includedHeaders[idx] = referencedClasses.get(idx)+".h";
+        String[] includedHeaders = new String[cppFieldsCreator.getReferencedClasses().size() + 1];
+        for (int idx = 0; idx < cppFieldsCreator.getReferencedClasses().size(); idx++)
+            includedHeaders[idx] = cppFieldsCreator.getReferencedClasses().get(idx) + ".h";
 
-        includedHeaders[referencedClasses.size()] = cppClassName + ".h";
+        includedHeaders[cppFieldsCreator.getReferencedClasses().size()] = cppClassName + ".h";
         stringBuilder.append(JniUtils.generateIncludeStatements(false,
                 includedHeaders));
         stringBuilder.append("\tstd::mutex ");
         stringBuilder.append(String.format("%s::%s", cppClassName, JniConstructor.MUTEX_CPP_FIELD_NAME));
         stringBuilder.append(";\n");
-        stringBuilder.append(getFieldLineImpl());
+//        stringBuilder.append(getFieldLineImpl());
 
         // JNI intervention section
         stringBuilder.append(jniConstructor.generateConstructorImpl());
@@ -143,43 +107,48 @@ public class CppBean {
         return true;
     }
 
-    private boolean generateHeaderFile(){
+    public String getHeaderImplementation() {
+        String macroName = cppClassName.toUpperCase();
+        return String.format(CppSyntax.BEAN_HEADER_FILE_STR, macroName, macroName, generateCppIncludeStatements(),
+                cppClassName, generatePrivateMemberDeclarations(), generatePublicMemberDeclarations(), macroName);
+    }
+
+    private String generatePublicMemberDeclarations() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getFieldLineDeclarations());
-
-        stringBuilder.append("\tstatic std::mutex ");
-        stringBuilder.append(JniConstructor.MUTEX_CPP_FIELD_NAME);
-        stringBuilder.append(";\n");
-
-        String []includes = new String[referencedClasses.size()];
-        int ctr = 0;
-        for(String ref: referencedClasses)
-            includes[ctr++] = ref+".h";
-
-        String includeStatements = JniUtils.generateIncludeStatements(true, includes),
-                privateMemberDeclarations = stringBuilder.toString();
-
-        stringBuilder = new StringBuilder();
-
         stringBuilder.append(generateMethodPrototypesStatements());
+        generateConstructors(stringBuilder);
+        stringBuilder.append(String.format(CppSyntax.DESTRUCTOR_PROTOTYPE_STR, cppClassName));
+
+        return stringBuilder.toString();
+    }
+
+    private String generatePrivateMemberDeclarations() {
+        return getFieldLineDeclarations() +
+                "\tstatic std::mutex " +
+                JniConstructor.MUTEX_CPP_FIELD_NAME +
+                ";\n";
+    }
+
+    private String generateCppIncludeStatements() {
+        String[] includes = new String[cppFieldsCreator.getReferencedClasses().size()];
+        int ctr = 0;
+        for (String ref : cppFieldsCreator.getReferencedClasses())
+            includes[ctr++] = ref + ".h";
+
+        return JniUtils.generateIncludeStatements(true, includes);
+    }
+
+    private void generateConstructors(StringBuilder stringBuilder) {
         stringBuilder.append(String.format(CppSyntax.JNI_CONSTRUCTOR_PROTOTYPE_STR, cppClassName));
         stringBuilder.append(cppConstructor.generateConstructorWithNativeArgsPrototype());
         stringBuilder.append(emptyCppConstructor.generateNonArgConstructorPrototype());
-        stringBuilder.append(String.format(CppSyntax.DESTRUCTOR_PROTOTYPE_STR, cppClassName));
-
-        String publicMemberDeclarations = stringBuilder.toString();
-        String macroName = cppClassName.toUpperCase();
-        headerImplementation =  String.format(CppSyntax.BEAN_HEADER_FILE_STR, macroName, macroName,includeStatements,
-                cppClassName, privateMemberDeclarations, publicMemberDeclarations, macroName);
-
-        return true;
     }
 
-    private String generateMethodPrototypesStatements(){
+    private String generateMethodPrototypesStatements() {
         StringBuilder stringBuilder = new StringBuilder();
-        for(CppBeanGetterMethod nativeMethod : fieldsGettersMap.values()){
+        for (CppBeanGetterMethod nativeMethod : fieldsGettersMap.values()) {
             String prototype = String.format(CppSyntax.FUNCTION_PROTOTYPE_STR,
-                    "\t",nativeMethod.getReturnType(), nativeMethod.getMethodName(), "");
+                    "\t", nativeMethod.getReturnType(), nativeMethod.getMethodName(), "");
             stringBuilder.append(prototype);
         }
 
@@ -198,7 +167,7 @@ public class CppBean {
         stringBuilder.append("\tJNIEnv* env;\n");
         stringBuilder.append(String.format("\tjobject %s;\n", CppSyntax.JAVACLASSJNI_OBJECT_NAME));
         stringBuilder.append("\tint jniCreated = 0;\n");
-        for(CppField cppField: cppFields){
+        for (CppField cppField : cppFieldsCreator.getCppFields()) {
             stringBuilder.append(cppField.getFieldDeclarationStmt());
         }
         return stringBuilder.toString();
@@ -211,24 +180,24 @@ public class CppBean {
     public String getFieldLineImpl() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("\tJNIEnv* %s::env;\n", cppClassName));
-        for(CppField cppField: cppFields){
+        for (CppField cppField : cppFieldsCreator.getCppFields()) {
             stringBuilder.append(cppField.getFieldDeclarationCppStmt(cppClassName));
         }
         return "";
     }
 
-    private void createFieldsGettersMapping(){
-        if(fieldsGettersMap == null)
+    private void createFieldsGettersMapping() {
+        if (fieldsGettersMap == null)
             fieldsGettersMap = new HashMap<>();
 
-        for(CppField cppField: cppFields){
+        for (CppField cppField : cppFieldsCreator.getCppFields()) {
             fieldsGettersMap.put(cppField, new CppBeanGetterMethod(cppField, "RAND"));
         }
     }
 
     private String getGetterMethods() {
         StringBuilder sb = new StringBuilder();
-        for(CppBeanGetterMethod method: fieldsGettersMap.values()){
+        for (CppBeanGetterMethod method : fieldsGettersMap.values()) {
             sb.append(method.getMethodBody());
             sb.append("\n");
         }
@@ -236,23 +205,15 @@ public class CppBean {
         return sb.toString();
     }
 
-    public CppField getCppFieldByName(String fieldName){
-        for(CppField field: cppFields)
-            if(field.getName().equals(fieldName))
-                return field;
-
-        return null;
-    }
-
-    public boolean isSuccessful() {
-        return successful;
+    public CppField getCppFieldByName(String fieldName) {
+        return cppFieldsCreator.getCppFieldByName(fieldName);
     }
 
     public String getCppClassName() {
         return cppClassName;
     }
 
-    public Class getJavaClass(){
+    public Class getJavaClass() {
         return javaClass;
     }
 
@@ -264,11 +225,11 @@ public class CppBean {
         return cppImplementation;
     }
 
-    public void setNativePath(String nativePath){
+    public void setNativePath(String nativePath) {
         this.nativePath = nativePath;
     }
 
-    public String getNativePath(){
+    public String getNativePath() {
         return nativePath;
     }
 
@@ -276,15 +237,15 @@ public class CppBean {
         return fieldsGettersMap;
     }
 
-    public ArrayList<CppField> getCppFields() {
-        return cppFields;
+    public List<CppField> getCppFields() {
+        return cppFieldsCreator.getCppFields();
+    }
+
+    public boolean isSuccessful(){
+        return cppFieldsCreator.isSuccessful();
     }
 
     public String getHeaderFilePath() {
         return headerFilePath;
-    }
-
-    public String getHeaderImplementation() {
-        return headerImplementation;
     }
 }

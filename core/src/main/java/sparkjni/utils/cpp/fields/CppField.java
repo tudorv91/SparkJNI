@@ -16,14 +16,15 @@
 package sparkjni.utils.cpp.fields;
 
 import sparkjni.utils.CppSyntax;
+import sparkjni.utils.JniLinkHandler;
 import sparkjni.utils.JniUtils;
 
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 
-/**
- * Created by Tudor on 8/16/16.
- */
 public abstract class CppField {
+    @Inject
+    JniLinkHandler jniLinkHandler;
     String name;
     String readableType;
     String type;

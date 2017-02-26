@@ -6,7 +6,7 @@
 .idea/tasks.xml
 *.class
 *.jar
-
+ubuntu-xenial*
 # Sensitive or high-churn files:
 .idea/dataSources/
 .idea/dataSources.ids
@@ -15,8 +15,9 @@
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
-resources/
 target/
+integration-tests/coretest/resources
+.vagrant/
 # Gradle:
 .idea/gradle.xml
 .idea/libraries

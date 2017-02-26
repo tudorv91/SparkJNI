@@ -23,9 +23,6 @@ import sparkjni.utils.JniUtils;
 
 import java.util.Formatter;
 
-/**
- * Created by Tudor on 8/20/16.
- */
 public class Destructor extends NativeMethod {
     public Destructor(CppBean cppBean) {
         super(cppBean);
@@ -50,6 +47,7 @@ public class Destructor extends NativeMethod {
                     bodySb.append("\t");
                     bodySb.append(releaseStatement);
                     bodySb.append("\n");
+                    JniUtils.jniExceptionCheck(bodySb);
                 }
             }
         }

@@ -27,20 +27,26 @@ import sparkjni.utils.JniUtils;
 import sparkjni.utils.MetadataHandler;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sparkjni.utils.AppInjector.injectMembers;
+
 public class KernelFileWrapperHeader {
+    @Inject
+    private MetadataHandler metadataHandler;
+
     private ArrayList<String> containerHeaderFiles;
     private JniRootContainer jniRootContainer;
     private String headerWrapperFileName;
-
     private List<UserNativeFunction> userNativeFunctions;
-
     private List<NativeFunctionWrapper> nativeFunctionWrappers;
+
     public KernelFileWrapperHeader(ArrayList<String> containerHeaderFiles, JniRootContainer jniRootContainer) {
         this.containerHeaderFiles = containerHeaderFiles;
         this.jniRootContainer = jniRootContainer;
+        injectMembers(this);
     }
 
     public boolean writeKernelWrapperFile() {
@@ -53,9 +59,9 @@ public class KernelFileWrapperHeader {
         sb.append(generateWrappersImplementationBody());
 
         headerWrapperFileName = JniUtils.generateDefaultHeaderWrapperFileName(jniRootContainer.appName(),
-                MetadataHandler.getHandler().getNativePath());
+                metadataHandler.getNativePath());
 
-        JniUtils.writeFile(wrapInHeader(sb.toString()), headerWrapperFileName);
+        JniUtils.writeFile(wrapInHeader(sb.toString()), headerWrapperFileName, true);
         return true;
     }
 
@@ -88,7 +94,7 @@ public class KernelFileWrapperHeader {
     }
 
     private String wrapInHeader(String s) {
-        String macroName = MetadataHandler.getHandler().getAppName().toUpperCase() + "_KERNELWRAPPER";
+        String macroName = metadataHandler.getAppName().toUpperCase() + "_KERNELWRAPPER";
         return String.format(CppSyntax.SIMPLE_HEADER_FILE_STR, macroName, macroName, s);
     }
 
@@ -115,7 +121,7 @@ public class KernelFileWrapperHeader {
         return ImmutableKernelFile.builder()
                 .kernelWrapperFileName(headerWrapperFileName)
                 .userNativeFunctions(userNativeFunctions)
-                .nativePath(MetadataHandler.getHandler().getNativePath())
+                .nativePath(metadataHandler.getNativePath())
                 .build();
     }
 }

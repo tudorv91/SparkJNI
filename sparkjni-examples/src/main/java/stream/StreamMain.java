@@ -4,7 +4,7 @@ import org.apache.spark.api.java.function.Function;
 import sparkjni.utils.CppSyntax;
 import sparkjni.utils.DeployMode;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 import testutils.TestUtils;
 import utils.ExampleUtils;
 
@@ -119,7 +119,7 @@ public class StreamMain {
         String sparkjniClasspath = FileSystems.getDefault().getPath("../core/target/classes").toAbsolutePath().normalize().toString();
         String examplesClasspath = FileSystems.getDefault().getPath("target/classes").toAbsolutePath().normalize().toString();
 
-        SparkJni sparkJni = new SparkJniSingletonBuilder()
+        SparkJni sparkJni = new SparkJniBuilder()
                 .nativePath(nativePath)
                 .appName(appName)
                 .build();

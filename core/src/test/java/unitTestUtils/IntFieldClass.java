@@ -1,9 +1,9 @@
 package unitTestUtils;
 
 import sparkjni.dataLink.JavaBean;
-import sparkjni.utils.jniAnnotations.JNI_field;
-import sparkjni.utils.jniAnnotations.JNI_method;
-import sparkjni.utils.jniAnnotations.JNI_param;
+import sparkjni.utils.annotations.JNI_field;
+import sparkjni.utils.annotations.JNI_method;
+import sparkjni.utils.annotations.JNI_param;
 
 /**
  * Created by Tudor on 9/5/16.

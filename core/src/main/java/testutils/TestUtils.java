@@ -20,7 +20,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import sparkjni.utils.JniUtils;
 import sparkjni.utils.SparkJni;
-import sparkjni.utils.SparkJniSingletonBuilder;
+import sparkjni.utils.SparkJniBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,13 +68,11 @@ public class TestUtils {
     }
 
     public SparkJni getSparkJni(String classpath){
-        SparkJni.reset();
-        System.gc();
-        SparkJni sparkJni =  new SparkJniSingletonBuilder()
+        return new SparkJniBuilder()
                 .appName(appName)
                 .nativePath(fullPath)
+                .classpath(classpath)
                 .build();
-        return sparkJni;
     }
 
     public String getLibPath(){
