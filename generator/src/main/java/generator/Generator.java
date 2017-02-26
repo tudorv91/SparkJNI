@@ -10,7 +10,7 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mojo(requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, name = "sparkjni-generator")
+@Mojo(requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, name = "sparkjni-generator-plugin")
 @SuppressWarnings("unused")
 public class Generator extends AbstractMojo {
     Logger logger = LoggerFactory.getLogger(Generator.class);
