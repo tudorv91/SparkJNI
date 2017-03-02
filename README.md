@@ -41,9 +41,13 @@ Last, a setter-constructor (that initializes only the ```@JNI_field``` annotated
 #### JNI functions
 JNI functions are user-defined classes which are used to transfer control to native code.
 These classes need to satisfy the following requirements:
+
 1. Extend one of the ```JniReduceFunction``` or ```JniMapFunction``` SparkJNI types.
+
 2. Declare a public default constructor. 
+
 3. Override the two-argument constructor from their supertype.
+
 4. Contain at least a declaration of a native Java function (with the modifier ```native```), with the required number of arguments.
 
 In the case of the example application, we define the two classes used for the reduce and the map transformations:
@@ -77,7 +81,9 @@ public class VectorMulJni extends JniMapFunction {
 
 # Deployment modes
 There are two ways of building Spark applications with SparkJNI:
-1. By using the SparkJNI Maven plugin. (recommended)
+
+1. By using the SparkJNI Maven Generator plugin. (recommended)
+
 2. By programmatically configuring SparkJNI before the actual application execution flow. 
 
 ## SparkJNI generator plugin
@@ -114,7 +120,9 @@ The following example showcases constructing a sample application, including the
 
 These are used in the main class (VectorOpsMain). The following code snippet showcases the programmatic configuration.
 A SparkJNI instance can be created using the built-in builder and by setting two mandatory parameters:
+
 1. The **native path** points to the directory where the native code will be generated, including the template kernel file.
+
 2. The **app name** indicates the kernel file and native library name (*native/path/appName.cpp* and *native/path/appName.so*).
 ```
 private static void initSparkJNI(){
